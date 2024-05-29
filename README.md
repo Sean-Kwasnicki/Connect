@@ -2,6 +2,8 @@
 
 # Discord API Routes (In Review)
 
+[db-schema]: ./aa19-python-group-project/images/Discord.pdf
+
 ## User Routes
 
 ### Get the Current User
