@@ -14,3 +14,9 @@ class Message(db.Model):
 
     user = db.relationship('User', back_populates='messages')
     channel = db.relationship('Channel', back_populates='messages')
+    threads = db.relationship('Thread', back_populates='message', lazy='dynamic')
+
+    def __init__(self, content, user_id, channel_id):
+        self.content = content
+        self.user_id = user_id
+        self.channel_id = channel_id
