@@ -1,6 +1,9 @@
 # Discord-Project
 
 # Discord API Routes (In Review)
+![db-schema]
+
+[db-schema]: ./aa19-python-group-project/images/Discord%20Schema.png
 
 ## User Routes
 
