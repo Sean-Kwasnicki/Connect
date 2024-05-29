@@ -1,14 +1,14 @@
 from datetime import datetime
-from .db import db, environment, SCHEMA
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 class DirectMessage(db.Model):
     __tablename__ = 'direct_messages'
-    __table_args__ = {'schema': SCHEMA} if environment == "production" else {}
-
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text, nullable=False)
-    sender_id = db.Column(db.Integer, db.ForeignKey(f'{SCHEMA}.users.id') if environment == "production" else db.ForeignKey('users.id'), nullable=False)
-    receiver_id = db.Column(db.Integer, db.ForeignKey(f'{SCHEMA}.users.id') if environment == "production" else db.ForeignKey('users.id'), nullable=False)
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

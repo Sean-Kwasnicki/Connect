@@ -13,12 +13,13 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(255), nullable=False, unique=True)
     hashed_password = db.Column(db.String(255), nullable=False)
 
-
     servers = db.relationship("ServerMember")
 
     messages = db.relationship('Message', back_populates='user', lazy='dynamic')
     sent_messages = db.relationship('DirectMessage', foreign_keys='DirectMessage.sender_id', back_populates='sender', lazy='dynamic')
     received_messages = db.relationship('DirectMessage', foreign_keys='DirectMessage.receiver_id', back_populates='receiver', lazy='dynamic')
+    channel_members = db.relationship('ChannelMembers', back_populates='user')
+    threads = db.relationship('Thread', secondary='messages', back_populates='user', lazy='dynamic')
 
     @property
     def password(self):

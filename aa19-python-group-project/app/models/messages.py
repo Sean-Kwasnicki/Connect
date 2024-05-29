@@ -1,22 +1,17 @@
 from datetime import datetime
-from .db import db, environment, SCHEMA
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 class Message(db.Model):
     __tablename__ = 'messages'
-    __table_args__ = {'schema': SCHEMA} if environment == "production" else {}
-
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey(f'{SCHEMA}.users.id') if environment == "production" else db.ForeignKey('users.id'), nullable=False)
-    channel_id = db.Column(db.Integer, db.ForeignKey(f'{SCHEMA}.channels.id') if environment == "production" else db.ForeignKey('channels.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    channel_id = db.Column(db.Integer, db.ForeignKey('channels.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user = db.relationship('User', back_populates='messages')
     channel = db.relationship('Channel', back_populates='messages')
-    threads = db.relationship('Thread', back_populates='message', lazy='dynamic')
-
-    def __init__(self, content, user_id, channel_id):
-        self.content = content
-        self.user_id = user_id
-        self.channel_id = channel_id
+    threads = db.relationship('Thread', back_populates='message')
