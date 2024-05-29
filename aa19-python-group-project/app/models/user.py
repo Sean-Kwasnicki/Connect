@@ -2,7 +2,6 @@ from .db import db, environment, SCHEMA, add_prefix_for_prod
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
-
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
@@ -17,6 +16,9 @@ class User(db.Model, UserMixin):
 
     servers = db.relationship("ServerMember")
 
+    messages = db.relationship('Message', back_populates='user', lazy='dynamic')
+    sent_messages = db.relationship('DirectMessage', foreign_keys='DirectMessage.sender_id', back_populates='sender', lazy='dynamic')
+    received_messages = db.relationship('DirectMessage', foreign_keys='DirectMessage.receiver_id', back_populates='receiver', lazy='dynamic')
 
     @property
     def password(self):
