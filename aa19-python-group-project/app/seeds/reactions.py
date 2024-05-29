@@ -1,13 +1,13 @@
-from app.models import db, reaction, environment, SCHEMA
+from app.models import db, Reaction, environment, SCHEMA
 from sqlalchemy.sql import text
 
 def seed_reactions():
-    reaction1 = reaction(emoji='😀', user_id=1, message_id=1)
-    reaction2 = reaction(emoji='😢', user_id=2, message_id=1)
-    reaction3 = reaction(emoji='👍', user_id=3, message_id=1)
-    reaction4 = reaction(emoji='😀', user_id=1, message_id=2)
-    reaction5 = reaction(emoji='😢', user_id=2, message_id=2)
-    reaction6 = reaction(emoji='👍', user_id=3, message_id=2)
+    reaction1 = Reaction(emoji='😀', user_id=1, message_id=1)
+    reaction2 = Reaction(emoji='😢', user_id=2, message_id=1)
+    reaction3 = Reaction(emoji='👍', user_id=3, message_id=1)
+    reaction4 = Reaction(emoji='😀', user_id=1, message_id=2)
+    reaction5 = Reaction(emoji='😢', user_id=2, message_id=2)
+    reaction6 = Reaction(emoji='👍', user_id=3, message_id=2)
 
 
     db.session.add(reaction1)

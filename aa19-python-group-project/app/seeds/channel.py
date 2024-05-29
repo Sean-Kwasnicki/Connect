@@ -1,9 +1,9 @@
-from app.models import db, channel, environment, SCHEMA
+from app.models import db, Channel, environment, SCHEMA
 from sqlalchemy.sql import text
 
 def seed_channels():
-    general = channel(name='general', server_id=1)
-    admin = channel(name='admin', server_id=1)
+    general = Channel(name='general', server_id=1)
+    admin = Channel(name='admin', server_id=1)
 
     db.session.add(general)
     db.session.add(admin)
