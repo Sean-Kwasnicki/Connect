@@ -17,8 +17,16 @@ depends_on = None
 
 
 def upgrade():
-    pass
+    sa.create_table(
+        "server_members",
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("user_id", sa.Integer, sa.ForeignKey("user.id"), nullable=False),
+        sa.Column("server_id", sa.Integer, sa.ForeignKey("server.id"), nullable=False),
+        sa.Column("created_at", sa.Date()),
+        sa.Column("updated_at", sa.Date()),
+        sa.PrimaryKeyConstraint('id'),
+    )
 
 
 def downgrade():
-    pass
+    op.drop_table("server_members")
