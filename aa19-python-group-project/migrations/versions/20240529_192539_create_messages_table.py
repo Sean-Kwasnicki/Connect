@@ -17,8 +17,16 @@ depends_on = None
 
 
 def upgrade():
-    pass
+    op.create_table(
+        'messages',
+        sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
+        sa.Column('content', sa.Text, nullable=False),
+        sa.Column('user_id', sa.Integer, sa.ForeignKey('users.id'), nullable=False),
+        sa.Column('channel_id', sa.Integer, sa.ForeignKey('channels.id'), nullable=False),
+        sa.Column('created_at', sa.DateTime, default=sa.func.current_timestamp()),
+        sa.Column('updated_at', sa.DateTime, default=sa.func.current_timestamp(), onupdate=sa.func.current_timestamp())
+    )
 
 
 def downgrade():
-    pass
+    op.drop_table('messages')

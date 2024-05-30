@@ -17,8 +17,14 @@ depends_on = None
 
 
 def upgrade():
-    pass
+    op.create_table(
+        'threads',
+        sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
+        sa.Column('message_id', sa.Integer, sa.ForeignKey('messages.id'), nullable=False),
+        sa.Column('created_at', sa.DateTime, default=sa.func.current_timestamp()),
+        sa.Column('updated_at', sa.DateTime, default=sa.func.current_timestamp(), onupdate=sa.func.current_timestamp())
+    )
 
 
 def downgrade():
-    pass
+    op.drop_table('threads')
