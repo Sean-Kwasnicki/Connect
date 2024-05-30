@@ -17,7 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    sa.create_table(
+    op.create_table(
         "server_members",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("user_id", sa.Integer, sa.ForeignKey("user.id"), nullable=False),
