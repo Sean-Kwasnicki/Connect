@@ -14,7 +14,6 @@ class User(db.Model, UserMixin):
     hashed_password = db.Column(db.String(255), nullable=False)
 
     servers = db.relationship("ServerMember")
-
     messages = db.relationship('Message', back_populates='user', lazy='dynamic')
     sent_messages = db.relationship('DirectMessage', foreign_keys='DirectMessage.sender_id', back_populates='sender', lazy='dynamic')
     received_messages = db.relationship('DirectMessage', foreign_keys='DirectMessage.receiver_id', back_populates='receiver', lazy='dynamic')
