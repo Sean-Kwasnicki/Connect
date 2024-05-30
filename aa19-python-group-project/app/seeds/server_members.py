@@ -6,15 +6,15 @@ def seed_server_members():
     demo = ServerMember(
         user_id="1",
         server_id="1",
-        updated_at = datetime.now(),
-        created_at = datetime.now()
+        updated_at=datetime.now(),
+        created_at=datetime.now()
     )
 
     demo2 = ServerMember(
         user_id="2",
         server_id="1",
-        updated_at = datetime.now(),
-        created_at = datetime.now()
+        updated_at=datetime.now(),
+        created_at=datetime.now()
     )
 
     db.session.add(demo)

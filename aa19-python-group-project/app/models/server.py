@@ -1,4 +1,5 @@
 from .db import db, environment, SCHEMA
+from datetime import datetime
 
 
 
@@ -11,8 +12,8 @@ class Server(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
     owner_id = db.Column(db.Integer, nullable=False)
-    created_at = db.Column(db.Date)
-    updated_at = db.Column(db.Date)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    updated_at = db.Column(db.DateTime, default=datetime.now)
 
     users = db.relationship("ServerMember")
     channels = db.relationship("Channel")
