@@ -1,9 +1,10 @@
 from app.models import db, Channel, environment, SCHEMA
 from sqlalchemy.sql import text
+from datetime import datetime
 
 def seed_channels():
-    general = Channel(name='general', server_id=1)
-    admin = Channel(name='admin', server_id=1)
+    general = Channel(name='general', server_id=1, created_at=datetime.now(), updated_at=datetime.now())
+    admin = Channel(name='admin', server_id=1, created_at=datetime.now(), updated_at=datetime.now())
 
     db.session.add(general)
     db.session.add(admin)

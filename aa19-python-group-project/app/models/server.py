@@ -15,3 +15,4 @@ class Server(db.Model):
     updated_at = db.Column(db.Date)
 
     users = db.relationship("ServerMember")
+    channels = db.relationship("Channel")

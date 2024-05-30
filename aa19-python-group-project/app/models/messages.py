@@ -1,7 +1,8 @@
 from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
+from .db import db
+# from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy()
+# db = SQLAlchemy()
 
 class Message(db.Model):
     __tablename__ = 'messages'
@@ -14,4 +15,5 @@ class Message(db.Model):
 
     user = db.relationship('User', back_populates='messages')
     channel = db.relationship('Channel', back_populates='messages')
-    threads = db.relationship('Thread', back_populates='message')
+    threads = db.relationship('Thread', back_populates='messages')
+    reactions = db.relationship('Reaction')
