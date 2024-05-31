@@ -5,15 +5,14 @@ from app.forms import ChannelForm
 
 channel_routes = Blueprint('channels', __name__)
 
-# Helper function to check if the user is a member of the server 
+# Helper function to check if the user is a member of the server
 def is_server_member(user_id, server_id):
     return ServerMember.query.filter(
         ServerMember.user_id == user_id,
         ServerMember.server_id == server_id
     ).first()
 
-# User Story: As a user, I want to see all channels in a server so that I can join and participate in different discussions.
-@channel_routes.route('/servers/<int:server_id>/channels', methods=['GET'])
+@channel_routes.route('/servers/<int:server_id>', methods=['GET'])
 @login_required
 def get_all_channels_in_server(server_id):
     """
@@ -30,8 +29,7 @@ def get_all_channels_in_server(server_id):
         return {'channels': [channel.to_dict() for channel in channels]}
     return {'errors': {'message': 'Unauthorized'}}, 401
 
-# User Story: As a server member, I want to create a new channel in my server so that I can organize discussions on specific topics.
-@channel_routes.route('/servers/<int:server_id>/channels', methods=['POST'])
+@channel_routes.route('/servers/<int:server_id>', methods=['POST'])
 @login_required
 def create_channel(server_id):
     """
@@ -46,7 +44,7 @@ def create_channel(server_id):
 
         form = ChannelForm()
         form['csrf_token'].data = request.cookies['csrf_token']
-        form.server_id = server_id  # Assign server_id to the form object for validation
+        form.server_id = server_id
 
         if form.validate_on_submit():
             server = Server.query.get(server_id)
@@ -63,8 +61,7 @@ def create_channel(server_id):
         return {'errors': form.errors}, 400
     return {'errors': {'message': 'Unauthorized'}}, 401
 
-# User Story: As a user, I want to view the details of a specific channel so that I can understand its purpose and join the conversation.
-@channel_routes.route('/channels/<int:id>', methods=['GET'])
+@channel_routes.route('/<int:id>', methods=['GET'])
 @login_required
 def get_channel_by_id(id):
     """
@@ -83,8 +80,7 @@ def get_channel_by_id(id):
         return {'errors': {'message': 'Channel not found'}}, 404
     return {'errors': {'message': 'Unauthorized'}}, 401
 
-# User Story: As a server owner or channel creator, I want to update a channel so that I can change its name or other settings.
-@channel_routes.route('/channels/<int:id>', methods=['PATCH'])
+@channel_routes.route('/<int:id>', methods=['PATCH'])
 @login_required
 def update_channel(id):
     """
@@ -115,8 +111,7 @@ def update_channel(id):
         return {'errors': form.errors}, 400
     return {'errors': {'message': 'Unauthorized'}}, 401
 
-# User Story: As a server owner, I want to delete a channel so that I can remove outdated or unnecessary channels.
-@channel_routes.route('/channels/<int:id>', methods=['DELETE'])
+@channel_routes.route('/<int:id>', methods=['DELETE'])
 @login_required
 def delete_channel(id):
     """
@@ -142,8 +137,7 @@ def delete_channel(id):
         return {'message': 'Channel deleted'}
     return {'errors': {'message': 'Unauthorized'}}, 401
 
-# User Story: As a server owner, I want to add users to a channel so that they can participate in specific discussions.
-@channel_routes.route('/channels/<int:channel_id>/members', methods=['POST'])
+@channel_routes.route('/<int:channel_id>/members', methods=['POST'])
 @login_required
 def add_user_to_channel(channel_id):
     """
@@ -175,8 +169,7 @@ def add_user_to_channel(channel_id):
         return member.to_dict(), 201
     return {'errors': {'message': 'Unauthorized'}}, 401
 
-# User Story: As a server owner, I want to remove users from a channel so that I can manage participation in discussions.
-@channel_routes.route('/channels/<int:channel_id>/members', methods=['DELETE'])
+@channel_routes.route('/<int:channel_id>/members', methods=['DELETE'])
 @login_required
 def remove_user_from_channel(channel_id):
     """
@@ -203,8 +196,7 @@ def remove_user_from_channel(channel_id):
         return {'message': 'User removed from channel'}
     return {'errors': {'message': 'Unauthorized'}}, 401
 
-# User Story: As a user, I want to get all members in a channel so that I can see who is participating in the discussions.
-@channel_routes.route('/channels/<int:channel_id>/members', methods=['GET'])
+@channel_routes.route('/<int:channel_id>/members', methods=['GET'])
 @login_required
 def get_all_members_in_channel(channel_id):
     """
