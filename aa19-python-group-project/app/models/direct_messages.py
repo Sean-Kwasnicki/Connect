@@ -1,8 +1,15 @@
 from datetime import datetime
-from .db import db
+from .db import db, environment, SCHEMA
+# from flask_sqlalchemy import SQLAlchemy
+
+# db = SQLAlchemy()
 
 class DirectMessage(db.Model):
     __tablename__ = 'direct_messages'
+
+    if environment == "production":
+        __table_args__ = {'schema': SCHEMA}
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text, nullable=False)
     sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
