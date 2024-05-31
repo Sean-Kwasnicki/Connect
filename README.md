@@ -57,15 +57,23 @@
 - Authentication: Required
 - Authorization: Required (only the server owner)
 
+## Server Member Routes
+
+### Get All Members in a Server
+- Method: GET
+- URL: `/api/servers/{server_id}/members`
+- Authentication: Required
+- Authorization: Required (user must be a member of the server)
+
 ### Add a User to a Server
 - Method: POST
-- URL: `/api/servers/{server_id}/memberships`
+- URL: `/api/servers/{server_id}/members`
 - Authentication: Required
 - Authorization: Required (only the server owner or admins)
 
 ### Remove a User from a Server
 - Method: DELETE
-- URL: `/api/servers/{server_id}/memberships`
+- URL: `/api/servers/{server_id}/members`
 - Authentication: Required
 - Authorization: Required (only the server owner or admins)
 
@@ -75,7 +83,7 @@
 - Method: GET
 - URL: `/api/servers/{server_id}/channels`
 - Authentication: Required
-- Authorization: Not required
+- Authorization: Required (user must be a member of the server)
 
 ### Create a Channel
 - Method: POST
@@ -87,7 +95,7 @@
 - Method: GET
 - URL: `/api/channels/{id}`
 - Authentication: Required
-- Authorization: Not required
+- Authorization: Required (user must be a member of the server)
 
 ### Update a Channel
 - Method: PATCH
@@ -101,15 +109,23 @@
 - Authentication: Required
 - Authorization: Required (only the channel creator or server owner)
 
+## Channel Member Routes
+
+### Get All Members in a Channel
+- Method: GET
+- URL: `/api/channels/{channel_id}/members`
+- Authentication: Required
+- Authorization: Required (user must be a member of the server)
+
 ### Add a User to a Channel
 - Method: POST
-- URL: `/api/channels/{channel_id}/memberships`
+- URL: `/api/channels/{channel_id}/members`
 - Authentication: Required
 - Authorization: Required (only the server owner or admins)
 
 ### Remove a User from a Channel
 - Method: DELETE
-- URL: `/api/channels/{channel_id}/memberships`
+- URL: `/api/channels/{channel_id}/members`
 - Authentication: Required
 - Authorization: Required (only the server owner or admins)
 
@@ -147,6 +163,12 @@
 
 ## Reaction Routes
 
+### Get All Reactions for a Message
+- Method: GET
+- URL: `/api/messages/{message_id}/reactions`
+- Authentication: Required
+- Authorization: Not required
+
 ### Add a Reaction to a Message
 - Method: POST
 - URL: `/api/messages/{message_id}/reactions`
@@ -158,6 +180,12 @@
 - URL: `/api/messages/{message_id}/reactions`
 - Authentication: Required
 - Authorization: Required (only the user who added the reaction)
+
+### Get All Reactions by a User
+- Method: GET
+- URL: `/api/users/{user_id}/reactions`
+- Authentication: Required
+- Authorization: Not required
 
 ## Thread Routes
 
@@ -192,29 +220,3 @@
 - URL: `/api/direct_messages/{id}`
 - Authentication: Required
 - Authorization: Not required
-
-## Membership Routes
-
-### Add a User to a Server
-- Method: POST
-- URL: `/api/servers/{server_id}/memberships`
-- Authentication: Required
-- Authorization: Required (only the server owner or admins)
-
-### Remove a User from a Server
-- Method: DELETE
-- URL: `/api/servers/{server_id}/memberships`
-- Authentication: Required
-- Authorization: Required (only the server owner or admins)
-
-### Add a User to a Channel
-- Method: POST
-- URL: `/api/channels/{channel_id}/memberships`
-- Authentication: Required
-- Authorization: Required (only the server owner or admins)
-
-### Remove a User from a Channel
-- Method: DELETE
-- URL: `/api/channels/{channel_id}/memberships`
-- Authentication: Required
-- Authorization: Required (only the server owner or admins)
