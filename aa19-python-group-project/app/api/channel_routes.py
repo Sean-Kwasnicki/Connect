@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from flask_login import login_required, current_user
 from datetime import datetime
 from app.models import Channel, Server, ServerMember, db
@@ -119,7 +119,7 @@ def update_channel(id):
 				return {'errors': {'message': 'Unauthorized'}}, 403
 
 			channel.name = form.name.data if form.name.data else channel.name
-			db.session.commit()  
+			db.session.commit()
 			return channel_to_dict(channel)
 		return {'errors': form.errors}, 400
 	return {'errors': {'message': 'Unauthorized'}}, 401

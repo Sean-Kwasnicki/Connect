@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from flask_login import login_required, current_user
 from datetime import datetime
 from app.models import Channel, Server, ServerMember, ChannelMembers, db
