@@ -9,7 +9,7 @@ server_routes = Blueprint('servers', __name__)
 @server_routes.route('')
 @login_required
 def all_servers():
-
+    print("\n\nhi\n\n")
     servers = Server.query.all()
     servers_list = [{
             "id": server.id,
@@ -19,7 +19,7 @@ def all_servers():
             "updated_at": server.updated_at
         } for server in servers]
 
-    return {"Servers": servers_list}
+    return servers_list
 
 
 @server_routes.route('/<id>')
@@ -167,6 +167,6 @@ def add_member(id):
             db.session.commit()
 
             return "Member added"
-        
+
         else:
             return "All ready a member"
