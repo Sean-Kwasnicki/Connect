@@ -1,7 +1,7 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from datetime import datetime
-from app.models import Channel, Server, ServerMember, db
+from app.models import Channel, Server, ServerMember, db, Message
 from app.forms import ChannelForm
 
 channel_routes = Blueprint('channels', __name__)
@@ -22,6 +22,30 @@ def channel_to_dict(channel):
 		'created_at': channel.created_at.isoformat(),
 		'updated_at': channel.updated_at.isoformat()
 	}
+
+
+# Eli added this route
+# get all message in channel based on channel id, return dict with message id, user username
+# , and content of the message
+# pretty sure I missing check to see if user is part of the server
+@channel_routes.route('/<channel_id>/messages')
+@login_required
+def get_all_messages_in_channel(channel_id):
+    channel = Channel.query.get(channel_id)
+    if not channel:
+        return {
+            "message": "Bad request",
+            "errors": {
+                "channel": "Channel not found"
+            }
+        }
+    messages = Message.query.filter(Message.channel_id == channel_id).all()
+    return [{
+        "id": message.id,
+        "user": message.user.username,
+        "content": message.content
+    } for message in messages]
+
 
 # Channel Routes
 

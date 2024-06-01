@@ -12,11 +12,9 @@ const getServers = (servers) => {
 ///////////////////////////////////////////////////////
 
 export const getServersThunk = () => async (dispatch) => {
-  const response = await fetch("api/servers");
+  const response = await fetch("/api/servers");
   if (response.ok) {
-    console.log(response)
     const data = await response.json();
-    console.log("\n\nhere\n\n");
     dispatch(getServers(data));
   }
 };

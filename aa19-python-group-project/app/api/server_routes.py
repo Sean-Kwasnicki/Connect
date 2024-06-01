@@ -9,7 +9,7 @@ server_routes = Blueprint('servers', __name__)
 @server_routes.route('')
 @login_required
 def all_servers():
-    print("\n\nhi\n\n")
+    # print("\n\nhi\n\n")
     servers = Server.query.all()
     servers_list = [{
             "id": server.id,

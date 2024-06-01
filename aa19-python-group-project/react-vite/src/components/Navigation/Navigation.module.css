@@ -1,0 +1,17 @@
+.profile_dropdown {
+  position: absolute;
+}
+
+.nav_bar {
+  display: flex;
+  flex-direction: column;
+  border-right: 2px solid black;
+  height: 100vw;
+}
+
+.server {
+  &:hover {
+    cursor: pointer;
+    background-color: gray;
+  }
+}

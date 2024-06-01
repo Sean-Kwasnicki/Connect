@@ -1,7 +1,9 @@
-import { createBrowserRouter } from 'react-router-dom';
-import LoginFormPage from '../components/LoginFormPage';
-import SignupFormPage from '../components/SignupFormPage';
-import Layout from './Layout';
+import { createBrowserRouter } from "react-router-dom";
+import LoginFormPage from "../components/LoginFormPage";
+import SignupFormPage from "../components/SignupFormPage";
+import Layout from "./Layout";
+import Server from "../components/Server";
+import Channel from "../components/Channel";
 
 export const router = createBrowserRouter([
   {
@@ -18,6 +20,16 @@ export const router = createBrowserRouter([
       {
         path: "signup",
         element: <SignupFormPage />,
+      },
+      {
+        path: "servers/:serverId",
+        element: <Server />,
+        children: [
+          {
+            path: "channels/:channelId",
+            element: <Channel />,
+          },
+        ],
       },
     ],
   },
