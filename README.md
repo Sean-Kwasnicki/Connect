@@ -117,6 +117,12 @@
 - Authentication: Required
 - Authorization: Required (user must be a member of the server)
 
+### Get A Member in a Channel
+- Method: GET
+- URL: `/api/channels/{channel_id}/members/{member_id}`
+- Authentication: Required
+- Authorization: Required (user must be a member of the server)
+
 ### Add a User to a Channel
 - Method: POST
 - URL: `/api/channels/{channel_id}/members`
@@ -125,7 +131,7 @@
 
 ### Remove a User from a Channel
 - Method: DELETE
-- URL: `/api/channels/{channel_id}/members`
+- URL: `/api/channels/{channel_id}/members/{member_id}`
 - Authentication: Required
 - Authorization: Required (only the server owner or admins)
 

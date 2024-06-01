@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from flask_login import login_required, current_user
 from app.models import Channel, Server, ServerMember, ChannelMembers, db
 from app.forms import ChannelForm
@@ -12,6 +12,8 @@ def is_server_member(user_id, server_id):
         ServerMember.server_id == server_id
     ).first()
 
+# Channel Routes
+
 @channel_routes.route('/servers/<int:server_id>', methods=['GET'])
 @login_required
 def get_all_channels_in_server(server_id):
@@ -21,8 +23,8 @@ def get_all_channels_in_server(server_id):
     Authorization: Required (user must be a member of the server)
     """
     if current_user.is_authenticated:
-        member = is_server_member(current_user.id, server_id)
-        if not member:
+        server_member = is_server_member(current_user.id, server_id)
+        if not server_member:
             return {'errors': {'message': 'Forbidden'}}, 403
 
         channels = Channel.query.filter(Channel.server_id == server_id).all()
@@ -38,8 +40,8 @@ def create_channel(server_id):
     Authorization: Required (user must be a member of the server)
     """
     if current_user.is_authenticated:
-        member = is_server_member(current_user.id, server_id)
-        if not member:
+        server_member = is_server_member(current_user.id, server_id)
+        if not server_member:
             return {'errors': {'message': 'Forbidden'}}, 403
 
         form = ChannelForm()
@@ -72,8 +74,8 @@ def get_channel_by_id(id):
     if current_user.is_authenticated:
         channel = Channel.query.get(id)
         if channel:
-            member = is_server_member(current_user.id, channel.server_id)
-            if not member:
+            server_member = is_server_member(current_user.id, channel.server_id)
+            if not server_member:
                 return {'errors': {'message': 'Forbidden'}}, 403
 
             return channel.to_dict()
@@ -93,8 +95,8 @@ def update_channel(id):
         if not channel:
             return {'errors': {'message': 'Channel not found'}}, 404
 
-        member = is_server_member(current_user.id, channel.server_id)
-        if not member:
+        server_member = is_server_member(current_user.id, channel.server_id)
+        if not server_member:
             return {'errors': {'message': 'Forbidden'}}, 403
 
         form = ChannelForm()
@@ -124,8 +126,8 @@ def delete_channel(id):
         if not channel:
             return {'errors': {'message': 'Channel not found'}}, 404
 
-        member = is_server_member(current_user.id, channel.server_id)
-        if not member:
+        server_member = is_server_member(current_user.id, channel.server_id)
+        if not server_member:
             return {'errors': {'message': 'Forbidden'}}, 403
 
         server = Server.query.get(channel.server_id)
@@ -136,6 +138,9 @@ def delete_channel(id):
         db.session.commit()
         return {'message': 'Channel deleted'}
     return {'errors': {'message': 'Unauthorized'}}, 401
+
+
+# Channel Member Routes
 
 @channel_routes.route('/<int:channel_id>/members', methods=['POST'])
 @login_required
@@ -148,50 +153,47 @@ def add_user_to_channel(channel_id):
     if current_user.is_authenticated:
         user_id = request.form.get('user_id')
         channel = Channel.query.get(channel_id)
-
         if not channel:
             return {'errors': {'message': 'Channel not found'}}, 404
 
-        member = is_server_member(current_user.id, channel.server_id)
-        if not member:
+        server_member = is_server_member(current_user.id, channel.server_id)
+        if not server_member:
             return {'errors': {'message': 'Forbidden'}}, 403
 
         server = Server.query.get(channel.server_id)
         if server.owner_id != current_user.id:
             return {'errors': {'message': 'Unauthorized'}}, 403
 
-        member = ChannelMembers(
+        channel_member = ChannelMembers(
             user_id=user_id,
             channel_id=channel_id
         )
-        db.session.add(member)
+        db.session.add(channel_member)
         db.session.commit()
-        return member.to_dict(), 201
+        return channel_member.to_dict(), 201
     return {'errors': {'message': 'Unauthorized'}}, 401
 
-@channel_routes.route('/<int:channel_id>/members', methods=['DELETE'])
+@channel_routes.route('/<int:channel_id>/members/<int:member_id>', methods=['DELETE'])
 @login_required
-def remove_user_from_channel(channel_id):
+def remove_user_from_channel(channel_id, member_id):
     """
     Removes a user from a channel.
     Authentication: Required
     Authorization: Required (user must be the server owner)
     """
     if current_user.is_authenticated:
-        user_id = request.form.get('user_id')
-        member = ChannelMembers.query.filter(
-            ChannelMembers.user_id == user_id,
+        channel_member = ChannelMembers.query.filter(
+            ChannelMembers.user_id == member_id,
             ChannelMembers.channel_id == channel_id
         ).first()
-
-        if not member:
+        if not channel_member:
             return {'errors': {'message': 'Member not found'}}, 404
 
-        server = Server.query.get(member.channel_id)
+        server = Server.query.get(channel_member.channel_id)
         if server.owner_id != current_user.id:
             return {'errors': {'message': 'Unauthorized'}}, 403
 
-        db.session.delete(member)
+        db.session.delete(channel_member)
         db.session.commit()
         return {'message': 'User removed from channel'}
     return {'errors': {'message': 'Unauthorized'}}, 401
@@ -200,7 +202,7 @@ def remove_user_from_channel(channel_id):
 @login_required
 def get_all_members_in_channel(channel_id):
     """
-    Gets all members in a channel.
+    Query for all members in a channel.
     Authentication: Required
     Authorization: Required (user must be a member of the server)
     """
@@ -209,10 +211,37 @@ def get_all_members_in_channel(channel_id):
         if not channel:
             return {'errors': {'message': 'Channel not found'}}, 404
 
-        member = is_server_member(current_user.id, channel.server_id)
-        if not member:
+        server_member = is_server_member(current_user.id, channel.server_id)
+        if not server_member:
             return {'errors': {'message': 'Forbidden'}}, 403
 
-        members = ChannelMembers.query.filter(ChannelMembers.channel_id == channel_id).all()
-        return {'members': [member.to_dict() for member in members]}
+        channel_members = ChannelMembers.query.filter(ChannelMembers.channel_id == channel_id).all()
+        return {'members': [channel_member.to_dict() for channel_member in channel_members]}
+    return {'errors': {'message': 'Unauthorized'}}, 401
+
+@channel_routes.route('/<int:channel_id>/members/<int:member_id>', methods=['GET'])
+@login_required
+def get_member_in_channel_by_id(channel_id, member_id):
+    """
+    Query for a member in a channel by member ID.
+    Authentication: Required
+    Authorization: Required (user must be a member of the server)
+    """
+    if current_user.is_authenticated:
+        channel = Channel.query.get(channel_id)
+        if not channel:
+            return {'errors': {'message': 'Channel not found'}}, 404
+
+        server_member = is_server_member(current_user.id, channel.server_id)
+        if not server_member:
+            return {'errors': {'message': 'Forbidden'}}, 403
+
+        channel_member = ChannelMembers.query.filter(
+            ChannelMembers.channel_id == channel_id,
+            ChannelMembers.user_id == member_id
+        ).first()
+        if not channel_member:
+            return {'errors': {'message': 'Member not found'}}, 404
+
+        return channel_member.to_dict()
     return {'errors': {'message': 'Unauthorized'}}, 401
