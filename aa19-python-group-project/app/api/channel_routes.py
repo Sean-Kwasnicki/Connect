@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from datetime import datetime
 from app.models import Channel, Server, ServerMember, db, Message
 from app.forms import ChannelForm
 
