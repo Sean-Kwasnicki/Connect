@@ -1,47 +1,72 @@
 from flask import Blueprint, request, jsonify
-from app.models import db, Message
 from flask_login import login_required, current_user
+from app.models import Thread, Message, db
+from datetime import datetime
 
-bp = Blueprint('messages', __name__, url_prefix='/messages')
+threads_routes = Blueprint('threads', __name__)
 
-@bp.route('/', methods=['POST'])
+@threads_routes.route('', methods=['GET'])
 @login_required
-def create_message():
+def all_threads():
+    threads = Thread.query.all()
+    threads_list = [{
+        "id": thread.id,
+        "message_id": thread.message_id,
+        "created_at": thread.created_at,
+        "updated_at": thread.updated_at
+    } for thread in threads]
+    return {"Threads": threads_list}
+
+@threads_routes.route('/<int:id>', methods=['GET'])
+@login_required
+def thread_by_id(id):
+    thread = Thread.query.get(id)
+    if not thread:
+        return {
+            "message": "Bad request",
+            "errors": {
+                "thread": "Thread not found"
+            }
+        }
+    return {
+        "id": thread.id,
+        "message_id": thread.message_id,
+        "created_at": thread.created_at,
+        "updated_at": thread.updated_at
+    }
+
+@threads_routes.route('', methods=['POST'])
+@login_required
+def create_thread():
     data = request.get_json()
-    new_message = Message(
-        content=data['content'],
-        user_id=current_user.id,
-        channel_id=data['channel_id']
-    )
-    db.session.add(new_message)
-    db.session.commit()
-    return jsonify(new_message.to_dict()), 201
-
-@bp.route('/<int:id>', methods=['GET'])
-@login_required
-def get_message(id):
-    message = Message.query.get(id)
+    message = Message.query.get(data['message_id'])
     if not message:
-        return jsonify({'error': 'Message not found'}), 404
-    return jsonify(message.to_dict())
-
-@bp.route('/<int:id>', methods=['PUT'])
-@login_required
-def update_message(id):
-    data = request.get_json()
-    message = Message.query.get(id)
-    if not message or message.user_id != current_user.id:
-        return jsonify({'error': 'Message not found or unauthorized'}), 404
-    message.content = data['content']
+        return {
+            "message": "Bad request",
+            "errors": {
+                "message": "Message not found"
+            }
+        }
+    new_thread = Thread(
+        message_id=message.id,
+        created_at=datetime.now(),
+        updated_at=datetime.now()
+    )
+    db.session.add(new_thread)
     db.session.commit()
-    return jsonify(message.to_dict())
+    return jsonify(new_thread.to_dict()), 201
 
-@bp.route('/<int:id>', methods=['DELETE'])
+@threads_routes.route('/<int:id>', methods=['DELETE'])
 @login_required
-def delete_message(id):
-    message = Message.query.get(id)
-    if not message or message.user_id != current_user.id:
-        return jsonify({'error': 'Message not found or unauthorized'}), 404
-    db.session.delete(message)
+def delete_thread(id):
+    thread = Thread.query.get(id)
+    if not thread:
+        return {
+            "message": "Bad request",
+            "errors": {
+                "thread": "Thread not found"
+            }
+        }
+    db.session.delete(thread)
     db.session.commit()
-    return jsonify({'message': 'Message deleted'}), 200
+    return {"message": "Thread deleted"}
