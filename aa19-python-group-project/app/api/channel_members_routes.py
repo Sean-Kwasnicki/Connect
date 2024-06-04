@@ -126,3 +126,4 @@ def get_member_in_channel_by_id(channel_id, id):
 
 		return channel_member_to_dict(channel_member)
 	return {'errors': {'message': 'Unauthorized'}}, 401
+
