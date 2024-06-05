@@ -5,18 +5,39 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import s from "./Channel.module.css";
 import { createMessageThunk } from "../../redux/message";
+import io from "socket.io-client";
 
 const Channel = () => {
   const { channelId } = useParams();
   const dispatch = useDispatch();
 
+  const [messages, setMessages] = useState([]);
   const [content, setContent] = useState("");
 
-  const messages = useSelector((state) => state.messages.messages);
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.session.user.id);
+  // http://localhost:5173/servers/1/channels/1
+  const socket = io.connect("/");
+
+  // const socket = io();
+  useEffect(() => {
+    socket.on("create_message", (message) => {
+      console.log("\n\n\n\n\n\n");
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+    // return () => {
+    //   socket.disconnect();
+    // };
+  }, []);
 
   useEffect(() => {
-    dispatch(getMessagesThunk(channelId));
+    const fetchData = async () => {
+      const messages = await dispatch(getMessagesThunk(channelId));
+      if (messages) {
+        setMessages(messages);
+        console.log(messages);
+      }
+    };
+    fetchData();
   }, [dispatch, channelId]);
 
   const handleSubmit = async (e) => {
@@ -24,8 +45,15 @@ const Channel = () => {
     const response = await dispatch(createMessageThunk(channelId, { content }));
     console.log(response);
     if (response) {
-      setContent("");
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { content, id: user.id, user: user.username },
+      ]);
+    } else {
+      console.log("bad")
     }
+
+    socket.emit("send_message", { content, id: user.id, user: user.username });
   };
 
   return (
