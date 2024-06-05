@@ -40,8 +40,6 @@ def message_by_id(id):
         "updated_at": message.updated_at
     }
 
-<<<<<<< HEAD
-=======
 @messages_routes.route('', methods=['POST'])
 @login_required
 def create_message():
@@ -60,7 +58,6 @@ def create_message():
         return jsonify(new_message.to_dict()), 201
     return form.errors, 401
 
->>>>>>> 9d0255ea18baba2d1873afc9cecc13ad8eea9c1f
 @messages_routes.route('/<int:id>', methods=['PUT'])
 @login_required
 def update_message(id):

@@ -24,7 +24,7 @@ export const getMessagesThunk = (channelId) => async (dispatch) => {
   if (response.ok) {
     const messages = await response.json();
     dispatch(getMessages(messages));
-    return "good";
+    return messages;
   }
 };
 
