@@ -24,22 +24,24 @@ export const getMessagesThunk = (channelId) => async (dispatch) => {
   if (response.ok) {
     const messages = await response.json();
     dispatch(getMessages(messages));
-    return "good"
+    return "good";
   }
 };
 
-export const createMessageThunk = (channelId, message) => async (dispatch) => {
-  console.log(channelId, message)
+export const createMessageThunk = (channelId, content) => async (dispatch) => {
+  console.log(channelId, content);
   const response = await fetch(`/api/channels/${channelId}/messages`, {
     method: "POST",
-    "Content-Type": "application/json",
-    body: JSON.stringify(message),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(content),
   });
 
   if (response.ok) {
     const newMessage = await response.json();
     dispatch(createMessage(newMessage));
-    return "good"
+    return "good";
   }
 };
 

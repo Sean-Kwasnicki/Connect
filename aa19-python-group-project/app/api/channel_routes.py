@@ -131,7 +131,11 @@ def delete_channel(id):
 @login_required
 def create_message(channel_id):
     data = request.get_json()
+
     print("\n\n")
+
+
+
     new_message = Message(
         content=data['content'],
         user_id=current_user.id,
@@ -141,4 +145,9 @@ def create_message(channel_id):
     )
     db.session.add(new_message)
     db.session.commit()
-    return jsonify(new_message.to_dict()), 201
+
+    return new_message.to_dict(), 201
+	# return {
+	# 	"content": new_message.content,
+
+	# }, 201
