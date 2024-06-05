@@ -24,6 +24,8 @@ def channel_to_dict(channel):
 	}
 
 
+# Channel Routes
+
 # Eli added this route
 # get all message in channel based on channel id, return dict with message id, user username
 # , and content of the message
@@ -45,10 +47,6 @@ def get_all_messages_in_channel(channel_id):
         "user": message.user.username,
         "content": message.content
     } for message in messages]
-
-
-
-# Channel Routes
 
 @channel_routes.route('/<int:id>', methods=['GET'])
 @login_required
@@ -126,6 +124,7 @@ def delete_channel(id):
 		return {'message': 'Channel deleted'}
 	return {'errors': {'message': 'Unauthorized'}}, 401
 
+<<<<<<< HEAD
 
 @channel_routes.route('<channel_id>/messages', methods=['POST'])
 @login_required
@@ -151,3 +150,5 @@ def create_message(channel_id):
 	# 	"content": new_message.content,
 
 	# }, 201
+=======
+>>>>>>> WebsocketEventHandlers

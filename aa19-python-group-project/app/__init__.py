@@ -15,6 +15,7 @@ from .api.direct_messages import direct_messages_routes
 from .api.threads import threads_routes
 from .seeds import seed_commands
 from .config import Config
+from .socket import socketio
 
 app = Flask(__name__, static_folder='../react-vite/dist', static_url_path='/')
 
@@ -42,6 +43,8 @@ app.register_blueprint(direct_messages_routes, url_prefix='/api/direct_messages'
 app.register_blueprint(threads_routes, url_prefix='/api/threads')
 db.init_app(app)
 Migrate(app, db)
+
+socketio.init_app(app)
 
 # Application Security
 CORS(app)
@@ -101,3 +104,6 @@ def react_root(path):
 @app.errorhandler(404)
 def not_found(e):
     return app.send_static_file('index.html')
+
+if __name__ == '__main__':
+    socketio.run(app)
