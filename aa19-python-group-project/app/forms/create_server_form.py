@@ -13,4 +13,4 @@ def unique_name(form, field):
 
 
 class CreateServerForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired(), unique_name])
+    name = StringField('Name', validators=[DataRequired()])

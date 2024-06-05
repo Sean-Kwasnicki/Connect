@@ -4,6 +4,7 @@ import s from "./Navigation.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getServersThunk } from "../../redux/server";
+import CreateServerButton from "./CreateServerButton";
 
 function Navigation() {
   const servers = useSelector((state) => state.servers.servers);
@@ -29,6 +30,7 @@ function Navigation() {
           </NavLink>
         );
       })}
+      <CreateServerButton />
     </ul>
   );
 }

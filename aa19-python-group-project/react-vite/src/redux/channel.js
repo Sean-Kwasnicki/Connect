@@ -12,7 +12,7 @@ const getChannels = (channels) => {
 ///////////////////////////////////////////////////////
 
 export const getChannelsThunk = (serverId) => async (dispatch) => {
-  const response = await fetch(`/api/channels/servers/${serverId}/channels`);
+  const response = await fetch(`/api/servers/${serverId}/channels`);
   if (response.ok) {
     const { channels } = await response.json();
     dispatch(getChannels(channels));
