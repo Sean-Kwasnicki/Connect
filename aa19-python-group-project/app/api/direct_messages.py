@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from app.models import DirectMessage, db
+from app.forms import DirectMessageForm
 from datetime import datetime
 
 direct_messages_routes = Blueprint('direct_messages', __name__)
@@ -45,34 +46,41 @@ def direct_message_by_id(id):
 @direct_messages_routes.route('', methods=['POST'])
 @login_required
 def create_direct_message():
-    data = request.get_json()
-    new_dm = DirectMessage(
-        content=data['content'],
-        sender_id=current_user.id,
-        receiver_id=data['receiver_id'],
-        created_at=datetime.now(),
-        updated_at=datetime.now()
-    )
-    db.session.add(new_dm)
-    db.session.commit()
-    return jsonify(new_dm.to_dict()), 201
+    form = DirectMessageForm()
+    form['csrf_token'].data = request.cookies['csrf_token']
+    if form.validate_on_submit():
+        new_dm = DirectMessage(
+            content=form.data['content'],
+            sender_id=current_user.id,
+            receiver_id=form.data['receiver_id'],
+            created_at=datetime.now(),
+            updated_at=datetime.now()
+        )
+        db.session.add(new_dm)
+        db.session.commit()
+        return jsonify(new_dm.to_dict()), 201
+    return form.errors, 401
 
 @direct_messages_routes.route('/<int:id>', methods=['PUT'])
 @login_required
 def update_direct_message(id):
-    data = request.get_json()
-    dm = DirectMessage.query.get(id)
-    if not dm or dm.sender_id != current_user.id:
-        return {
-            "message": "Bad request",
-            "errors": {
-                "direct_message": "Direct Message not found or unauthorized"
+    form = DirectMessageForm()
+    form['csrf_token'].data = request.cookies['csrf_token']
+    if form.validate_on_submit():
+        dm = DirectMessage.query.get(id)
+        if not dm or dm.sender_id != current_user.id:
+            return {
+                "message": "Bad request",
+                "errors": {
+                    "direct_message": "Direct Message not found or unauthorized"
+                }
             }
-        }
-    dm.content = data['content']
-    dm.updated_at = datetime.now()
-    db.session.commit()
-    return jsonify(dm.to_dict())
+        dm.content = form.data['content']
+        dm.receiver_id = form.data['receiver_id']
+        dm.updated_at = datetime.now()
+        db.session.commit()
+        return jsonify(dm.to_dict())
+    return form.errors, 401
 
 @direct_messages_routes.route('/<int:id>', methods=['DELETE'])
 @login_required
