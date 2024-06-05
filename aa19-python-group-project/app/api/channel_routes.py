@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from app.models import Channel, Server, ServerMember, db, Message
 from app.forms import ChannelForm
+from datetime import datetime
 
 channel_routes = Blueprint('channels', __name__)
 
@@ -22,6 +23,8 @@ def channel_to_dict(channel):
 		'updated_at': channel.updated_at.isoformat()
 	}
 
+
+# Channel Routes
 
 # Eli added this route
 # get all message in channel based on channel id, return dict with message id, user username
@@ -44,10 +47,6 @@ def get_all_messages_in_channel(channel_id):
         "user": message.user.username,
         "content": message.content
     } for message in messages]
-
-
-
-# Channel Routes
 
 @channel_routes.route('/<int:id>', methods=['GET'])
 @login_required
@@ -124,3 +123,4 @@ def delete_channel(id):
 		db.session.commit()
 		return {'message': 'Channel deleted'}
 	return {'errors': {'message': 'Unauthorized'}}, 401
+
