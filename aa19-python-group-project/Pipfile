@@ -31,6 +31,7 @@ pytest = "*"
 pycodestyle = "*"
 pylint = "*"
 rope = "*"
+flask-socketio = "*"
 
 [dev-packages]
 
