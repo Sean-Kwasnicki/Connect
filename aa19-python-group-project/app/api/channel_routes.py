@@ -124,7 +124,6 @@ def delete_channel(id):
 		return {'message': 'Channel deleted'}
 	return {'errors': {'message': 'Unauthorized'}}, 401
 
-<<<<<<< HEAD
 
 @channel_routes.route('<channel_id>/messages', methods=['POST'])
 @login_required
@@ -150,5 +149,3 @@ def create_message(channel_id):
 	# 	"content": new_message.content,
 
 	# }, 201
-=======
->>>>>>> WebsocketEventHandlers
