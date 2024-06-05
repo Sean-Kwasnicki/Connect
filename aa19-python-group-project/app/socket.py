@@ -40,3 +40,4 @@ def handle_leave_server(data):
     emit('leave_server', {'message': f'{current_user.username} has left the server.'}, room=data['server_id'])
   else:
     emit('leave_server', {'message': 'Forbidden'}, broadcast=False)
+
