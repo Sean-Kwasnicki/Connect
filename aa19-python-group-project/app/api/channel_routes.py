@@ -46,6 +46,7 @@ def get_all_messages_in_channel(channel_id):
     } for message in messages]
 
 
+
 # Channel Routes
 
 @channel_routes.route('/<int:id>', methods=['GET'])

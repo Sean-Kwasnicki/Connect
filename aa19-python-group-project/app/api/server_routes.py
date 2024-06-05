@@ -69,27 +69,39 @@ def server_by_id(id):
 @server_routes.route("", methods=["POST"])
 @login_required
 def create_server():
-    form = CreateServerForm()
 
+    data = request.get_json()
+    form = CreateServerForm(data=data)
     form['csrf_token'].data = request.cookies['csrf_token']
+
     if form.validate_on_submit():
         # Add the user to the session, we are logged in!
         server = Server(
-            name=form.data.name,
+            name=form.data["name"],
             owner_id=current_user.id,
             updated_at=datetime.now(),
             created_at=datetime.now()
         )
-        db.session.add(server)
-        db.session.commit()
 
-        new_server = Server.query.filter(Server.name == form.data.name).first()
+        db.session.add(server)
+
+        new_server = Server.query.filter(Server.name == form.data["name"]).first()
+
+        server_member = ServerMember(
+            user_id=current_user.id,
+            server_id=new_server.id,
+            updated_at=datetime.now(),
+            created_at=datetime.now()
+            )
+
+        db.session.add(server_member)
+        db.session.commit()
 
         return {
             "id": new_server.id,
             "name": new_server.name,
             "owner_id": new_server.owner_id,
-            "created_at": new_server.create_at,
+            "created_at": new_server.created_at,
             "updated_at": new_server.updated_at,
         }
 
