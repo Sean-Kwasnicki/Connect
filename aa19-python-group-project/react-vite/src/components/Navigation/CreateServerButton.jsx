@@ -25,7 +25,7 @@ function CreateServerModalButton() {
       <OpenModalMenuItem
         itemText="Create Server"
         onItemClick={closeMenu}
-        modalComponent={<CreateServerModal closeMenu={closeMenu} />}
+        modalComponent={<CreateServerModal />}
       />
     </button>
   );

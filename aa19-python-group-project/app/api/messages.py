@@ -39,21 +39,6 @@ def message_by_id(id):
         "updated_at": message.updated_at
     }
 
-@messages_routes.route('', methods=['POST'])
-@login_required
-def create_message():
-    data = request.get_json()
-    new_message = Message(
-        content=data['content'],
-        user_id=current_user.id,
-        channel_id=data['channel_id'],
-        created_at=datetime.now(),
-        updated_at=datetime.now()
-    )
-    db.session.add(new_message)
-    db.session.commit()
-    return jsonify(new_message.to_dict()), 201
-
 @messages_routes.route('/<int:id>', methods=['PUT'])
 @login_required
 def update_message(id):

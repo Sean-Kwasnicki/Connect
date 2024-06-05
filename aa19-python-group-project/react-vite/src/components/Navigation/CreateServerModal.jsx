@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useModal } from "../../context/Modal";
 import { createServerThunk } from "../../redux/server";
 
-function CreateServerModal({ closeMenu }) {
+function CreateServerModal() {
   const dispatch = useDispatch();
   const [name, setName] = useState("");
   const [errors, setErrors] = useState({});
