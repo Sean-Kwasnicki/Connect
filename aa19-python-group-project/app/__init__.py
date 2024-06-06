@@ -15,7 +15,9 @@ from .api.direct_messages import direct_messages_routes
 from .api.threads import threads_routes
 from .seeds import seed_commands
 from .config import Config
-from .socket import socketio
+from flask_socketio import SocketIO
+from flask import Flask, send_from_directory
+from flask_socketio import SocketIO, join_room, leave_room, send
 
 app = Flask(__name__, static_folder='../react-vite/dist', static_url_path='/')
 
@@ -44,11 +46,28 @@ app.register_blueprint(threads_routes, url_prefix='/api/threads')
 db.init_app(app)
 Migrate(app, db)
 
-socketio.init_app(app)
-
 # Application Security
 CORS(app)
 
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+@socketio.on('join')
+def on_join(data):
+    room = data['room']
+    join_room(room)
+
+@socketio.on('leave')
+def on_leave(data):
+    room = data['room']
+    leave_room(room)
+
+@socketio.on('message')
+def handle_message(data):
+    room = data['room']
+    send(data['message'], to=room)
+
+if __name__ == '__main__':
+    socketio.run(app)
 
 # Since we are deploying with Docker and Flask,
 # we won't be using a buildpack when we deploy to Heroku.
