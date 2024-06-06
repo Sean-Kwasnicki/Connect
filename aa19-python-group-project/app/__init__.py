@@ -17,7 +17,7 @@ from .seeds import seed_commands
 from .config import Config
 from flask_socketio import SocketIO
 from flask import Flask, send_from_directory
-from flask_socketio import SocketIO, join_room, leave_room, send
+from flask_socketio import SocketIO, join_room, leave_room, send, emit
 
 app = Flask(__name__, static_folder='../react-vite/dist', static_url_path='/')
 
@@ -49,17 +49,42 @@ Migrate(app, db)
 # Application Security
 CORS(app)
 
+# Initialize SocketIO
 socketio = SocketIO(app, cors_allowed_origins="*")
+
+# @socketio.on('join')
+# def on_join(data):
+#     room = data['room']
+#     join_room(room)
+
+# @socketio.on('leave')
+# def on_leave(data):
+#     room = data['room']
+#     leave_room(room)
+
+# Maintain a dictionary of rooms and their users
+rooms = {}
 
 @socketio.on('join')
 def on_join(data):
     room = data['room']
+    user = data['user']
+    if room not in rooms:
+        rooms[room] = []
+    if user not in rooms[room]:
+        rooms[room].append(user)
     join_room(room)
+    emit('update_users', {'room': room, 'users': rooms[room]}, to=room)
 
 @socketio.on('leave')
 def on_leave(data):
     room = data['room']
+    user = data['user']
     leave_room(room)
+    if room in rooms and user in rooms[room]:
+        rooms[room].remove(user)
+        emit('update_users', {'room': room, 'users': rooms[room]}, to=room)
+
 
 @socketio.on('message')
 def handle_message(data):

@@ -5,9 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getServersThunk } from "../../redux/server";
 import CreateServerButton from "./CreateServerButton";
+import io from "socket.io-client";
+
+// Connect to the SocketIO server
+const socket = io.connect("/");
 
 function Navigation() {
   const servers = useSelector((state) => state.servers.servers);
+  const user = useSelector((state) => state.session.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -25,7 +30,16 @@ function Navigation() {
       {servers.map(({ name, id }) => {
         const navTo = `/servers/${id}`;
         return (
-          <NavLink key={id} to={navTo} className={s.server}>
+          <NavLink
+            key={id}
+            to={navTo}
+            className={s.server}
+            onClick={() => {
+              if (user) {
+                socket.emit('join', { room: id, user: user.username });
+              }
+            }}
+          >
             {name}
           </NavLink>
         );

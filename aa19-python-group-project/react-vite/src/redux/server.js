@@ -1,32 +1,37 @@
+// src/redux/server.js
 const GET_SERVERS = "servers/getServers";
-const CREATE_SERVER = "severs/createServer";
-const DELETE_SERVER = "server/deleteServer";
+const CREATE_SERVER = "servers/createServer";
+const DELETE_SERVER = "servers/deleteServer";
+const JOIN_SERVER = "servers/joinServer";
+const LEAVE_SERVER = "servers/leaveServer";
 
-///////////////////////////////////////////////////////
+// Action Creators
+const getServers = (servers) => ({
+  type: GET_SERVERS,
+  payload: servers,
+});
 
-const getServers = (servers) => {
-  return {
-    type: GET_SERVERS,
-    payload: servers,
-  };
-};
+const createServer = (server) => ({
+  type: CREATE_SERVER,
+  payload: server,
+});
 
-const createServer = (server) => {
-  return {
-    type: CREATE_SERVER,
-    payload: server,
-  };
-};
+const deleteServer = (serverId) => ({
+  type: DELETE_SERVER,
+  payload: serverId,
+});
 
-const deleteServer = (serverId) => {
-  return {
-    type: DELETE_SERVER,
-    payload: serverId,
-  };
-};
+const joinServer = (user) => ({
+  type: JOIN_SERVER,
+  payload: user,
+});
 
-///////////////////////////////////////////////////////
+const leaveServer = (user) => ({
+  type: LEAVE_SERVER,
+  payload: user,
+});
 
+// Thunks
 export const createServerThunk = (server) => async (dispatch) => {
   const response = await fetch("/api/servers", {
     method: "POST",
@@ -51,7 +56,6 @@ export const getServersThunk = () => async (dispatch) => {
 };
 
 export const deleteServerThunk = (serverId) => async (dispatch) => {
-  console.log(`/api/servers/${serverId}`)
   const response = await fetch(`/api/servers/${serverId}`, {
     method: "DELETE",
   });
@@ -62,10 +66,18 @@ export const deleteServerThunk = (serverId) => async (dispatch) => {
   return "bad";
 };
 
-///////////////////////////////////////////////////////
+export const joinServerThunk = (user) => async (dispatch) => {
+  dispatch(joinServer(user));
+};
 
-const initialState = { servers: [] };
+export const leaveServerThunk = (user) => async (dispatch) => {
+  dispatch(leaveServer(user));
+};
 
+// Initial State
+const initialState = { servers: [], users: [] };
+
+// Reducer
 function serverReducer(state = initialState, action) {
   switch (action.type) {
     case GET_SERVERS: {
@@ -79,6 +91,15 @@ function serverReducer(state = initialState, action) {
         ({ id }) => id !== action.payload
       );
       return { ...state, servers: currentServers };
+    }
+    case JOIN_SERVER: {
+      return { ...state, users: [...state.users, action.payload] };
+    }
+    case LEAVE_SERVER: {
+      return {
+        ...state,
+        users: state.users.filter((user) => user !== action.payload),
+      };
     }
     default:
       return state;
