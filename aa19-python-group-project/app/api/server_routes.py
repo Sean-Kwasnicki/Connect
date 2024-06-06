@@ -111,7 +111,9 @@ def create_server():
 @login_required
 def delete_server(id):
 
+
     server = Server.query.get(id)
+
 
     if not server:
         return {
@@ -120,7 +122,9 @@ def delete_server(id):
                 "server": "Server not found"
             }
         }
-    elif id == server.owner_id:
+    elif current_user.id == server.owner_id:
+        print("\n\n")
+        print(server.id)
         db.session.delete(server)
         db.session.commit()
         return { "message": "Successfully deleted server"}

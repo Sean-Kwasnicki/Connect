@@ -17,5 +17,5 @@ class Channel(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     server = db.relationship('Server', back_populates='channels')
-    messages = db.relationship('Message', back_populates='channel')
-    channelmembers = db.relationship('ChannelMembers', back_populates='channel')
+    messages = db.relationship('Message', back_populates='channel', cascade = "all,delete")
+    channelmembers = db.relationship('ChannelMembers', back_populates='channel', cascade = "all,delete")

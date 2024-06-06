@@ -15,5 +15,5 @@ class Server(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, default=datetime.now)
 
-    users = db.relationship("ServerMember")
-    channels = db.relationship("Channel")
+    users = db.relationship("ServerMember", cascade = "all,delete")
+    channels = db.relationship("Channel", cascade = "all,delete")

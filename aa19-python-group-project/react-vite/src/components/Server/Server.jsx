@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useParams } from "react-router-dom";
 import { getChannelsThunk } from "../../redux/channel";
+import { deleteServerThunk } from "../../redux/server";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import s from "./Server.module.css";
@@ -27,6 +28,12 @@ const Server = () => {
             </li>
           );
         })}
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            dispatch(deleteServerThunk(serverId));
+          }}
+        >Delete Server!</button>
       </ul>
       <Outlet />
     </>

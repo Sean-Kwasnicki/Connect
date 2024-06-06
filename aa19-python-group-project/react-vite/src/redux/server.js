@@ -1,5 +1,6 @@
 const GET_SERVERS = "servers/getServers";
 const CREATE_SERVER = "severs/createServer";
+const DELETE_SERVER = "server/deleteServer";
 
 ///////////////////////////////////////////////////////
 
@@ -14,6 +15,13 @@ const createServer = (server) => {
   return {
     type: CREATE_SERVER,
     payload: server,
+  };
+};
+
+const deleteServer = (serverId) => {
+  return {
+    type: DELETE_SERVER,
+    payload: serverId,
   };
 };
 
@@ -42,6 +50,18 @@ export const getServersThunk = () => async (dispatch) => {
   }
 };
 
+export const deleteServerThunk = (serverId) => async (dispatch) => {
+  console.log(`/api/servers/${serverId}`)
+  const response = await fetch(`/api/servers/${serverId}`, {
+    method: "DELETE",
+  });
+  if (response.ok) {
+    dispatch(deleteServer(serverId));
+    return "good";
+  }
+  return "bad";
+};
+
 ///////////////////////////////////////////////////////
 
 const initialState = { servers: [] };
@@ -53,6 +73,12 @@ function serverReducer(state = initialState, action) {
     }
     case CREATE_SERVER: {
       return { ...state, servers: [action.payload, ...state.servers] };
+    }
+    case DELETE_SERVER: {
+      const currentServers = state.servers.filter(
+        ({ id }) => id !== action.payload
+      );
+      return { ...state, servers: currentServers };
     }
     default:
       return state;
