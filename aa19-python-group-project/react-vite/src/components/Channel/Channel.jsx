@@ -7,27 +7,29 @@ import s from "./Channel.module.css";
 import { createMessageThunk } from "../../redux/message";
 import io from "socket.io-client";
 
+const socket = io.connect("/");
+
 const Channel = () => {
   const { channelId } = useParams();
   const dispatch = useDispatch();
 
-  const [messages, setMessages] = useState([]);
-  const [content, setContent] = useState("");
+  // const [messages, setMessages] = useState([]);
+  // const [content, setContent] = useState("");
 
-  const user = useSelector((state) => state.session.user.id);
-  // http://localhost:5173/servers/1/channels/1
-  const socket = io.connect("/");
+  // const user = useSelector((state) => state.session.user);
+  // // http://localhost:5173/servers/1/channels/1
+  // const socket = io.connect("/");
 
-  // const socket = io();
-  useEffect(() => {
-    socket.on("create_message", (message) => {
-      console.log("\n\n\n\n\n\n");
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
-    // return () => {
-    //   socket.disconnect();
-    // };
-  }, []);
+  // // const socket = io();
+  // useEffect(() => {
+  //   socket.on("create_message", (message) => {
+  //     console.log("\n\n\n\n\n\n");
+  //     setMessages((prevMessages) => [...prevMessages, message]);
+  //   });
+  //   // return () => {
+  //   //   socket.disconnect();
+  //   // };
+  // }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,20 +42,67 @@ const Channel = () => {
     fetchData();
   }, [dispatch, channelId]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const response = await dispatch(createMessageThunk(channelId, { content }));
-    console.log(response);
-    if (response) {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { content, id: user.id, user: user.username },
-      ]);
-    } else {
-      console.log("bad")
-    }
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const response = await dispatch(createMessageThunk(channelId, { content }));
+  //   console.log(response);
+  //   if (response) {
+  //     setMessages((prevMessages) => [
+  //       ...prevMessages,
+  //       { content, id: user.id, user: user.username },
+  //     ]);
+  //   } else {
+  //     console.log("bad")
+  //   }
 
-    socket.emit("send_message", { content, id: user.id, user: user.username });
+  //   socket.emit("send_message", { content, id: user.id, user: user.username });
+  // };
+
+  const user = useSelector((state) => state.session.user);
+
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    joinRoom();
+    return leaveRoom;
+  });
+
+  useEffect(() => {
+    socket.on("message", (data) => {
+      setMessages((prevMessages) => [...prevMessages, data]);
+    });
+
+    return () => {
+      socket.off("message");
+    };
+  }, []);
+
+  const joinRoom = () => {
+    if (channelId) {
+      socket.emit("join", { room: channelId });
+    }
+  };
+
+  const leaveRoom = () => {
+    if (channelId) {
+      socket.emit("leave", { room: channelId });
+    }
+  };
+
+  const sendMessage = () => {
+    if (message && channelId) {
+      socket.emit("message", {
+        message: { user: user.username, content: message },
+        room: channelId,
+      });
+      setMessage("");
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    sendMessage();
   };
 
   return (
@@ -72,10 +121,10 @@ const Channel = () => {
         <label>
           <input
             type="text"
-            value={content}
+            value={message}
             onChange={(e) => {
               e.preventDefault();
-              setContent(e.target.value);
+              setMessage(e.target.value);
             }}
           />
         </label>
