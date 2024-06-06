@@ -7,7 +7,6 @@ import { getServersThunk } from "../../redux/server";
 import CreateServerButton from "./CreateServerButton";
 
 
-
 function Navigation() {
   const servers = useSelector((state) => state.servers.servers);
   const dispatch = useDispatch();

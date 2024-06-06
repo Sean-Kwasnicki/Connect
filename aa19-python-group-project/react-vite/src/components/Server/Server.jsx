@@ -15,7 +15,13 @@ const Server = () => {
 
   const channels = useSelector((state) => state.channels.channels);
   const user = useSelector((state) => state.session.user);
+  const servers = useSelector((state) => state.servers.servers);
+  
   const [usersInServer, setUsersInServer] = useState([]);
+
+   // Find the server name based on serverId
+   const currentServer = servers.find(server => server.id === parseInt(serverId));
+   const serverName = currentServer ? currentServer.name : '';
 
   useEffect(() => {
     dispatch(getChannelsThunk(serverId));
@@ -65,7 +71,7 @@ const Server = () => {
         </button>
       </ul>
       <div className="users">
-        <h3>Users in Server</h3>
+        <h3>Users in {serverName}</h3>
         <ul>
           {usersInServer.map((username, index) => (
             <li key={index}>{username}</li>
