@@ -62,28 +62,28 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 #     room = data['room']
 #     leave_room(room)
 
-# Maintain a dictionary of rooms and their users
-rooms = {}
+# Server dictionary to keep track of users in each server
+servers = {} # Was previously 'rooms'
 
 @socketio.on('join')
 def on_join(data):
-    room = data['room']
+    server = data['server'] # Was previously 'room'
     user = data['user']
-    if room not in rooms:
-        rooms[room] = []
-    if user not in rooms[room]:
-        rooms[room].append(user)
-    join_room(room)
-    emit('update_users', {'room': room, 'users': rooms[room]}, to=room)
+    if server not in servers:
+        servers[server] = []
+    if user not in servers[server]:
+        servers[server].append(user)
+    join_room(server)
+    emit('update_users', {'server': server, 'users': servers[server]}, to=server)
 
 @socketio.on('leave')
 def on_leave(data):
-    room = data['room']
+    server = data['server'] # Was previously 'room'
     user = data['user']
-    leave_room(room)
-    if room in rooms and user in rooms[room]:
-        rooms[room].remove(user)
-        emit('update_users', {'room': room, 'users': rooms[room]}, to=room)
+    leave_room(server)
+    if server in servers and user in servers[server]:
+        servers[server].remove(user)
+        emit('update_users', {'server': server, 'users': servers[server]}, to=server)
 
 
 @socketio.on('message')

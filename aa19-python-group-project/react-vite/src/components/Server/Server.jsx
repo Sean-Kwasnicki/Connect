@@ -25,18 +25,18 @@ const Server = () => {
   useEffect(() => {
     if (serverId && user) {
       // Emit join event when user enters the server
-      socket.emit('join', { room: serverId, user: user.username });
+      socket.emit('join', { server: serverId, user: user.username });  // Was previously 'room'
 
       // Listen for update_users event and update state
       socket.on('update_users', (data) => {
-        if (data.room === serverId) {
+          if (data.server === serverId) {  // Was previously 'room'
           setUsersInServer(data.users);
         }
       });
 
       // Cleanup on component unmount
       return () => {
-        socket.emit('leave', { room: serverId, user: user.username });
+        socket.emit('leave', { server: serverId, user: user.username });  // Was previously 'room'
         socket.off('update_users');
       };
     }

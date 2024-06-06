@@ -36,7 +36,7 @@ function Navigation() {
             className={s.server}
             onClick={() => {
               if (user) {
-                socket.emit('join', { room: id, user: user.username });
+                socket.emit('join', { server: id, user: user.username });  // Was previously 'room'
               }
             }}
           >
