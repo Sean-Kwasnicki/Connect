@@ -35,12 +35,12 @@ def channel_to_dict(channel):
 def get_all_messages_in_channel(channel_id):
     channel = Channel.query.get(channel_id)
     if not channel:
-        return {
-            "message": "Bad request",
-            "errors": {
-                "channel": "Channel not found"
-            }
-        }
+      return {'errors': {'message': 'Channel not found'}}, 404
+
+    server_member = is_server_member(current_user.id, channel.server_id)
+    if not server_member:
+      return {'errors': {'message': 'Forbidden'}}, 403
+
     messages = Message.query.filter(Message.channel_id == channel_id).all()
     return [{
         "id": message.id,
