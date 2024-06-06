@@ -63,6 +63,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 #     leave_room(room)
 
 # Server dictionary to keep track of users in each server
+# Single source of truth for the current state of each room.
 servers = {} # Was previously 'rooms'
 
 @socketio.on('join')
