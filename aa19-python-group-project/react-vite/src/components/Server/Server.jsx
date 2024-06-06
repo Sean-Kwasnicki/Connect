@@ -4,6 +4,7 @@ import { deleteServerThunk } from "../../redux/server";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import s from "./Server.module.css";
+import CreateChannelButton from "../Modals/CreateChannelModal";
 
 const Server = () => {
   const { serverId } = useParams("serverId");
@@ -33,7 +34,10 @@ const Server = () => {
             e.preventDefault();
             dispatch(deleteServerThunk(serverId));
           }}
-        >Delete Server!</button>
+        >
+          Delete Server!
+        </button>
+        <CreateChannelButton />
       </ul>
       <Outlet />
     </>

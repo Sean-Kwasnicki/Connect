@@ -4,13 +4,13 @@ import { getMessagesThunk } from "../../redux/message";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import s from "./Channel.module.css";
-import { createMessageThunk } from "../../redux/message";
+import { createChannelThunk } from "../../redux/channel";
 import io from "socket.io-client";
 
 const socket = io.connect("/");
 
 const Channel = () => {
-  const { channelId } = useParams();
+  const { channelId, serverId } = useParams();
   const dispatch = useDispatch();
 
   // const [messages, setMessages] = useState([]);
