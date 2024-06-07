@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
 // Action Types
 const GET_MESSAGES = "messages/getMessages";
@@ -31,7 +31,13 @@ export const getMessagesThunk = (channelId) => async (dispatch) => {
 
 export const createMessageThunk = (channelId, content) => async (dispatch) => {
   try {
-    const response = await axios.post(`/api/channels/${channelId}/messages`, { content });
+    const response = await fetch(`api/channels/${channelId}/messages`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(content),
+    });
     if (response.status === 201) {
       const newMessage = response.data;
       dispatch(createMessage(newMessage));

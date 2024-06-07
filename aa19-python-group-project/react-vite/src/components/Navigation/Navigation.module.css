@@ -1,17 +1,64 @@
-.profile_dropdown {
-  position: absolute;
-}
-
 .nav_bar {
   display: flex;
   flex-direction: column;
-  border-right: 2px solid black;
-  height: 100vw;
+  align-items: space-between;
+}
+
+.nav_bar_bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90px;
+  height: 10vh;
+  background-color: #1e1f22;
+  padding-bottom: 15px;
+}
+
+.nav_bar_top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90px;
+  height: 90vh;
+  background-color: #1e1f22;
+  padding-top: 15px;
+}
+
+.home_link {
+  background-color: #5865f2;
+  color: white;
 }
 
 .server {
+  background-color: #313338;
+  color: white;
+}
+
+.create_server_button {
+  color: #23a559;
+  background-color: #313338;
+}
+
+.home_link,
+.server,
+.create_server_button {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+  font-size: 35px;
+  font-family: "Lucida Sans";
+  margin-top: 5px;
+  margin-bottom: 5px;
   &:hover {
     cursor: pointer;
     background-color: gray;
   }
+}
+
+.home_icon {
+  color: white;
+  font-size: 35px;
 }
