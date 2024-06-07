@@ -4,10 +4,8 @@ import { deleteServerThunk } from "../../redux/server";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import s from "./Server.module.css";
-import io from 'socket.io-client';
-
-// Connect to the SocketIO server
-const socket = io.connect("/");
+import CreateChannelButton from "../Modals/CreateChannelModal";
+import DeleteServerModalButton from "../Modals/DeleteServerModal";
 
 const Server = () => {
   const { serverId } = useParams("serverId");
@@ -16,7 +14,7 @@ const Server = () => {
   const channels = useSelector((state) => state.channels.channels);
   const user = useSelector((state) => state.session.user);
   const servers = useSelector((state) => state.servers.servers);
-  
+
   const [usersInServer, setUsersInServer] = useState([]);
 
    // Find the server name based on serverId
@@ -61,6 +59,7 @@ const Server = () => {
             </li>
           );
         })}
+<<<<<<< HEAD
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -69,6 +68,10 @@ const Server = () => {
         >
           Delete Server!
         </button>
+=======
+        <DeleteServerModalButton />
+        <CreateChannelButton />
+>>>>>>> create/deleteChannel
       </ul>
       <div className="users">
         <h3>Users in {serverName}</h3>
