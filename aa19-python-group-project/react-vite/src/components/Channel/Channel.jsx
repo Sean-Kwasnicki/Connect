@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import s from "./Channel.module.css";
 import DeleteChannelModalButton from "../Modals/DeleteChannelModal";
 import io from "socket.io-client";
+import { getMessagesThunk } from "../../redux/message";
 
 const socket = io.connect("/");
 
