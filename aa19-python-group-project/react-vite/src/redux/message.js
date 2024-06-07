@@ -52,7 +52,7 @@ const messageReducer = (state = initialState, action) => {
     case GET_MESSAGES:
       return { ...state, messages: action.payload };
     case CREATE_MESSAGE:
-      return { ...state, messages: [action.payload, ...state.messages] };
+      return { ...state, messages: [...state.messages, action.payload] };
     default:
       return state;
   }

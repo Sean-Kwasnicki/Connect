@@ -8,8 +8,8 @@ const socket = io.connect('/');
 const MessagesPage = ({ channelId }) => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.session.user);
-    const messages = useSelector((state) => state.messages.messages);
-    const [message, setMessage] = useState('');
+    const messages = useSelector((state) => state.messages.messages || []);
+    const [message, setMessage] = useState([]);
 
     useEffect(() => {
         dispatch(getMessagesThunk(channelId));
@@ -39,7 +39,7 @@ const MessagesPage = ({ channelId }) => {
         <div>
             <h1>Channel Messages</h1>
             <ul>
-                {messages.map(({ user, content, id }) => (
+                {Array.isArray(messages) && messages.map(({ user, content, id }) => (
                     <li key={id}>
                         <span>{user}</span>: {content}
                     </li>
