@@ -6,6 +6,9 @@ import { useEffect, useState } from "react";
 import s from "./Server.module.css";
 import CreateChannelButton from "../Modals/CreateChannelModal";
 import DeleteServerModalButton from "../Modals/DeleteServerModal";
+import io from "socket.io-client"
+
+const socket = io.connect("/");
 
 const Server = () => {
   const { serverId } = useParams("serverId");
@@ -17,9 +20,9 @@ const Server = () => {
 
   const [usersInServer, setUsersInServer] = useState([]);
 
-   // Find the server name based on serverId
-   const currentServer = servers.find(server => server.id === parseInt(serverId));
-   const serverName = currentServer ? currentServer.name : '';
+  // Find the server name based on serverId
+  const currentServer = servers.find(server => server.id === parseInt(serverId));
+  const serverName = currentServer ? currentServer.name : '';
 
   useEffect(() => {
     dispatch(getChannelsThunk(serverId));
@@ -33,7 +36,7 @@ const Server = () => {
 
       // Listen for update_users event and update state
       socket.on('update_users', (data) => {
-          if (data.server === serverId) {  // Was previously 'room'
+        if (data.server === serverId) {  // Was previously 'room'
           setUsersInServer(data.users);
         }
       });
@@ -59,19 +62,8 @@ const Server = () => {
             </li>
           );
         })}
-<<<<<<< HEAD
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            dispatch(deleteServerThunk(serverId));
-          }}
-        >
-          Delete Server!
-        </button>
-=======
         <DeleteServerModalButton />
         <CreateChannelButton />
->>>>>>> create/deleteChannel
       </ul>
       <div className="users">
         <h3>Users in {serverName}</h3>
