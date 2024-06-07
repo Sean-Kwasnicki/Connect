@@ -1,5 +1,6 @@
 const GET_CHANNELS = "channels/getChannels";
 const CREATE_CHANNEL = "channels/createChannel";
+const DELETE_CHANNEL = "channels/deleteChannel";
 
 ///////////////////////////////////////////////////////
 
@@ -14,6 +15,13 @@ const createChannel = (channel) => {
   return {
     type: CREATE_CHANNEL,
     payload: channel,
+  };
+};
+
+const deleteChannel = (channelId) => {
+  return {
+    type: DELETE_CHANNEL,
+    payload: channelId,
   };
 };
 
@@ -44,6 +52,18 @@ export const createChannelThunk = (serverId, channel) => async (dispatch) => {
   return "bad";
 };
 
+export const deleteChannelThunk = (channelId) => async (dispatch) => {
+  const response = await fetch(`/api/channels/${channelId}`, {
+    method: "DELETE",
+  });
+
+  if (response.ok) {
+    dispatch(deleteChannel(channelId));
+    return "good";
+  }
+  return "bad";
+};
+
 ///////////////////////////////////////////////////////
 
 const initialState = { channels: [] };
@@ -54,6 +74,12 @@ function channelReducer(state = initialState, action) {
       return { ...state, channels: [...action.payload] };
     case CREATE_CHANNEL:
       return { ...state, channels: [...state.channels, action.payload] };
+    case DELETE_CHANNEL: {
+      const currentChannels = state.channels.filter(
+        ({ id }) => id !== Number(action.payload)
+      );
+      return { ...state, channels: [...currentChannels] };
+    }
     default:
       return state;
   }
