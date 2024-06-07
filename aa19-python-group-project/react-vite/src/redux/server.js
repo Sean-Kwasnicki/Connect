@@ -56,6 +56,7 @@ export const getServersThunk = () => async (dispatch) => {
 };
 
 export const deleteServerThunk = (serverId) => async (dispatch) => {
+  console.log(`/api/servers/${serverId}`);
   const response = await fetch(`/api/servers/${serverId}`, {
     method: "DELETE",
   });
@@ -88,7 +89,7 @@ function serverReducer(state = initialState, action) {
     }
     case DELETE_SERVER: {
       const currentServers = state.servers.filter(
-        ({ id }) => id !== action.payload
+        ({ id }) => id !== Number(action.payload)
       );
       return { ...state, servers: currentServers };
     }

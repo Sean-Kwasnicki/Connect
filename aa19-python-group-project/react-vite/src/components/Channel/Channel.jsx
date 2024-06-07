@@ -1,14 +1,16 @@
 import { Outlet, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getMessagesThunk, createMessageThunk } from "../../redux/message";
+import { useEffect } from "react";
+import s from "./Channel.module.css";
+import DeleteChannelModalButton from "../Modals/DeleteChannelModal";
 import io from "socket.io-client";
 import s from "./Channel.module.css";
 
 const socket = io.connect("/");
 
 const Channel = () => {
-  const { channelId } = useParams();
+  const { channelId, serverId } = useParams();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.session.user);
   const messages = useSelector((state) => state.messages.messages);
@@ -20,7 +22,7 @@ const Channel = () => {
 
   useEffect(() => {
     socket.on("message", (data) => {
-      dispatch(getMessagesThunk(channelId)); 
+      dispatch(getMessagesThunk(channelId));
     });
 
     return () => {
@@ -120,5 +122,5 @@ export default Channel;
 //     console.log("bad")
 //   }
 
-//   socket.emit("send_message", { content, id: user.id, user: user.username });
-// };
+  //   socket.emit("send_message", { content, id: user.id, user: user.username });
+  // };
