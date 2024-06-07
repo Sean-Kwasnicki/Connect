@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getReactionsThunk } from '../redux/reaction';
 import socket from '../socket';
@@ -47,11 +47,13 @@ const Reaction = ({ messageId }) => {
   return (
     <div className="reactions">
       <ReactionForm onAddReaction={handleAddReaction} />
-      {['👍', '👎', '❤️'].map(emoji => (
-        <span key={emoji} onClick={() => handleRemoveReaction(emoji)}>
-          {emoji} {reactionCounts[emoji] || 0}
-        </span>
-      ))}
+      <div className="reaction-counts">
+        {['👍', '👎', '❤️'].map(emoji => (
+          <span key={emoji} onClick={() => handleRemoveReaction(emoji)}>
+            {emoji} {reactionCounts[emoji] || 0}
+          </span>
+        ))}
+      </div>
     </div>
   );
 };

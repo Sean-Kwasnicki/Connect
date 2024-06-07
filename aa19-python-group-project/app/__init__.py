@@ -64,11 +64,11 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Server dictionary to keep track of users in each server
 # Single source of truth for the current state of each room.
-servers = {} # Was previously 'rooms'
+servers = {} # Was 'rooms'
 
 @socketio.on('join')
 def on_join(data):
-    server = data['server'] # Was previously 'room'
+    server = data['server'] # Was 'room'
     user = data['user']
     if server not in servers:
         servers[server] = []
@@ -79,7 +79,7 @@ def on_join(data):
 
 @socketio.on('leave')
 def on_leave(data):
-    server = data['server'] # Was previously 'room'
+    server = data['server'] # Was 'room'
     user = data['user']
     leave_room(server)
     if server in servers and user in servers[server]:
@@ -91,6 +91,8 @@ def on_leave(data):
 def handle_message(data):
     room = data['room']
     send(data['message'], to=room)
+
+
 
 if __name__ == '__main__':
     socketio.run(app)
