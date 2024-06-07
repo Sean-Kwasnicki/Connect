@@ -1,17 +1,95 @@
 import { Outlet, useParams } from "react-router-dom";
-import { useState } from "react";
-import { getMessagesThunk } from "../../redux/message";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import s from "./Channel.module.css";
-import { createMessageThunk } from "../../redux/message";
+import { getMessagesThunk, createMessageThunk } from "../../redux/message";
 import io from "socket.io-client";
+import s from "./Channel.module.css";
 
 const socket = io.connect("/");
 
 const Channel = () => {
   const { channelId } = useParams();
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.session.user);
+  const messages = useSelector((state) => state.messages.messages);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    dispatch(getMessagesThunk(channelId));
+  }, [dispatch, channelId]);
+
+  useEffect(() => {
+    socket.on("message", (data) => {
+      dispatch(getMessagesThunk(channelId)); 
+    });
+
+    return () => {
+      socket.off("message");
+    };
+  }, [dispatch, channelId]);
+
+  const joinRoom = () => {
+    if (channelId) {
+      socket.emit("join", { room: channelId });
+    }
+  };
+
+  const leaveRoom = () => {
+    if (channelId) {
+      socket.emit("leave", { room: channelId });
+    }
+  };
+
+  useEffect(() => {
+    joinRoom();
+    return leaveRoom;
+  }, [channelId]);
+
+  const sendMessage = async () => {
+    if (message && channelId) {
+      await dispatch(createMessageThunk(channelId, { content: message }));
+      socket.emit("message", {
+        message: { user: user.username, content: message },
+        room: channelId,
+      });
+      setMessage("");
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    sendMessage();
+  };
+
+  return (
+    <>
+      <ul className={s.channels}>
+        {messages.map(({ user, content, id }) => (
+          <li key={id} className={s.message}>
+            <span>{user}</span>
+            <p>{content}</p>
+          </li>
+        ))}
+      </ul>
+      <form onSubmit={handleSubmit}>
+        <label>
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+        </label>
+        <button type="submit">Send Message</button>
+      </form>
+      <Outlet /> {/* for the nested routes */}
+    </>
+  );
+};
+
+export default Channel;
+
+
+
 
   // const [messages, setMessages] = useState([]);
   // const [content, setContent] = useState("");
@@ -31,16 +109,6 @@ const Channel = () => {
   //   // };
   // }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const messages = await dispatch(getMessagesThunk(channelId));
-      if (messages) {
-        setMessages(messages);
-        console.log(messages);
-      }
-    };
-    fetchData();
-  }, [dispatch, channelId]);
 
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
@@ -57,82 +125,3 @@ const Channel = () => {
 
   //   socket.emit("send_message", { content, id: user.id, user: user.username });
   // };
-
-  const user = useSelector((state) => state.session.user);
-
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
-
-  useEffect(() => {
-    joinRoom();
-    return leaveRoom;
-  });
-
-  useEffect(() => {
-    socket.on("message", (data) => {
-      setMessages((prevMessages) => [...prevMessages, data]);
-    });
-
-    return () => {
-      socket.off("message");
-    };
-  }, []);
-
-  const joinRoom = () => {
-    if (channelId) {
-      socket.emit("join", { room: channelId });
-    }
-  };
-
-  const leaveRoom = () => {
-    if (channelId) {
-      socket.emit("leave", { room: channelId });
-    }
-  };
-
-  const sendMessage = () => {
-    if (message && channelId) {
-      socket.emit("message", {
-        message: { user: user.username, content: message },
-        room: channelId,
-      });
-      setMessage("");
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    sendMessage();
-  };
-
-  return (
-    <>
-      <ul className={s.channels}>
-        {messages.map(({ user, content, id }) => {
-          return (
-            <li key={id} className={s.message}>
-              <span>{user}</span>
-              <p>{content}</p>
-            </li>
-          );
-        })}
-      </ul>
-      <form onSubmit={handleSubmit}>
-        <label>
-          <input
-            type="text"
-            value={message}
-            onChange={(e) => {
-              e.preventDefault();
-              setMessage(e.target.value);
-            }}
-          />
-        </label>
-        <button type="submit">send message</button>
-      </form>
-      <Outlet />
-    </>
-  );
-};
-
-export default Channel;

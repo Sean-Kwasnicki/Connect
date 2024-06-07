@@ -1,64 +1,61 @@
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
+
+// Action Types
 const GET_MESSAGES = "messages/getMessages";
 const CREATE_MESSAGE = "messages/createMessage";
 
-///////////////////////////////////////////////////////
+// Actions
+const getMessages = (messages) => ({
+  type: GET_MESSAGES,
+  payload: messages,
+});
 
-const getMessages = (messages) => {
-  return {
-    type: GET_MESSAGES,
-    payload: messages,
-  };
-};
+const createMessage = (message) => ({
+  type: CREATE_MESSAGE,
+  payload: message,
+});
 
-const createMessage = (message) => {
-  return {
-    type: CREATE_MESSAGE,
-    payload: message,
-  };
-};
-
-///////////////////////////////////////////////////////
-
+// Thunks
 export const getMessagesThunk = (channelId) => async (dispatch) => {
-  const response = await fetch(`/api/channels/${channelId}/messages`);
-  if (response.ok) {
-    const messages = await response.json();
-    dispatch(getMessages(messages));
-    return messages;
+  try {
+    const response = await axios.get(`/api/channels/${channelId}/messages`);
+    if (response.status === 200) {
+      const messages = response.data;
+      dispatch(getMessages(messages));
+    }
+  } catch (error) {
+    console.error("Failed to fetch messages:", error);
   }
 };
 
 export const createMessageThunk = (channelId, content) => async (dispatch) => {
-  console.log(channelId, content);
-  const response = await fetch(`/api/channels/${channelId}/messages`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(content),
-  });
-
-  if (response.ok) {
-    const newMessage = await response.json();
-    dispatch(createMessage(newMessage));
-    return "good";
+  try {
+    const response = await axios.post(`/api/channels/${channelId}/messages`, { content });
+    if (response.status === 201) {
+      const newMessage = response.data;
+      dispatch(createMessage(newMessage));
+    }
+  } catch (error) {
+    console.error("Failed to create message:", error);
   }
 };
 
-///////////////////////////////////////////////////////
+// Initial State
+const initialState = {
+  messages: [],
+};
 
-const initialState = { messages: [] };
-
-function messageReducer(state = initialState, action) {
+// Reducer
+const messageReducer = (state = initialState, action) => {
   switch (action.type) {
     case GET_MESSAGES:
-      return { ...state, messages: [...action.payload] };
-    case CREATE_MESSAGE: {
+      return { ...state, messages: action.payload };
+    case CREATE_MESSAGE:
       return { ...state, messages: [action.payload, ...state.messages] };
-    }
     default:
       return state;
   }
-}
+};
 
 export default messageReducer;
