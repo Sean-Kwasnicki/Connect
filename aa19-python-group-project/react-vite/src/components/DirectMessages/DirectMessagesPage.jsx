@@ -18,7 +18,7 @@ const DirectMessagesPage = () => {
 
     useEffect(() => {
         socket.on("direct_message", (data) => {
-            dispatch(fetchDirectMessages()); // Re-fetch direct messages when a new one is received
+            dispatch(fetchDirectMessages()); 
         });
 
         return () => {
