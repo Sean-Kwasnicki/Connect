@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from app.models import Server, ServerMember, Channel, ChannelMembers, db
+from app.models import Server, ServerMember, Channel, ChannelMembers, Message, db
 from app.forms import CreateServerForm, ChannelForm
 from datetime import datetime
 
@@ -253,3 +253,20 @@ def create_channel(server_id):
 			return channel_to_dict(channel), 201
 		return {'errors': form.errors}, 400
 	return {'errors': {'message': 'Unauthorized'}}, 401
+
+@server_routes.route('/<int:server_id>/channels/<int:channel_id>/messages', methods=['POST'])
+@login_required
+def create_message(server_id, channel_id):
+    data = request.get_json()
+
+    new_message = Message(
+        content=data['content'],
+        user_id=current_user.id,
+        channel_id=channel_id,
+        created_at=datetime.now(),
+        updated_at=datetime.now()
+    )
+    db.session.add(new_message)
+    db.session.commit()
+
+    return jsonify(new_message.to_dict()), 201

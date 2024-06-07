@@ -87,10 +87,10 @@ def on_leave(data):
         emit('update_users', {'server': server, 'users': servers[server]}, to=server)
 
 
-@socketio.on('message')
-def handle_message(data):
-    room = data['room']
-    send(data['message'], to=room)
+# @socketio.on('message')
+# def handle_message(data):
+#     room = data['room']
+#     send(data['message'], to=room)
 
 if __name__ == '__main__':
     socketio.run(app)

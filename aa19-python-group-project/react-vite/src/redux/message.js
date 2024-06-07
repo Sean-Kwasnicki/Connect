@@ -17,9 +17,9 @@ const createMessage = (message) => ({
 });
 
 // Thunks
-export const getMessagesThunk = (channelId) => async (dispatch) => {
+export const getMessagesThunk = (serverId, channelId) => async (dispatch) => {
   try {
-    const response = await axios.get(`/api/channels/${channelId}/messages`);
+    const response = await axios.get(`/api/servers/${serverId}/channels/${channelId}/messages`);
     if (response.status === 200) {
       const messages = response.data;
       dispatch(getMessages(messages));
@@ -29,9 +29,9 @@ export const getMessagesThunk = (channelId) => async (dispatch) => {
   }
 };
 
-export const createMessageThunk = (channelId, content) => async (dispatch) => {
+export const createMessageThunk = (serverId, channelId, content) => async (dispatch) => {
   try {
-    const response = await axios.post(`/api/channels/${channelId}/messages`, { content });
+    const response = await axios.post(`/api/servers/${serverId}/channels/${channelId}/messages`, { content });
     if (response.status === 201) {
       const newMessage = response.data;
       dispatch(createMessage(newMessage));

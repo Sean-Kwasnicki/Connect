@@ -126,27 +126,24 @@ def delete_channel(id):
 	return {'errors': {'message': 'Unauthorized'}}, 401
 
 
-@channel_routes.route('<channel_id>/messages', methods=['POST'])
-@login_required
-def create_message(channel_id):
-    data = request.get_json()
+# @channel_routes.route('/<int:channel_id>/messages', methods=['POST'])
+# @login_required
+# def create_message(channel_id):
+#     data = request.get_json()
 
-    print("\n\n")
+#     content = data['content']  # Ensure content is a string
+#     user_id = current_user.id
+#     created_at = datetime.now()
+#     updated_at = datetime.now()
 
+#     new_message = Message(
+#         content=content,
+#         user_id=user_id,
+#         channel_id=channel_id,
+#         created_at=created_at,
+#         updated_at=updated_at
+#     )
+#     db.session.add(new_message)
+#     db.session.commit()
 
-
-    new_message = Message(
-        content=data['content'],
-        user_id=current_user.id,
-        channel_id=channel_id,
-        created_at=datetime.now(),
-        updated_at=datetime.now()
-    )
-    db.session.add(new_message)
-    db.session.commit()
-
-    return new_message.to_dict(), 201
-	# return {
-	# 	"content": new_message.content,
-
-	# }, 201
+#     return jsonify(new_message.to_dict()), 201
