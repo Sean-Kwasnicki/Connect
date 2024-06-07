@@ -16,7 +16,7 @@ const ThreadsPage = () => {
 
     useEffect(() => {
         socket.on("thread_created", (data) => {
-            dispatch(fetchThreads()); // Re-fetch threads when a new one is created
+            dispatch(fetchThreads()); 
         });
 
         return () => {
