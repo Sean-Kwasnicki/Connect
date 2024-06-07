@@ -2,14 +2,13 @@ import { Outlet, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import s from "./Channel.module.css";
-import DeleteChannelModalButton from "../Modals/DeleteChannelModal";
 import io from "socket.io-client";
 import { getMessagesThunk, createMessageThunk } from "../../redux/message";
 
 const socket = io.connect("/");
 
 const Channel = () => {
-  const { channelId, serverId } = useParams();
+  const { channelId } = useParams();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.session.user);
   const messages = useSelector((state) => state.messages.messages);
@@ -21,6 +20,7 @@ const Channel = () => {
 
   useEffect(() => {
     socket.on("message", (data) => {
+      console.log("Received message via WebSocket:", data);
       dispatch(getMessagesThunk(channelId));
     });
 
@@ -29,31 +29,27 @@ const Channel = () => {
     };
   }, [dispatch, channelId]);
 
-  const joinRoom = () => {
+  useEffect(() => {
     if (channelId) {
       socket.emit("join", { room: channelId });
     }
-  };
-
-  const leaveRoom = () => {
-    if (channelId) {
-      socket.emit("leave", { room: channelId });
-    }
-  };
-
-  useEffect(() => {
-    joinRoom();
-    return leaveRoom;
+    return () => {
+      if (channelId) {
+        socket.emit("leave", { room: channelId });
+      }
+    };
   }, [channelId]);
 
   const sendMessage = async () => {
     if (message && channelId) {
-      await dispatch(createMessageThunk(channelId, { content: message }));
-      socket.emit("message", {
-        message: { user: user.username, content: message },
-        room: channelId,
-      });
-      setMessage("");
+      const response = await dispatch(createMessageThunk(channelId, { content: message }));
+      if (response) {
+        socket.emit("message", {
+          message: { user: user.username, content: message },
+          room: channelId,
+        });
+        setMessage("");
+      }
     }
   };
 
@@ -88,6 +84,7 @@ const Channel = () => {
 };
 
 export default Channel;
+
 
 // Below is the commented-out code for reference
 // const [messages, setMessages] = useState([]);

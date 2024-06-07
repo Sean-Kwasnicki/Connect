@@ -6,7 +6,7 @@ const MessageList = ({ channelId }) => {
 
     useEffect(() => {
         const fetchMessages = async () => {
-            const response = await axios.get(`/api/messages/${channelId}/all`);
+            const response = await fetch(`/api/channels/${channelId}/messages`);
             setMessages(response.data.messages);
         };
 
