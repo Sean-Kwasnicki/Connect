@@ -32,19 +32,15 @@ function LoginFormPage() {
   };
 
   return (
-    <div className={s.login_form_page_container}>
-      <div className={s.login_form_container}>
-        <div className={s.login_form}>
-          <h1 className={s.welcome_back}>Welcome back</h1>
-          <h3 className={s.see_you_again}>
-            {"We're"} so exited to see you again!
-          </h3>
-          {/* {errors.length > 0 &&
-          errors.map((message) => <p key={message}>{message}</p>)} */}
+    <div className={s.page_container}>
+      <div className={s.item_container}>
+        <div className={s.item}>
+          <h1 className={s.header_1}>Welcome back</h1>
+          <h3 className={s.header_2}>{"We're"} so exited to see you again!</h3>
           <form onSubmit={handleSubmit}>
-            <div className={s.email_container}>
-              <label className={s.label_text}>
-                EMAIL <span>*</span>
+            <div className={s.form_input}>
+              <label>
+                Email <span>*</span>
               </label>
               <input
                 type="text"
@@ -54,9 +50,9 @@ function LoginFormPage() {
               />
               {errors.email && <p>{errors.email}</p>}
             </div>
-            <div className={s.password_container}>
+            <div className={s.form_input}>
               <label>
-                PASSWORD <span>*</span>
+                Password <span>*</span>
               </label>
               <input
                 type="password"
@@ -66,10 +62,15 @@ function LoginFormPage() {
               />
               {errors.password && <p>{errors.password}</p>}
             </div>
-            <button className={s.login_button} type="submit">Log In</button>
+            <button className={s.submit_button} type="submit">
+              Log In
+            </button>
           </form>
-          <div className={s.need_account}>
-            Need an account? <NavLink to="/signup" className={s.signup_link}>Signup</NavLink>
+          <div className={s.text}>
+            Need an account?{" "}
+            <NavLink to="/signup" className={s.link}>
+              Signup
+            </NavLink>
           </div>
         </div>
       </div>

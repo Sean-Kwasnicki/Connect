@@ -1,4 +1,5 @@
 /* TODO: Add sitewide styles */
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
+  font-family: Helvetica, Arial, sans-serif;
 }

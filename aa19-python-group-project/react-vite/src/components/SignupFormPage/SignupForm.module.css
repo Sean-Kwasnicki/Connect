@@ -28,13 +28,6 @@
   color: #f2f3f5;
 }
 
-.header_2 {
-  text-align: center;
-  font-size: 14px;
-  margin-bottom: 20px;
-  color: #b5bac1;
-}
-
 .form_input {
   text-align: left;
   display: flex;
@@ -74,10 +67,6 @@
   cursor: pointer;
   margin-bottom: 30px;
   margin-top: 20px;
-}
-
-.text {
-  color: #b5bac1;
 }
 
 .link {
