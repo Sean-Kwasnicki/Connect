@@ -1,0 +1,16 @@
+.login_form_page_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login_form_page {
+  width: 600px;
+  padding: 40px;
+}
+
+.welcome_back,
+.see_you_again {
+  width: 100%;
+  text-align: center;
+}
