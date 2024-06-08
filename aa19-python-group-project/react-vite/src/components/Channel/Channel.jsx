@@ -4,29 +4,18 @@ import { useDispatch, useSelector } from "react-redux";
 import s from "./Channel.module.css";
 import io from "socket.io-client";
 import { getMessagesThunk, createMessageThunk } from "../../redux/message";
+import Reaction from "../Reaction/Reaction";
+import MessagesPage from "../Messages/MessagesPage";
+
 
 const socket = io.connect("/");
 
 const Channel = () => {
   const { channelId } = useParams();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.session.user);
-  const messages = useSelector((state) => state.messages.messages);
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     dispatch(getMessagesThunk(channelId));
-  }, [dispatch, channelId]);
-
-  useEffect(() => {
-    socket.on("message", (data) => {
-      console.log("Received message via WebSocket:", data);
-      dispatch(getMessagesThunk(channelId));
-    });
-
-    return () => {
-      socket.off("message");
-    };
   }, [dispatch, channelId]);
 
   useEffect(() => {
@@ -40,52 +29,15 @@ const Channel = () => {
     };
   }, [channelId]);
 
-  const sendMessage = async () => {
-    if (message && channelId) {
-      const response = await dispatch(createMessageThunk(channelId, { content: message }));
-      if (response) {
-        socket.emit("message", {
-          message: { user: user.username, content: message },
-          room: channelId,
-        });
-        setMessage("");
-      }
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    sendMessage();
-  };
-
   return (
     <>
-      <ul className={s.channels}>
-        {Array.isArray(messages) && messages.map(({ user, content, id }) => (
-          <li key={id} className={s.message}>
-            <span>{user}</span>
-            <p>{content}</p>
-          </li>
-        ))}
-      </ul>
-      <form onSubmit={handleSubmit}>
-        <label>
-          <input
-            type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-        </label>
-        <button type="submit">Send Message</button>
-      </form>
+      <MessagesPage channelId={channelId} />
       <Outlet /> {/* for the nested routes */}
     </>
   );
 };
 
 export default Channel;
-
-
 // Below is the commented-out code for reference
 // const [messages, setMessages] = useState([]);
 // const [content, setContent] = useState("");

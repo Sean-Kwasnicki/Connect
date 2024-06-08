@@ -31,7 +31,7 @@ def channel_to_dict(channel):
 # get all message in channel based on channel id, return dict with message id, user username
 # , and content of the message
 # pretty sure I missing check to see if user is part of the server
-@channel_routes.route('/<channel_id>/messages')
+@channel_routes.route('/<int:channel_id>/messages')
 @login_required
 def get_all_messages_in_channel(channel_id):
     channel = Channel.query.get(channel_id)
@@ -126,7 +126,7 @@ def delete_channel(id):
 	return {'errors': {'message': 'Unauthorized'}}, 401
 
 
-@channel_routes.route('<channel_id>/messages', methods=['POST'])
+@channel_routes.route('<int:channel_id>/messages', methods=['POST'])
 @login_required
 def create_message(channel_id):
     data = request.get_json()
@@ -178,28 +178,28 @@ def is_server_member(user_id, server_id):
     ).first()
 
 # Get All Reactions for a Message
-@channel_routes.route('/<channel_id>/messages/<int:message_id>/reactions', methods=['GET'])
+@channel_routes.route('/<int:channel_id>/messages/<int:message_id>/reactions', methods=['GET'])
 @login_required
-def get_all_reactions_for_message(message_id):
+def get_all_reactions_for_message(channel_id, message_id):
     message = Message.query.get(message_id)
     if not message:
         return {'errors': {'message': 'Message not found'}}, 404
 
-    server_member = is_server_member(current_user.id, message.channel.server_id)
-    if not server_member:
-        return {'errors': {'message': 'Forbidden'}}, 403
+    # server_member = is_server_member(current_user.id, message.channel.server_id)
+    # if not server_member:
+    #     return {'errors': {'message': 'Forbidden'}}, 403
 
-    channel_member = is_channel_member(current_user.id, message.channel_id)
-    if not channel_member:
-        return {'errors': {'message': 'Forbidden'}}, 403
+    # channel_member = is_channel_member(current_user.id, message.channel_id)
+    # if not channel_member:
+    #     return {'errors': {'message': 'Forbidden'}}, 403
 
     reactions = Reaction.query.filter(Reaction.message_id == message_id).all()
     return {'reactions': [reaction_to_dict(reaction) for reaction in reactions]}
 
 # Add a Reaction to a Message
-@channel_routes.route('/<channel_id>/messages/<int:message_id>/reactions', methods=['POST'])
+@channel_routes.route('/<int:channel_id>/messages/<int:message_id>/reactions', methods=['POST'])
 @login_required
-def add_reaction_to_message(message_id):
+def add_reaction_to_message(channel_id, message_id):
     emoji = request.json.get('emoji')
     if not emoji:
         return {'errors': {'message': 'Emoji is required'}}, 400
@@ -208,13 +208,13 @@ def add_reaction_to_message(message_id):
     if not message:
         return {'errors': {'message': 'Message not found'}}, 404
 
-    server_member = is_server_member(current_user.id, message.channel.server_id)
-    if not server_member:
-        return {'errors': {'message': 'Forbidden'}}, 403
+    # server_member = is_server_member(current_user.id, message.channel.server_id)
+    # if not server_member:
+    #     return {'errors': {'message': 'Forbidden'}}, 403
 
-    channel_member = is_channel_member(current_user.id, message.channel_id)
-    if not channel_member:
-        return {'errors': {'message': 'Forbidden'}}, 403
+    # channel_member = is_channel_member(current_user.id, message.channel_id)
+    # if not channel_member:
+    #     return {'errors': {'message': 'Forbidden'}}, 403
 
     reaction = Reaction(
         user_id=current_user.id,
@@ -226,7 +226,7 @@ def add_reaction_to_message(message_id):
     return reaction_to_dict(reaction), 201
 
 # Update a Reaction to a Message
-@channel_routes.route('/<channel_id>/messages/<int:message_id>/reactions/<int:id>', methods=['PATCH'])
+@channel_routes.route('/<int:channel_id>/messages/<int:message_id>/reactions/<int:id>', methods=['PATCH'])
 @login_required
 def update_reaction_to_message(message_id):
     emoji = request.json.get('emoji')
@@ -260,36 +260,27 @@ def update_reaction_to_message(message_id):
     db.session.commit()
     return reaction_to_dict(reaction)
 
-# Remove a Reaction from a Message
-@channel_routes.route('/<channel_id>/messages/<int:message_id>/reactions/<int:id>', methods=['DELETE'])
+@channel_routes.route('/<int:channel_id>/messages/<int:message_id>/reactions/<int:reaction_id>', methods=['DELETE'])
 @login_required
-def remove_reaction_from_message(message_id):
-    emoji = request.json.get('emoji')
-    if not emoji:
-        return {'errors': {'message': 'Emoji is required'}}, 400
+def remove_reaction_from_message(channel_id, message_id, reaction_id):
+    reaction = Reaction.query.get(reaction_id)
+    if not reaction:
+        return {'errors': {'message': 'Reaction not found'}}, 404
 
     message = Message.query.get(message_id)
     if not message:
         return {'errors': {'message': 'Message not found'}}, 404
 
-    server_member = is_server_member(current_user.id, message.channel.server_id)
-    if not server_member:
-        return {'errors': {'message': 'Forbidden'}}, 403
+    # server_member = is_server_member(current_user.id, message.channel.server_id)
+    # if not server_member:
+    #     return {'errors': {'message': 'Forbidden'}}, 403
 
-    channel_member = is_channel_member(current_user.id, message.channel_id)
-    if not channel_member:
-        return {'errors': {'message': 'Forbidden'}}, 403
+    # channel_member = is_channel_member(current_user.id, message.channel_id)
+    # if not channel_member:
+    #     return {'errors': {'message': 'Forbidden'}}, 403
 
-    reaction = Reaction.query.filter_by(
-        user_id=current_user.id,
-        message_id=message_id,
-        emoji=emoji
-    ).first()
-    if not reaction:
-        return {'errors': {'message': 'Reaction not found'}}, 404
-
-    if reaction.user_id != current_user.id:
-        return {'errors': {'message': 'Unauthorized'}}, 403
+    # if reaction.user_id != current_user.id:
+    #     return {'errors': {'message': 'Unauthorized'}}, 403
 
     db.session.delete(reaction)
     db.session.commit()

@@ -50,8 +50,9 @@ export const addReactionThunk = (channelId, messageId, emoji) => async (dispatch
     });
 
     if (response.ok) {
-      const newReaction = await response.json(); 
+      const newReaction = await response.json(); // Parse the JSON data from the response
       dispatch(addReaction(newReaction));
+      dispatch(getReactionsThunk(channelId, messageId)); // Ensure to get the updated reactions
     } else {
       console.error("Failed to add reaction:", response.statusText);
     }
@@ -71,6 +72,7 @@ export const removeReactionThunk = (channelId, messageId, reactionId) => async (
 
     if (response.ok) {
       dispatch(removeReaction(reactionId));
+      dispatch(getReactionsThunk(channelId, messageId)); // Ensure to get the updated reactions
     } else {
       console.error("Failed to remove reaction:", response.statusText);
     }
