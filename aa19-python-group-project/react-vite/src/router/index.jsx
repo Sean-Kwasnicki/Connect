@@ -9,7 +9,10 @@ import DirectMessagesPage from "../components/DirectMessages/DirectMessagesPage"
 import ThreadsPage from "../components/Threads/ThreadsPage";
 
 export const router = createBrowserRouter([
+  { path: "signup", element: <SignupFormPage /> },
+  { path: "login", element: <LoginFormPage /> },
   {
+    path: "/",
     element: <Layout />,
     children: [
       {
