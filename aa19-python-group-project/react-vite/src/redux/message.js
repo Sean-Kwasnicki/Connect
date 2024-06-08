@@ -31,21 +31,26 @@ export const getMessagesThunk = (channelId) => async (dispatch) => {
 
 export const createMessageThunk = (channelId, content) => async (dispatch) => {
   try {
-    const response = await fetch(`api/channels/${channelId}/messages`, {
+    console.log(channelId); // For debugging purposes
+    const response = await fetch(`/api/channels/${channelId}/messages`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(content),
     });
-    if (response.status === 201) {
-      const newMessage = response.data;
+
+    if (response.ok) {
+      const newMessage = await response.json(); // Parse the JSON data from the response
       dispatch(createMessage(newMessage));
+    } else {
+      console.error("Failed to create message:", response.statusText);
     }
   } catch (error) {
     console.error("Failed to create message:", error);
   }
 };
+
 
 // Initial State
 const initialState = {

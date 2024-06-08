@@ -6,8 +6,12 @@ const MessageForm = ({ channelId }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await axios.post('/api/messages', { content, channel_id: channelId });
-        setContent('');
+        try {
+            await axios.post(`/api/channels/${channelId}/messages`, { content });
+            setContent('');
+        } catch (error) {
+            console.error("Failed to send message:", error);
+        }
     };
 
     return (

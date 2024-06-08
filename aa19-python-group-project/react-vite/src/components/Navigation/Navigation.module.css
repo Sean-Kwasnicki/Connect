@@ -1,27 +1,17 @@
 .nav_bar {
   display: flex;
   flex-direction: column;
-  align-items: space-between;
-}
-
-.nav_bar_bottom {
-  display: flex;
-  flex-direction: column;
   align-items: center;
   width: 90px;
-  height: 10vh;
-  background-color: #1e1f22;
-  padding-bottom: 15px;
-}
-
-.nav_bar_top {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 90px;
-  height: 90vh;
   background-color: #1e1f22;
   padding-top: 15px;
+  height: 94vh;
+  overflow-y: scroll;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
 }
 
 .home_link {
@@ -44,6 +34,7 @@
 .create_server_button {
   width: 60px;
   height: 60px;
+  min-height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;

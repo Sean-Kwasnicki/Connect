@@ -19,29 +19,26 @@ function Navigation() {
 
   return (
     <nav className={s.nav_bar}>
-      <div className={s.nav_bar_top}>
-        <div
-          className={s.home_link}
-          onClick={() => {
-            navigate("/");
-          }}
-        >
-          <IoIosHome className={s.home_icon} />
-        </div>
-        {servers.map(({ name, id }) => {
-          const navTo = `/servers/${id}`;
-          return (
-            <div key={id} onClick={() => navigate(navTo)} className={s.server}>
-              {name[0].toUpperCase()}
-            </div>
-          );
-        })}
-        <CreateServerButton />
+      <div
+        className={s.home_link}
+        onClick={() => {
+          navigate("/");
+        }}
+      >
+        <IoIosHome className={s.home_icon} />
       </div>
-      <div className={s.nav_bar_bottom}>
-        <div className={s.profile_button}>
-          <ProfileButton />
-        </div>
+      {servers.map(({ name, id }) => {
+        const navTo = `/servers/${id}`;
+        return (
+          <div key={id} onClick={() => navigate(navTo)} className={s.server}>
+            {name[0].toUpperCase()}
+          </div>
+        );
+      })}
+      <CreateServerButton />
+
+      <div className={s.profile_button}>
+        <ProfileButton />
       </div>
     </nav>
   );

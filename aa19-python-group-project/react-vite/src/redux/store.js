@@ -9,12 +9,14 @@ import sessionReducer from "./session";
 import serverReducer from "./server";
 import channelReducer from "./channel";
 import messageReducer from "./message"
+import reactionReducer from "./reaction";
 
 const rootReducer = combineReducers({
   session: sessionReducer,
   servers: serverReducer,
   channels: channelReducer,
   messages: messageReducer,
+  reactions: reactionReducer,
 });
 
 let enhancer;
