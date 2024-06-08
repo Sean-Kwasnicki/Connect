@@ -1,42 +1,22 @@
-import React, { useEffect } from 'react';
+// src/components/Reaction.js
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getReactionsThunk } from '../redux/reaction';
-import socket from '../socket';
-import ReactionForm from './ReactionForm';
+import { getReactionsThunk, addReactionThunk, removeReactionThunk } from '../redux/reactionSlice';
 
-const Reaction = ({ messageId }) => {
+const Reaction = ({ channelId, messageId }) => {
   const dispatch = useDispatch();
-  const reactions = useSelector(state => state.reactions.filter(reaction => reaction.message_id === messageId));
+  const reactions = useSelector((state) => state.reactions.reactions.filter((reaction) => reaction.message_id === messageId));
 
   useEffect(() => {
-    dispatch(getReactionsThunk(messageId));
-
-    // Set up socket listeners for new and removed reactions
-    socket.on('new_reaction', (reaction) => {
-      if (reaction.message_id === messageId) {
-        dispatch({ type: 'ADD_REACTION', payload: reaction });
-      }
-    });
-
-    socket.on('remove_reaction', (data) => {
-      if (data.message_id === messageId) {
-        dispatch({ type: 'REMOVE_REACTION', payload: data.emoji });
-      }
-    });
-
-    // Clean up socket listeners when the component unmounts
-    return () => {
-      socket.off('new_reaction');
-      socket.off('remove_reaction');
-    };
-  }, [dispatch, messageId]);
+    dispatch(getReactionsThunk(channelId, messageId));
+  }, [dispatch, channelId, messageId]);
 
   const handleAddReaction = (emoji) => {
-    socket.emit('add_reaction', { emoji, message_id: messageId });
+    dispatch(addReactionThunk(channelId, messageId, emoji));
   };
 
-  const handleRemoveReaction = (emoji) => {
-    socket.emit('remove_reaction', { emoji, message_id: messageId });
+  const handleRemoveReaction = (reactionId) => {
+    dispatch(removeReactionThunk(channelId, messageId, reactionId));
   };
 
   const reactionCounts = reactions.reduce((acc, reaction) => {
@@ -46,12 +26,19 @@ const Reaction = ({ messageId }) => {
 
   return (
     <div className="reactions">
-      <ReactionForm onAddReaction={handleAddReaction} />
-      {['👍', '👎', '❤️'].map(emoji => (
-        <span key={emoji} onClick={() => handleRemoveReaction(emoji)}>
-          {emoji} {reactionCounts[emoji] || 0}
-        </span>
-      ))}
+      <button onClick={() => handleAddReaction('👍')}>👍</button>
+      <button onClick={() => handleAddReaction('👎')}>👎</button>
+      <button onClick={() => handleAddReaction('❤️')}>❤️</button>
+      <div className="reaction-counts">
+        {['👍', '👎', '❤️'].map((emoji) => (
+          <span key={emoji}>
+            {emoji} {reactionCounts[emoji] || 0}
+            {reactions.filter(reaction => reaction.emoji === emoji).map(reaction => (
+              <button key={reaction.id} onClick={() => handleRemoveReaction(reaction.id)}>Remove</button>
+            ))}
+          </span>
+        ))}
+      </div>
     </div>
   );
 };

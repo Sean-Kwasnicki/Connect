@@ -1,72 +1,104 @@
-// import socket from '../socket';
+// src/redux/reactionSlice.js
 
 // Action Types
-const GET_REACTIONS = 'reactions/getReactions';
-const ADD_REACTION = 'reactions/addReaction';
-const REMOVE_REACTION = 'reactions/removeReaction';
+const GET_REACTIONS = "reactions/getReactions";
+const ADD_REACTION = "reactions/addReaction";
+const REMOVE_REACTION = "reactions/removeReaction";
 
-///////////////////////////////////////////////////////
+// Actions
+const getReactions = (reactions) => ({
+  type: GET_REACTIONS,
+  payload: reactions,
+});
 
-// Action Creators
+const addReaction = (reaction) => ({
+  type: ADD_REACTION,
+  payload: reaction,
+});
 
-const getReactions = (reactions) => {
-  return {
-    type: GET_REACTIONS,
-    payload: reactions,
-  };
-};
-
-// const addReactionAction = (reaction) => {
-//   return {
-//     type: ADD_REACTION,
-//     payload: reaction,
-//   };
-// };
-
-// const removeReactionAction = (emoji) => {
-//   return {
-//     type: REMOVE_REACTION,
-//     payload: emoji,
-//   };
-// };
-
-///////////////////////////////////////////////////////
+const removeReaction = (reactionId) => ({
+  type: REMOVE_REACTION,
+  payload: reactionId,
+});
 
 // Thunks
-
-export const getReactionsThunk = (messageId) => async (dispatch) => {
-  const response = await fetch(`/api/messages/${messageId}/reactions`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
+export const getReactionsThunk = (channelId, messageId) => async (dispatch) => {
+  try {
+    const response = await fetch(`/api/channels/${channelId}/messages/${messageId}/reactions`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    if (response.ok) {
+      const data = await response.json();
+      dispatch(getReactions(data.reactions));
     }
-  });
-  if (response.ok) {
-    const data = await response.json();
-    dispatch(getReactions(data));
+  } catch (error) {
+    console.error("Failed to fetch reactions:", error);
   }
 };
 
-///////////////////////////////////////////////////////
+export const addReactionThunk = (channelId, messageId, emoji) => async (dispatch) => {
+  try {
+    const response = await fetch(`/api/channels/${channelId}/messages/${messageId}/reactions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ emoji }),
+    });
+
+    if (response.ok) {
+      const newReaction = await response.json(); 
+      dispatch(addReaction(newReaction));
+    } else {
+      console.error("Failed to add reaction:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Failed to add reaction:", error);
+  }
+};
+
+export const removeReactionThunk = (channelId, messageId, reactionId) => async (dispatch) => {
+  try {
+    const response = await fetch(`/api/channels/${channelId}/messages/${messageId}/reactions/${reactionId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      dispatch(removeReaction(reactionId));
+    } else {
+      console.error("Failed to remove reaction:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Failed to remove reaction:", error);
+  }
+};
+
+// Initial State
+const initialState = {
+  reactions: [],
+};
 
 // Reducer
-
-const initialState = { reactions: [] };
-
-const reactionReducer = (state = initialState, action) => {
+const reactionsReducer = (state = initialState, action) => {
   switch (action.type) {
     case GET_REACTIONS:
-      return { ...state, reactions: [...action.payload] };
+      return { ...state, reactions: action.payload };
     case ADD_REACTION:
       return { ...state, reactions: [...state.reactions, action.payload] };
     case REMOVE_REACTION:
       return {
         ...state,
-        reactions: state.reactions.filter(reaction => reaction.emoji !== action.payload)
+        reactions: state.reactions.filter((reaction) => reaction.id !== action.payload),
       };
     default:
       return state;
   }
 };
 
-export default reactionReducer;
+export default reactionsReducer;

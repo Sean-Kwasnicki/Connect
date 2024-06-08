@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMessagesThunk, createMessageThunk } from '../../redux/message';
 import io from 'socket.io-client';
+import Reaction from '../Reaction/Reaction';
 
 const socket = io.connect('/');
 
@@ -42,6 +43,7 @@ const MessagesPage = ({ channelId }) => {
                 {Array.isArray(messages) && messages.map(({ user, content, id }) => (
                     <li key={id}>
                         <span>{user}</span>: {content}
+                        <Reaction channelId={channelId} messageId={id} /> {/* Added the Reaction component here */}
                     </li>
                 ))}
             </ul>
