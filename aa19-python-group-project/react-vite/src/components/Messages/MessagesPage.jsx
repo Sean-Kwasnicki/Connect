@@ -1,6 +1,8 @@
+
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMessagesThunk, createMessageThunk } from '../../redux/message';
+import { getReactionsThunk } from '../../redux/reaction';
 import io from 'socket.io-client';
 import Reaction from '../Reaction/Reaction';
 
@@ -10,7 +12,7 @@ const MessagesPage = ({ channelId }) => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.session.user);
     const messages = useSelector((state) => state.messages.messages || []);
-    const [message, setMessage] = useState([]);
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         dispatch(getMessagesThunk(channelId));
@@ -26,6 +28,12 @@ const MessagesPage = ({ channelId }) => {
         };
     }, [dispatch, channelId]);
 
+    useEffect(() => {
+        messages.forEach(message => {
+            dispatch(getReactionsThunk(channelId, message.id));
+        });
+    }, [dispatch, channelId, messages]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         await dispatch(createMessageThunk(channelId, { content: message }));
@@ -33,7 +41,7 @@ const MessagesPage = ({ channelId }) => {
             message: { user: user.username, content: message },
             room: channelId,
         });
-        setMessage('');
+        setMessage(''); // Clear the input field
     };
 
     return (
@@ -43,7 +51,7 @@ const MessagesPage = ({ channelId }) => {
                 {Array.isArray(messages) && messages.map(({ user, content, id }) => (
                     <li key={id}>
                         <span>{user}</span>: {content}
-                        <Reaction channelId={channelId} messageId={id} /> {/* Added the Reaction component here */}
+                        <Reaction channelId={channelId} messageId={id} /> {/* Use the Reaction component here */}
                     </li>
                 ))}
             </ul>
