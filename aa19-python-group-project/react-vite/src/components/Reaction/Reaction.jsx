@@ -1,7 +1,7 @@
 // src/components/Reaction.js
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getReactionsThunk, addReactionThunk, removeReactionThunk } from '../redux/reactionSlice';
+import { getReactionsThunk, addReactionThunk, removeReactionThunk } from '../../redux/reaction'
 
 const Reaction = ({ channelId, messageId }) => {
   const dispatch = useDispatch();
