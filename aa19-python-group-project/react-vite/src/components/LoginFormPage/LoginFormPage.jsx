@@ -33,38 +33,44 @@ function LoginFormPage() {
 
   return (
     <div className={s.login_form_page_container}>
-      <div className={s.login_form_page}>
-        <h1 className={s.welcome_back}>Welcome back</h1>
-        <h3 className={s.see_you_again}>
-          {"We're"} so exited to see you again!
-        </h3>
-        {errors.length > 0 &&
-          errors.map((message) => <p key={message}>{message}</p>)}
-        <form onSubmit={handleSubmit}>
-          <label>
-            EMAIL <span>*</span>
-            <input
-              type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </label>
-          {errors.email && <p>{errors.email}</p>}
-          <label>
-            PASSWORD <span>*</span>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </label>
-          {errors.password && <p>{errors.password}</p>}
-          <button type="submit">Log In</button>
-        </form>
-        <div>
-          Need an account? <NavLink to="/signup">Signup</NavLink>
+      <div className={s.login_form_container}>
+        <div className={s.login_form}>
+          <h1 className={s.welcome_back}>Welcome back</h1>
+          <h3 className={s.see_you_again}>
+            {"We're"} so exited to see you again!
+          </h3>
+          {/* {errors.length > 0 &&
+          errors.map((message) => <p key={message}>{message}</p>)} */}
+          <form onSubmit={handleSubmit}>
+            <div className={s.email_container}>
+              <label className={s.label_text}>
+                EMAIL <span>*</span>
+              </label>
+              <input
+                type="text"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              {errors.email && <p>{errors.email}</p>}
+            </div>
+            <div className={s.password_container}>
+              <label>
+                PASSWORD <span>*</span>
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              {errors.password && <p>{errors.password}</p>}
+            </div>
+            <button className={s.login_button} type="submit">Log In</button>
+          </form>
+          <div className={s.need_account}>
+            Need an account? <NavLink to="/signup" className={s.signup_link}>Signup</NavLink>
+          </div>
         </div>
       </div>
     </div>
