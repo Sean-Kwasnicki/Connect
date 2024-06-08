@@ -45,9 +45,11 @@ export const createMessageThunk = (channelId, content) => async (dispatch) => {
       dispatch(createMessage(newMessage));
     } else {
       console.error("Failed to create message:", response.statusText);
+      return null; // Return null if response is not ok
     }
   } catch (error) {
     console.error("Failed to create message:", error);
+    return null; // Return null if response is not ok
   }
 };
 
