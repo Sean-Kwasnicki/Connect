@@ -1,4 +1,3 @@
-// src/redux/reactionSlice.js
 
 // Action Types
 const GET_REACTIONS = "reactions/getReactions";
@@ -6,9 +5,9 @@ const ADD_REACTION = "reactions/addReaction";
 const REMOVE_REACTION = "reactions/removeReaction";
 
 // Actions
-const getReactions = (reactions) => ({
+const getReactions = (messageId, reactions) => ({
   type: GET_REACTIONS,
-  payload: reactions,
+  payload: { messageId, reactions },
 });
 
 const addReaction = (reaction) => ({
@@ -16,9 +15,9 @@ const addReaction = (reaction) => ({
   payload: reaction,
 });
 
-const removeReaction = (reactionId) => ({
+const removeReaction = (reactionId, messageId) => ({
   type: REMOVE_REACTION,
-  payload: reactionId,
+  payload: { reactionId, messageId },
 });
 
 // Thunks
@@ -32,7 +31,7 @@ export const getReactionsThunk = (channelId, messageId) => async (dispatch) => {
     });
     if (response.ok) {
       const data = await response.json();
-      dispatch(getReactions(data.reactions));
+      dispatch(getReactions(messageId, data.reactions));
     }
   } catch (error) {
     console.error("Failed to fetch reactions:", error);
@@ -52,7 +51,6 @@ export const addReactionThunk = (channelId, messageId, emoji) => async (dispatch
     if (response.ok) {
       const newReaction = await response.json(); // Parse the JSON data from the response
       dispatch(addReaction(newReaction));
-      dispatch(getReactionsThunk(channelId, messageId)); // Ensure to get the updated reactions
     } else {
       console.error("Failed to add reaction:", response.statusText);
     }
@@ -71,8 +69,7 @@ export const removeReactionThunk = (channelId, messageId, reactionId) => async (
     });
 
     if (response.ok) {
-      dispatch(removeReaction(reactionId));
-      dispatch(getReactionsThunk(channelId, messageId)); // Ensure to get the updated reactions
+      dispatch(removeReaction(reactionId, messageId));
     } else {
       console.error("Failed to remove reaction:", response.statusText);
     }
@@ -83,20 +80,40 @@ export const removeReactionThunk = (channelId, messageId, reactionId) => async (
 
 // Initial State
 const initialState = {
-  reactions: [],
+  reactionsByMessageId: {},
 };
 
 // Reducer
 const reactionsReducer = (state = initialState, action) => {
   switch (action.type) {
     case GET_REACTIONS:
-      return { ...state, reactions: action.payload };
+      return {
+        ...state,
+        reactionsByMessageId: {
+          ...state.reactionsByMessageId,
+          [action.payload.messageId]: action.payload.reactions
+        }
+      };
     case ADD_REACTION:
-      return { ...state, reactions: [...state.reactions, action.payload] };
+      return {
+        ...state,
+        reactionsByMessageId: {
+          ...state.reactionsByMessageId,
+          [action.payload.message_id]: [
+            ...(state.reactionsByMessageId[action.payload.message_id] || []),
+            action.payload
+          ]
+        }
+      };
     case REMOVE_REACTION:
       return {
         ...state,
-        reactions: state.reactions.filter((reaction) => reaction.id !== action.payload),
+        reactionsByMessageId: {
+          ...state.reactionsByMessageId,
+          [action.payload.messageId]: state.reactionsByMessageId[action.payload.messageId].filter(
+            (reaction) => reaction.id !== action.payload.reactionId
+          )
+        }
       };
     default:
       return state;

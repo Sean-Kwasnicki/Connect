@@ -52,21 +52,12 @@ CORS(app)
 # Initialize SocketIO
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-# @socketio.on('join')
-# def on_join(data):
-#     room = data['room']
-#     join_room(room)
-
-# @socketio.on('leave')
-# def on_leave(data):
-#     room = data['room']
-#     leave_room(room)
 
 # Server dictionary to keep track of users in each server
 # Single source of truth for the current state of each room.
 servers = {} # Was previously 'rooms'
 
-@socketio.on('join')
+@socketio.on('join_server')
 def on_join(data):
     server = data['server'] # Was previously 'room'
     user = data['user']
@@ -77,7 +68,7 @@ def on_join(data):
     join_room(server)
     emit('update_users', {'server': server, 'users': servers[server]}, to=server)
 
-@socketio.on('leave')
+@socketio.on('leave_server')
 def on_leave(data):
     server = data['server'] # Was previously 'room'
     user = data['user']
@@ -86,11 +77,22 @@ def on_leave(data):
         servers[server].remove(user)
         emit('update_users', {'server': server, 'users': servers[server]}, to=server)
 
+@socketio.on('join')
+def handle_join(data):
+    room = data['room']
+    join_room(room)
+    emit('user_joined', {'msg': f"{data['user']} has joined the room {room}."}, to=room)
+
+@socketio.on('leave')
+def handle_leave(data):
+    room = data['room']
+    leave_room(room)
+    emit('user_left', {'msg': f"{data['user']} has left the room {room}."}, to=room)
 
 @socketio.on('message')
 def handle_message(data):
     room = data['room']
-    send(data['message'], to=room)
+    emit('message', data['message'], to=room)
 
 if __name__ == '__main__':
     socketio.run(app)
