@@ -94,6 +94,11 @@ def handle_message(data):
     room = data['room']
     emit('message', data['message'], to=room)
 
+@socketio.on('channel')
+def handle_channel(data):
+    room = data['room']
+    emit('new_channel', data['channel'], to=room)
+
 if __name__ == '__main__':
     socketio.run(app)
 
