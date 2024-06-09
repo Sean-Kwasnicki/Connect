@@ -3,16 +3,18 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import s from "./Channel.module.css";
 import io from "socket.io-client";
-import { getMessagesThunk, createMessageThunk } from "../../redux/message";
+import { getMessagesThunk, createMessageThunk, deleteMessageThunk } from "../../redux/message";
 import Reaction from "../Reaction/Reaction";
 import MessagesPage from "../Messages/MessagesPage";
-
 
 const socket = io.connect("/");
 
 const Channel = () => {
   const { channelId } = useParams();
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.session.user);
+  const messages = useSelector((state) => state.messages.messages);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     dispatch(getMessagesThunk(channelId));
@@ -29,8 +31,23 @@ const Channel = () => {
     };
   }, [channelId]);
 
+  const handleDelete = (messageId) => {
+    dispatch(deleteMessageThunk(messageId));
+  };
+
   return (
     <>
+      <ul className={s.channels}>
+        {Array.isArray(messages) && messages.map(({ user, content, id }) => (
+          <li key={id} className={s.message}>
+            <span>{user}</span>
+            <p>{content}</p>
+            {user.id === currentUser.id && (
+              <button onClick={() => handleDelete(id)}>Delete</button>
+            )}
+          </li>
+        ))}
+      </ul>
       <MessagesPage channelId={channelId} />
       <Outlet /> {/* for the nested routes */}
     </>
@@ -38,6 +55,9 @@ const Channel = () => {
 };
 
 export default Channel;
+
+
+
 // Below is the commented-out code for reference
 // const [messages, setMessages] = useState([]);
 // const [content, setContent] = useState("");

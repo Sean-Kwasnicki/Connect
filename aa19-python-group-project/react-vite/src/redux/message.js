@@ -4,6 +4,8 @@ import axios from "axios";
 // Action Types
 const GET_MESSAGES = "messages/getMessages";
 const CREATE_MESSAGE = "messages/createMessage";
+const DELETE_MESSAGE = "messages/deleteMessage";
+
 
 // Actions
 const getMessages = (messages) => ({
@@ -15,6 +17,13 @@ const createMessage = (message) => ({
   type: CREATE_MESSAGE,
   payload: message,
 });
+
+const deleteMessage = (messageId) => ({
+  type: DELETE_MESSAGE,
+  payload: messageId,
+});
+
+
 
 // Thunks
 export const getMessagesThunk = (channelId) => async (dispatch) => {
@@ -31,7 +40,7 @@ export const getMessagesThunk = (channelId) => async (dispatch) => {
 
 export const createMessageThunk = (channelId, content) => async (dispatch) => {
   try {
-    console.log(channelId); // For debugging purposes
+    // console.log(channelId); // For debugging purposes
     const response = await fetch(`/api/channels/${channelId}/messages`, {
       method: "POST",
       headers: {
@@ -53,6 +62,17 @@ export const createMessageThunk = (channelId, content) => async (dispatch) => {
   }
 };
 
+export const deleteMessageThunk = (messageId) => async (dispatch) => {
+  try {
+    const response = await axios.delete(`/api/messages/${messageId}`);
+    if (response.status === 200) {
+      dispatch(deleteMessage(messageId));
+    }
+  } catch (error) {
+    console.error("Failed to delete message:", error);
+  }
+};
+
 
 // Initial State
 const initialState = {
@@ -66,6 +86,8 @@ const messageReducer = (state = initialState, action) => {
       return { ...state, messages: action.payload };
     case CREATE_MESSAGE:
       return { ...state, messages: [...state.messages, action.payload] };
+    case DELETE_MESSAGE:
+      return { ...state, messages: state.messages.filter(message => message.id !== action.payload) };
     default:
       return state;
   }
