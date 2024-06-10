@@ -14,14 +14,15 @@ export default function Layout() {
   const user = useSelector((state) => state.session.user);
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, [navigate, user]);
-
-  useEffect(() => {
-    dispatch(thunkAuthenticate()).then(() => setIsLoaded(true));
-  }, [dispatch]);
+    dispatch(thunkAuthenticate())
+      .then(() => setIsLoaded(true))
+      .then(() => {
+        if (!user) {
+          navigate("/login");
+        }
+      });
+    //putting user in this array causes an infinite loop
+  }, []);
 
   return (
     <>

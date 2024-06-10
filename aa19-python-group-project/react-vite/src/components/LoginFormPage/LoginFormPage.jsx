@@ -65,6 +65,16 @@ function LoginFormPage() {
             <button className={s.submit_button} type="submit">
               Log In
             </button>
+            <button
+              className={s.submit_button}
+              type="submit"
+              onClick={() => {
+                setEmail("demo@aa.io");
+                setPassword("password");
+              }}
+            >
+              Log In as Demo User
+            </button>
           </form>
           <div className={s.text}>
             Need an account?{" "}

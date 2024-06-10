@@ -6,7 +6,6 @@ import { useEffect } from "react";
 import { getServersThunk } from "../../redux/server";
 import CreateServerButton from "./CreateServerButton";
 import { IoIosHome } from "react-icons/io";
-import { CiCirclePlus } from "react-icons/ci";
 
 function Navigation() {
   const servers = useSelector((state) => state.servers.servers);
