@@ -99,6 +99,16 @@ def handle_channel(data):
     room = data['room']
     emit('new_channel', data['channel'], to=room)
 
+@socketio.on('reaction')
+def handle_reaction(data):
+    room = data['room']
+    reaction = data['reaction']
+    if 'remove' in reaction and reaction['remove']:
+        emit('remove_reaction', {'reactionId': reaction['reactionId'], 'messageId': reaction['messageId']}, to=room)
+    else:
+        emit('new_reaction', reaction, to=room)
+
+
 if __name__ == '__main__':
     socketio.run(app)
 

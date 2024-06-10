@@ -1,3 +1,4 @@
+// src/redux/reaction.js
 
 // Action Types
 const GET_REACTIONS = "reactions/getReactions";
@@ -10,12 +11,12 @@ const getReactions = (messageId, reactions) => ({
   payload: { messageId, reactions },
 });
 
-const addReaction = (reaction) => ({
+export const addReaction = (reaction) => ({
   type: ADD_REACTION,
   payload: reaction,
 });
 
-const removeReaction = (reactionId, messageId) => ({
+export const removeReaction = (reactionId, messageId) => ({
   type: REMOVE_REACTION,
   payload: { reactionId, messageId },
 });
@@ -51,6 +52,7 @@ export const addReactionThunk = (channelId, messageId, emoji) => async (dispatch
     if (response.ok) {
       const newReaction = await response.json(); // Parse the JSON data from the response
       dispatch(addReaction(newReaction));
+      return newReaction;
     } else {
       console.error("Failed to add reaction:", response.statusText);
     }
@@ -79,9 +81,7 @@ export const removeReactionThunk = (channelId, messageId, reactionId) => async (
 };
 
 // Initial State
-const initialState = {
-  reactionsByMessageId: {},
-};
+const initialState = { reactionsByMessageId: {} };
 
 // Reducer
 const reactionsReducer = (state = initialState, action) => {
