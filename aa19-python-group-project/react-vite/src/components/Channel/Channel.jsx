@@ -31,6 +31,16 @@ const Channel = () => {
     };
   }, [channelId]);
 
+  useEffect(() => {
+    socket.on("message_deleted", (data) => {
+      dispatch(deleteMessage(data.message_id));
+    });
+  
+    return () => {
+      socket.off("message_deleted");
+    };
+  }, [dispatch]);  
+
   const handleDelete = (messageId) => {
     dispatch(deleteMessageThunk(messageId));
   };

@@ -94,6 +94,13 @@ def handle_message(data):
     room = data['room']
     emit('message', data['message'], to=room)
 
+@socketio.on('delete_message')
+def handle_delete_message(data):
+    room = data['room']
+    message_id = data['message_id']
+    emit('message_deleted', {'message_id': message_id}, to=room)
+
+
 if __name__ == '__main__':
     socketio.run(app)
 
