@@ -1,7 +1,6 @@
-
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMessagesThunk, createMessageThunk } from '../../redux/message';
+import { getMessagesThunk, createMessageThunk, deleteMessageThunk } from '../../redux/message';
 import { getReactionsThunk } from '../../redux/reaction';
 import io from 'socket.io-client';
 import Reaction from '../Reaction/Reaction';
@@ -10,7 +9,7 @@ const socket = io.connect('/');
 
 const MessagesPage = ({ channelId }) => {
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.session.user);
+    const currentUser = useSelector((state) => state.session.user); 
     const messages = useSelector((state) => state.messages.messages || []);
     const [message, setMessage] = useState("");
 
@@ -38,10 +37,14 @@ const MessagesPage = ({ channelId }) => {
         e.preventDefault();
         await dispatch(createMessageThunk(channelId, { content: message }));
         socket.emit('message', {
-            message: { user: user.username, content: message },
+            message: { user: currentUser.username, content: message },
             room: channelId,
         });
-        setMessage(''); // Clear the input field
+        setMessage(''); 
+    };
+
+    const handleDelete = (messageId) => {
+        dispatch(deleteMessageThunk(messageId));
     };
 
     return (
@@ -51,6 +54,9 @@ const MessagesPage = ({ channelId }) => {
                 {Array.isArray(messages) && messages.map(({ user, content, id }) => (
                     <li key={id}>
                         <span>{user}</span>: {content}
+                        {currentUser.username === user && (
+                            <button onClick={() => handleDelete(id)}>Delete</button>
+                        )}
                         <Reaction channelId={channelId} messageId={id} /> {/* Use the Reaction component here */}
                     </li>
                 ))}
