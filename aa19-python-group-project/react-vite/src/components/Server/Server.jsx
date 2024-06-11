@@ -4,8 +4,8 @@ import { deleteServerThunk } from "../../redux/server";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import s from "./Server.module.css";
-import CreateChannelButton from "../Modals/CreateChannelModal";
-import DeleteServerModalButton from "../Modals/DeleteServerModal";
+import CreateChannelButton from "../Modals/CreateChannelModal/CreateChannelModalButton";
+import DeleteServerModalButton from "../Modals/DeleteServerModal/DeleteServerModalButton";
 import DeleteChannelModalButton from "../Modals/DeleteChannelModal/DeleteChannelModalButton";
 import io from "socket.io-client"
 
