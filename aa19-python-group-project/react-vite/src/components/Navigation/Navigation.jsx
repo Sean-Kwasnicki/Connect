@@ -12,6 +12,7 @@ export const socket = io.connect("/");
 
 function Navigation() {
   const [servers, setServers] = useState([]);
+  const [channels, setChannels] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const username = useSelector((state) => {

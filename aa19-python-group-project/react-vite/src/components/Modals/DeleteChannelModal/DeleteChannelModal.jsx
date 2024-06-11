@@ -1,25 +1,30 @@
-import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useModal } from "../../../context/Modal";
 import { deleteChannelThunk } from "../../../redux/channel";
 import { useNavigate, useParams } from "react-router-dom";
+import io from "socket.io-client";
 
-function DeleteChannelModal() {
+const socket = io.connect("/");
+
+function DeleteChannelModal({ channelId }) {
   const navigate = useNavigate();
   const { serverId } = useParams();
   const dispatch = useDispatch();
-  const [name, setName] = useState("");
-  const [errors, setErrors] = useState({});
   const { closeModal } = useModal();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await dispatch(deleteChannelThunk(serverId, { name }));
+    const response = await dispatch(deleteChannelThunk(channelId));
 
-    if (!response.errors) {
+    if (response) {
+      console.log('Emitting delete_channel event with data:', { serverId, channelId });
+      socket.emit('delete_channel', {
+        serverId,
+        channelId,
+        room: `server_${serverId}`
+      });
       closeModal();
-    } else {
-      setErrors(response.errors);
+      navigate(`/servers/${serverId}`);
     }
   };
 
@@ -28,11 +33,8 @@ function DeleteChannelModal() {
       <h1>Delete Channel</h1>
       <form onSubmit={handleSubmit}>
         <label>Are you sure you want to delete this channel?</label>
-        {errors.name && <p>{errors.name}</p>}
-        <button onClick={closeModal}>back</button>
-        <button type="submit" onClick={() => navigate(`servers/${serverId}`)}>
-          Delete Channel
-        </button>
+        <button onClick={closeModal}>Back</button>
+        <button type="submit">Delete Channel</button>
       </form>
     </>
   );

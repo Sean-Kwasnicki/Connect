@@ -1,7 +1,7 @@
 const GET_CHANNELS = "channels/getChannels";
 const CREATE_CHANNEL = "channels/createChannel";
 const DELETE_CHANNEL = "channels/deleteChannel";
-
+const REMOVE_CHANNEL = "channels/removeChannel";
 ///////////////////////////////////////////////////////
 
 const getChannels = (channels) => {
@@ -18,12 +18,19 @@ export const createChannel = (channel) => {
   };
 };
 
-const deleteChannel = (channelId) => {
+export const deleteChannel = (channelId) => {
   return {
     type: DELETE_CHANNEL,
     payload: channelId,
   };
 };
+
+// Action
+export const removeChannel = (channelId) => ({
+  type: 'REMOVE_CHANNEL',
+  channelId,
+});
+
 
 ///////////////////////////////////////////////////////
 
@@ -80,6 +87,11 @@ function channelReducer(state = initialState, action) {
       );
       return { ...state, channels: [...currentChannels] };
     }
+    case 'REMOVE_CHANNEL':
+      return {
+        ...state,
+        channels: state.channels.filter(channel => channel.id !== action.channelId),
+      };
     default:
       return state;
   }

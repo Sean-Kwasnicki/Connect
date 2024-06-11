@@ -1,17 +1,16 @@
-import { Outlet, useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import s from "./Channel.module.css";
+import { Outlet, useParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import io from "socket.io-client";
-import { getMessagesThunk, createMessageThunk } from "../../redux/message";
-import Reaction from "../Reaction/Reaction";
+import { getMessagesThunk } from "../../redux/message";
 import MessagesPage from "../Messages/MessagesPage";
-
 
 const socket = io.connect("/");
 
 const Channel = () => {
   const { channelId } = useParams();
+  const { serverId } = useParams();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -21,13 +20,21 @@ const Channel = () => {
   useEffect(() => {
     if (channelId) {
       socket.emit("join", { room: channelId });
+
+      // Listen for channel removal
+      socket.on('remove_channel', (removedChannelId) => {
+        if (removedChannelId === channelId) {
+          navigate(`/servers/${serverId}`); // Redirect to server page or another appropriate page
+        }
+      });
     }
     return () => {
       if (channelId) {
         socket.emit("leave", { room: channelId });
+        socket.off('remove_channel');
       }
     };
-  }, [channelId]);
+  }, [channelId, serverId, navigate]);
 
   return (
     <>
@@ -38,6 +45,9 @@ const Channel = () => {
 };
 
 export default Channel;
+
+
+
 // Below is the commented-out code for reference
 // const [messages, setMessages] = useState([]);
 // const [content, setContent] = useState("");

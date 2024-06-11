@@ -57,6 +57,15 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # Single source of truth for the current state of each room.
 servers = {} # Was previously 'rooms'
 
+@socketio.on('connect')
+def handle_connect():
+    print('Client connected:', request.sid)
+    emit('message', {'data': 'Connected to the server!'})
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print('Client disconnected:', request.sid)
+
 @socketio.on('join_server')
 def on_join(data):
     server = data['server'] # Was previously 'room'
@@ -104,10 +113,21 @@ def handle_delete_message(data):
 def create_server(data):
     emit('create_server', data['server'], to=-1)
 
-
 @socketio.on('delete_server')
 def delete_server(data):
     emit('delete_server', data['serverId'], to=-1)
+
+@socketio.on('create_channel')
+def create_channel(data):
+    emit('create_channel', data['channel'], to=-1)
+
+@socketio.on('delete_channel')
+def handle_delete_channel(data):
+    room = data['room']
+    server_id = data['serverId']
+    channel_id = data['channelId']
+    print(f'Received delete_channel event for server {server_id}, channel {channel_id}')
+    emit('remove_channel', channel_id, to=room)
 
 @socketio.on('reaction')
 def handle_reaction(data):

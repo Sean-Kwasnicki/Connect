@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import OpenModalMenuItem from "../../Navigation/OpenModalMenuItem";
 import DeleteChannelModal from "./DeleteChannelModal";
 
-function DeleteChannelModalButton() {
+function DeleteChannelModalButton({ channelId }) {
   const [showMenu, setShowMenu] = useState(false);
 
   const toggleMenu = (e) => {
-    e.stopPropagation(); // Keep from bubbling up to document and triggering closeMenu
+    e.stopPropagation(); // Prevent bubbling up to document and triggering closeMenu
     setShowMenu(!showMenu);
   };
 
@@ -25,7 +25,7 @@ function DeleteChannelModalButton() {
       <OpenModalMenuItem
         itemText="Delete Channel"
         onItemClick={closeMenu}
-        modalComponent={<DeleteChannelModal />}
+        modalComponent={<DeleteChannelModal channelId={channelId} />}
       />
     </button>
   );
