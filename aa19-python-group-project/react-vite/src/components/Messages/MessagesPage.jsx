@@ -47,7 +47,7 @@ const MessagesPage = ({ channelId }) => {
             message: { user: user.username, content: message },
             room: channelId,
         });
-        setMessage(''); // Clear the input field
+        setMessage('');
     };
 
     return (
@@ -57,7 +57,7 @@ const MessagesPage = ({ channelId }) => {
                 {Array.isArray(messages) && messages.map(({ user, content, id }) => (
                     <li key={id}>
                         <span>{user}</span>: {content}
-                        <Reaction channelId={channelId} messageId={id} /> {/* Use the Reaction component here */}
+                        <Reaction channelId={channelId} messageId={id} />
                     </li>
                 ))}
             </ul>

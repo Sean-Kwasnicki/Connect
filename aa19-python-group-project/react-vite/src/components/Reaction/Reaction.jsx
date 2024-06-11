@@ -1,5 +1,4 @@
-// src/components/Reaction/Reaction.js
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { addReactionThunk, removeReactionThunk, getReactionsThunk, addReaction, removeReaction } from '../../redux/reaction';
 import io from 'socket.io-client';
@@ -12,6 +11,7 @@ const Reaction = ({ channelId, messageId }) => {
     state.reactions.reactionsByMessageId[messageId] || []
   );
   const user = useSelector((state) => state.session.user);
+  const [Reactions, setReactions] = useState(new Set());
 
   useEffect(() => {
     dispatch(getReactionsThunk(channelId, messageId));
@@ -19,7 +19,7 @@ const Reaction = ({ channelId, messageId }) => {
     socket.emit('join', { room: `channel_${channelId}` });
 
     const handleNewReaction = (reaction) => {
-      if (reaction.message_id === messageId && reaction.user_id !== user.id) {
+      if (reaction.message_id === messageId && !Reactions.has(reaction.id)) {
         dispatch(addReaction(reaction));
       }
     };
@@ -38,25 +38,29 @@ const Reaction = ({ channelId, messageId }) => {
       socket.off('new_reaction', handleNewReaction);
       socket.off('remove_reaction', handleRemoveReaction);
     };
-  }, [dispatch, channelId, messageId, user.id]);
+  }, [dispatch, channelId, messageId, Reactions]);
 
-  const handleAddReaction = (emoji) => {
-    dispatch(addReactionThunk(channelId, messageId, emoji)).then((newReaction) => {
-      if (newReaction) {
-        socket.emit('reaction', {
-          room: `channel_${channelId}`,
-          reaction: newReaction,
-        });
-      }
-    });
-  };
-
-  const handleRemoveReaction = (reactionId) => {
-    dispatch(removeReactionThunk(channelId, messageId, reactionId)).then(() => {
+  const handleAddReaction = async (emoji) => {
+    const newReaction = await dispatch(addReactionThunk(channelId, messageId, emoji));
+    if (newReaction) {
+      setReactions((prev) => new Set(prev).add(newReaction.id));
       socket.emit('reaction', {
         room: `channel_${channelId}`,
-        reaction: { remove: true, reactionId, messageId },
+        reaction: newReaction,
       });
+    }
+  };
+
+  const handleRemoveReaction = async (reactionId) => {
+    await dispatch(removeReactionThunk(channelId, messageId, reactionId));
+    setReactions((prev) => {
+      const updated = new Set(prev);
+      updated.delete(reactionId);
+      return updated;
+    });
+    socket.emit('reaction', {
+      room: `channel_${channelId}`,
+      reaction: { remove: true, reactionId, messageId },
     });
   };
 
