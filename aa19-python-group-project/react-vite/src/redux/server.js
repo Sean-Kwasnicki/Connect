@@ -52,7 +52,9 @@ export const getServersThunk = () => async (dispatch) => {
   if (response.ok) {
     const data = await response.json();
     dispatch(getServers(data));
+    return data;
   }
+  return [];
 };
 
 export const deleteServerThunk = (serverId) => async (dispatch) => {

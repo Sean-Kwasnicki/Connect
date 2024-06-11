@@ -27,15 +27,8 @@ def channel_to_dict(channel):
 @server_routes.route('')
 @login_required
 def all_servers():
-    # print("\n\nhi\n\n")
     servers = Server.query.all()
-    servers_list = [{
-            "id": server.id,
-            "name": server.name,
-            "owner_id": server.owner_id,
-            "created_at": server.created_at,
-            "updated_at": server.updated_at
-        } for server in servers]
+    servers_list = [server.to_dict() for server in servers]
 
     return servers_list
 
@@ -43,12 +36,7 @@ def all_servers():
 @server_routes.route('/<id>')
 @login_required
 def server_by_id(id):
-
-    print("\n\n" + str(current_user.id) + "\n\n")
-
     server = Server.query.get(id)
-
-    print("\n\n" + str(server.owner_id) + "\n\n")
 
     if not server:
         return {

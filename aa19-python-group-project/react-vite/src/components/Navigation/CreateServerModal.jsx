@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useModal } from "../../context/Modal";
 import { createServerThunk } from "../../redux/server";
+import { socket } from "./Navigation";
 
 function CreateServerModal() {
   const dispatch = useDispatch();
@@ -12,8 +13,10 @@ function CreateServerModal() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await dispatch(createServerThunk({ name }));
-
+    console.log();
+    console.log(response);
     if (response.message !== "Bad Request") {
+      socket.emit("create_server", { room: -1, server: response });
       closeModal();
     } else {
       setErrors(response.errors);
