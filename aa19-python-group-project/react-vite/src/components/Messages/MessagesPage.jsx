@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMessagesThunk, createMessageThunk, deleteMessageThunk } from '../../redux/message';
-import { getReactionsThunk } from '../../redux/reaction';
-import { getMessagesThunk, createMessageThunk } from '../../redux/message';
 import { getReactionsThunk, addReaction, addReactionThunk } from '../../redux/reaction';
 import io from 'socket.io-client';
 import Reaction from '../Reaction/Reaction';
