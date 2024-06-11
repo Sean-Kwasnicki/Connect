@@ -6,18 +6,18 @@ import { useNavigate, useParams } from "react-router-dom";
 
 function DeleteChannelModal() {
   const navigate = useNavigate();
-  const { serverId } = useParams();
+  const { serverId, channelId } = useParams(); // Make sure to get channelId if required
   const dispatch = useDispatch();
-  const [name, setName] = useState("");
   const [errors, setErrors] = useState({});
   const { closeModal } = useModal();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await dispatch(deleteChannelThunk(serverId, { name }));
+    const response = await dispatch(deleteChannelThunk(serverId, channelId));
 
     if (!response.errors) {
       closeModal();
+      navigate(`/servers/${serverId}`); // Navigate to server page after deletion
     } else {
       setErrors(response.errors);
     }
@@ -28,11 +28,9 @@ function DeleteChannelModal() {
       <h1>Delete Channel</h1>
       <form onSubmit={handleSubmit}>
         <label>Are you sure you want to delete this channel?</label>
-        {errors.name && <p>{errors.name}</p>}
-        <button onClick={closeModal}>back</button>
-        <button type="submit" onClick={() => navigate(`servers/${serverId}`)}>
-          Delete Channel
-        </button>
+        {errors.message && <p>{errors.message}</p>}
+        <button type="button" onClick={closeModal}>Back</button>
+        <button type="submit">Delete Channel</button>
       </form>
     </>
   );
