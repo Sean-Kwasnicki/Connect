@@ -11,7 +11,7 @@ const getChannels = (channels) => {
   };
 };
 
-const createChannel = (channel) => {
+export const createChannel = (channel) => {
   return {
     type: CREATE_CHANNEL,
     payload: channel,

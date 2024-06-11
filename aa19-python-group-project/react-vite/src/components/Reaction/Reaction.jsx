@@ -1,7 +1,6 @@
-// src/components/Reaction/Reaction.js
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addReactionThunk, removeReactionThunk, getReactionsThunk } from '../../redux/reaction';
+import { addReactionThunk, removeReactionThunk, getReactionsThunk, addReaction, removeReaction } from '../../redux/reaction';
 import io from 'socket.io-client';
 
 const socket = io.connect('/');
@@ -12,39 +11,56 @@ const Reaction = ({ channelId, messageId }) => {
     state.reactions.reactionsByMessageId[messageId] || []
   );
   const user = useSelector((state) => state.session.user);
+  const [Reactions, setReactions] = useState(new Set());
 
   useEffect(() => {
     dispatch(getReactionsThunk(channelId, messageId));
 
-    socket.on('chat', (data) => {
-      const { action, data: eventData } = data;
-      if (action === 'reaction' && eventData.messageId === messageId) {
-        dispatch(getReactionsThunk(channelId, messageId)); // Fetch updated reactions
+    socket.emit('join', { room: `channel_${channelId}` });
+
+    const handleNewReaction = (reaction) => {
+      if (reaction.message_id === messageId && !Reactions.has(reaction.id)) {
+        dispatch(addReaction(reaction));
       }
-    });
+    };
+
+    const handleRemoveReaction = ({ reactionId, messageId: msgId }) => {
+      if (msgId === messageId) {
+        dispatch(removeReaction(reactionId, msgId));
+      }
+    };
+
+    socket.on('new_reaction', handleNewReaction);
+    socket.on('remove_reaction', handleRemoveReaction);
 
     return () => {
-      socket.off('chat');
+      socket.emit('leave', { room: `channel_${channelId}` });
+      socket.off('new_reaction', handleNewReaction);
+      socket.off('remove_reaction', handleRemoveReaction);
     };
-  }, [dispatch, channelId, messageId]);
+  }, [dispatch, channelId, messageId, Reactions]);
 
-  const handleAddReaction = (emoji) => {
-    dispatch(addReactionThunk(channelId, messageId, emoji)).then((newReaction) => {
-      socket.emit('chat', {
-        room: channelId,
-        action: 'reaction',
-        data: { reaction: newReaction }
+  const handleAddReaction = async (emoji) => {
+    const newReaction = await dispatch(addReactionThunk(channelId, messageId, emoji));
+    if (newReaction) {
+      setReactions((prev) => new Set(prev).add(newReaction.id));
+      socket.emit('reaction', {
+        room: `channel_${channelId}`,
+        reaction: newReaction,
       });
-    });
+    }
   };
 
-  const handleRemoveReaction = (reactionId) => {
-    dispatch(removeReactionThunk(channelId, messageId, reactionId)).then(() => {
-      socket.emit('chat', {
-        room: channelId,
-        action: 'reaction',
-        data: { remove: true, reactionId, messageId }
-      });
+  const handleRemoveReaction = async (reactionId) => {
+    await dispatch(removeReactionThunk(channelId, messageId, reactionId));
+    setReactions((prev) => {
+      const updated = new Set(prev);
+      updated.delete(reactionId);
+      return updated;
+    });
+    socket.emit('reaction', {
+      room: `channel_${channelId}`,
+      reaction: { remove: true, reactionId, messageId },
     });
   };
 

@@ -231,9 +231,9 @@ def create_channel(server_id):
 	Authorization: Required (user must be a member of the server)
 	"""
 	if current_user.is_authenticated:
-		server_member = is_server_member(current_user.id, server_id)
-		if not server_member:
-			return {'errors': {'message': 'Forbidden'}}, 403
+		# server_member = is_server_member(current_user.id, server_id)
+		# if not server_member:
+		# 	return {'errors': {'message': 'Forbidden'}}, 403
 
 		form = ChannelForm()
 		form['csrf_token'].data = request.cookies['csrf_token']

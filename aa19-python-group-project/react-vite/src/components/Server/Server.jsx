@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useParams } from "react-router-dom";
-import { getChannelsThunk } from "../../redux/channel";
+import { getChannelsThunk, createChannelThunk, createChannel} from "../../redux/channel";
 import { deleteServerThunk } from "../../redux/server";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -24,30 +24,55 @@ const Server = () => {
   const currentServer = servers.find(server => server.id === parseInt(serverId));
   const serverName = currentServer ? currentServer.name : '';
 
+  // useEffect(() => {
+  //   dispatch(getChannelsThunk(serverId));
+  // }, [dispatch, serverId]);
+
+
+  // useEffect(() => {
+  //   if (serverId && user) {
+  //     // Emit join event when user enters the server
+  //     socket.emit('join_server', { server: serverId, user: user.username });  // Was previously 'room'
+
+  //     // Listen for update_users event and update state
+  //     socket.on('update_users', (data) => {
+  //       if (data.server === serverId) {  // Was previously 'room'
+  //         setUsersInServer(data.users);
+  //       }
+  //     });
+
+  //     // Cleanup on component unmount
+  //     return () => {
+  //       socket.emit('leave_server', { server: serverId, user: user.username });  // Was previously 'room'
+  //       socket.off('update_users');
+  //     };
+  //   }
+  // }, [serverId, user]);
+
   useEffect(() => {
     dispatch(getChannelsThunk(serverId));
-  }, [dispatch, serverId]);
 
-
-  useEffect(() => {
     if (serverId && user) {
-      // Emit join event when user enters the server
-      socket.emit('join_server', { server: serverId, user: user.username });  // Was previously 'room'
+      socket.emit('join_server', { server: serverId, user: user.username });
 
-      // Listen for update_users event and update state
       socket.on('update_users', (data) => {
-        if (data.server === serverId) {  // Was previously 'room'
+        if (data.server === serverId) {
           setUsersInServer(data.users);
         }
       });
 
-      // Cleanup on component unmount
+      socket.on('new_channel', (channel) => {
+        dispatch(createChannel(channel));
+      });
+
       return () => {
-        socket.emit('leave_server', { server: serverId, user: user.username });  // Was previously 'room'
+        socket.emit('leave_server', { server: serverId, user: user.username });
         socket.off('update_users');
+        socket.off('new_channel');
       };
     }
-  }, [serverId, user]);
+  }, [dispatch, serverId, user]);
+
 
   return (
     <>

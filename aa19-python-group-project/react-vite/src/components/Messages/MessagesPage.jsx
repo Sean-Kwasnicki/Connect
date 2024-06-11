@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMessagesThunk, createMessageThunk } from '../../redux/message';
-import { getReactionsThunk } from '../../redux/reaction';
+import { getReactionsThunk, addReaction, addReactionThunk } from '../../redux/reaction';
 import io from 'socket.io-client';
 import Reaction from '../Reaction/Reaction';
 
@@ -22,9 +22,15 @@ const MessagesPage = ({ channelId }) => {
             dispatch(getMessagesThunk(channelId));
         });
 
+        // socket.on('new_reaction', (reaction) => {
+        //     dispatch(addReaction(reaction));
+        // });
+
+
         return () => {
             socket.emit('leave', { room: channelId });
             socket.off('message');
+            // socket.off('new_reaction');
         };
     }, [dispatch, channelId]);
 
@@ -41,7 +47,7 @@ const MessagesPage = ({ channelId }) => {
             message: { user: user.username, content: message },
             room: channelId,
         });
-        setMessage(''); // Clear the input field
+        setMessage('');
     };
 
     return (
@@ -51,7 +57,7 @@ const MessagesPage = ({ channelId }) => {
                 {Array.isArray(messages) && messages.map(({ user, content, id }) => (
                     <li key={id}>
                         <span>{user}</span>: {content}
-                        <Reaction channelId={channelId} messageId={id} /> {/* Use the Reaction component here */}
+                        <Reaction channelId={channelId} messageId={id} />
                     </li>
                 ))}
             </ul>
