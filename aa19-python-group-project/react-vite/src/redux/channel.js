@@ -18,7 +18,7 @@ export const createChannel = (channel) => {
   };
 };
 
-const deleteChannel = (channelId) => {
+export const deleteChannel = (channelId) => {
   return {
     type: DELETE_CHANNEL,
     payload: channelId,

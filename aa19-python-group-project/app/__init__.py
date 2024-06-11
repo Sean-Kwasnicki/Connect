@@ -96,8 +96,16 @@ def handle_message(data):
 
 @socketio.on('channel')
 def handle_channel(data):
+    print(f"Received data: {data}")  # Debugging line
     room = data['room']
-    emit('new_channel', data['channel'], to=room)
+    channel = data['channel']
+    if 'remove' in channel and channel['remove']:
+        channel_id = channel['channelId']
+        print(f"WebSocket Emitting remove_channel event for channelId {channel_id}")  # Debugging line
+        emit('remove_channel', {'channelId': channel_id}, to=room)
+    else:
+        print(f"Emitting new_channel event for channel: {channel}")  # Debugging line
+        emit('new_channel', channel, to=room)
 
 @socketio.on('reaction')
 def handle_reaction(data):
