@@ -94,6 +94,7 @@ def handle_message(data):
     room = data['room']
     emit('message', data['message'], to=room)
 
+<<<<<<< HEAD
 @socketio.on('channel')
 def handle_channel(data):
     room = data['room']
@@ -107,6 +108,13 @@ def handle_reaction(data):
         emit('remove_reaction', {'reactionId': reaction['reactionId'], 'messageId': reaction['messageId']}, to=room)
     else:
         emit('new_reaction', reaction, to=room)
+=======
+@socketio.on('delete_message')
+def handle_delete_message(data):
+    room = data['room']
+    message_id = data['message_id']
+    emit('message_deleted', {'message_id': message_id}, to=room)
+>>>>>>> delete-message
 
 
 if __name__ == '__main__':
