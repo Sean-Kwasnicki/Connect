@@ -109,8 +109,14 @@ def create_server(data):
 def delete_server(data):
     emit('delete_server', data['serverId'], to=-1)
 
-
-
+@socketio.on('reaction')
+def handle_reaction(data):
+    room = data['room']
+    reaction = data['reaction']
+    if 'remove' in reaction and reaction['remove']:
+        emit('remove_reaction', {'reactionId': reaction['reactionId'], 'messageId': reaction['messageId']}, to=room)
+    else:
+        emit('new_reaction', reaction, to=room)
 
 if __name__ == '__main__':
     socketio.run(app)
