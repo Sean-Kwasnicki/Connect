@@ -1,20 +1,55 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import ProfileButton from "./ProfileButton";
 import s from "./Navigation.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { getServersThunk } from "../../redux/server";
 import CreateServerButton from "./CreateServerButton";
+import io from "socket.io-client";
 import { IoIosHome } from "react-icons/io";
 
+export const socket = io.connect("/");
+
 function Navigation() {
-  const servers = useSelector((state) => state.servers.servers);
+  const [servers, setServers] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const username = useSelector((state) => {
+    if (state.session.user) {
+      return state.session.user.username;
+    } else {
+      return null;
+    }
+  });
 
+  //get servers on initial render
   useEffect(() => {
-    dispatch(getServersThunk());
-  }, [dispatch]);
+    const getServers = async () => {
+      const servers = await dispatch(getServersThunk());
+      setServers(servers);
+      socket.emit("join", { user: username, room: -1 });
+    };
+    getServers();
+
+    socket.on("create_server", (data) => {
+      setServers((prevServers) => [...prevServers, data]);
+    });
+
+    socket.on("delete_server", (serverId) => {
+      console.log("hit delete server emit");
+      setServers((prevServers) =>
+        prevServers.filter(({ id }) => {
+          return id !== Number(serverId);
+        })
+      );
+    });
+
+    return () => {
+      socket.emit("leave", { user: username, room: -1 });
+      socket.off("create_server");
+      socket.off("delete_server");
+    };
+  }, []);
 
   return (
     <nav className={s.nav_bar}>

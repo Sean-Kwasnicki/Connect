@@ -94,6 +94,19 @@ def handle_message(data):
     room = data['room']
     emit('message', data['message'], to=room)
 
+
+@socketio.on('create_server')
+def create_server(data):
+    emit('create_server', data['server'], to=-1)
+
+
+@socketio.on('delete_server')
+def delete_server(data):
+    emit('delete_server', data['serverId'], to=-1)
+
+
+
+
 if __name__ == '__main__':
     socketio.run(app)
 

@@ -17,3 +17,12 @@ class Server(db.Model):
 
     users = db.relationship("ServerMember", cascade = "all,delete")
     channels = db.relationship("Channel", cascade = "all,delete")
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'owner_id': self.owner_id,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
+        }

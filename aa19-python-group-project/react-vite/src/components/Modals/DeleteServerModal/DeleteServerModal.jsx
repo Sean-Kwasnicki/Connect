@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { useModal } from "../../../context/Modal";
 import { deleteServerThunk } from "../../../redux/server";
 import { useNavigate, useParams } from "react-router-dom";
+import { socket } from "../../Navigation/Navigation";
 
 function DeleteServerModal() {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ function DeleteServerModal() {
 
     if (!response.errors) {
       closeModal();
+      socket.emit("delete_server", { serverId });
       navigate("/");
     } else {
       setErrors(response.errors);
