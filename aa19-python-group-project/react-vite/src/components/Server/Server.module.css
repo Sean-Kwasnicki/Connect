@@ -3,3 +3,17 @@
     background-color: gray;
   }
 }
+
+.channels_container{
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 8px;
+  background-color: white;
+  outline: 2px solid white;
+  & > li {list-style: none;}
+}
+
+.hashtag_symbol_inside_channel{
+
+}

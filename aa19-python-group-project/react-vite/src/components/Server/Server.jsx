@@ -1,5 +1,5 @@
-import { NavLink, Outlet, useParams } from "react-router-dom";
-import { getChannelsThunk, createChannelThunk, createChannel} from "../../redux/channel";
+import { NavLink, Navigate, Outlet, useNavigate, useParams } from "react-router-dom";
+import { getChannelsThunk, createChannelThunk, createChannel } from "../../redux/channel";
 import { deleteServerThunk } from "../../redux/server";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -14,6 +14,7 @@ const socket = io.connect("/");
 const Server = () => {
   const { serverId } = useParams("serverId");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const channels = useSelector((state) => state.channels.channels);
   const user = useSelector((state) => state.session.user);
@@ -49,15 +50,18 @@ const Server = () => {
 
   return (
     <>
-      <ul className="channels">
+      <ul className={s.channels_container}>
         {channels.map(({ name, id }) => {
           const navTo = `/servers/${serverId}/channels/${id}`;
           return (
             <li key={id}>
-              <NavLink key={id} to={navTo} className="server">
-                {name}
-              </NavLink>
-              <DeleteChannelModalButton channelId={id} />
+              <div onClick={e => {
+                e.preventDefault()
+                navigate(navTo)
+              }} key={id} to={navTo} className="server">
+                <span className={s.hashtag_symbol_inside_channel}>#</span>{name}
+              </div>
+              {/* <DeleteChannelModalButton channelId={id} /> */}
             </li>
           );
         })}
