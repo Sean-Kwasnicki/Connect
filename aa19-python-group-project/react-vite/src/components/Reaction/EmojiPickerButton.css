@@ -1,0 +1,10 @@
+/* EmojiPickerButton.css */
+.emoji-picker-container {
+  position: relative;
+}
+
+.emoji-picker-icon {
+  display: inline;
+  cursor: pointer;
+  margin-left: 10px;
+}

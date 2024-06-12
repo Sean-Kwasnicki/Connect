@@ -1,13 +1,12 @@
 import { NavLink, Outlet, useParams } from "react-router-dom";
-import { getChannelsThunk, createChannelThunk, createChannel} from "../../redux/channel";
-import { deleteServerThunk } from "../../redux/server";
+import { getChannelsThunk } from "../../redux/channel";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import s from "./Server.module.css";
 import CreateChannelButton from "../Modals/CreateChannelModal/CreateChannelModalButton";
 import DeleteServerModalButton from "../Modals/DeleteServerModal/DeleteServerModalButton";
 import DeleteChannelModalButton from "../Modals/DeleteChannelModal/DeleteChannelModalButton";
-import io from "socket.io-client"
+import io from "socket.io-client";
 
 const socket = io.connect("/");
 
@@ -25,7 +24,6 @@ const Server = () => {
   const currentServer = servers.find(server => server.id === parseInt(serverId));
   const serverName = currentServer ? currentServer.name : '';
 
-
   useEffect(() => {
     dispatch(getChannelsThunk(serverId));
 
@@ -38,7 +36,6 @@ const Server = () => {
         }
       });
 
-
       return () => {
         socket.emit('leave_server', { server: serverId, user: user.username });
         socket.off('update_users');
@@ -46,25 +43,24 @@ const Server = () => {
     }
   }, [dispatch, serverId, user]);
 
-
   return (
     <>
-      <ul className="channels">
+      <ul className={s.channels}>
         {channels.map(({ name, id }) => {
           const navTo = `/servers/${serverId}/channels/${id}`;
           return (
-            <li key={id}>
-              <NavLink key={id} to={navTo} className="server">
+            <li key={id} className={`${s.serverItem} channel`}>
+              <NavLink key={id} to={navTo} className={s.server}>
                 {name}
               </NavLink>
-              <DeleteChannelModalButton channelId={id} />
+              <DeleteChannelModalButton channelId={id} serverId={serverId} />
             </li>
           );
         })}
         <DeleteServerModalButton />
         <CreateChannelButton />
       </ul>
-      <div className="users">
+      <div className={s.users}>
         <h3>Users in {serverName}</h3>
         <ul>
           {usersInServer.map((username, index) => (

@@ -1,5 +1,18 @@
-.server {
-  &:hover {
-    background-color: gray;
-  }
+.server-item {
+  position: relative;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete-icon {
+  visibility: hidden;
+  color: red;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.server-item:hover .delete-icon {
+  visibility: visible;
 }

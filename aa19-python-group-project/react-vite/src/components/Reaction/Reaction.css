@@ -1,0 +1,20 @@
+/* Reaction.css */
+
+.reaction-container {
+  position: relative;
+}
+
+.emoji-picker-button {
+  display: none; /* Initially hidden */
+  position: absolute;
+  right: 0;
+}
+
+.reaction-container:hover .emoji-picker-button {
+  display: inline-block; /* Show on hover */
+}
+
+.reaction-counts {
+  display: flex;
+  gap: 5px;
+}

@@ -1,0 +1,10 @@
+/* MessagesPage.css */
+
+.message-item {
+  position: relative;
+  padding: 5px;
+}
+
+.message-item:hover .emoji-picker-button {
+  display: inline-block;
+}
