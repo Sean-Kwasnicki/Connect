@@ -18,6 +18,10 @@ import CreateChannelButton from "../Modals/CreateChannelModal/CreateChannelModal
 import DeleteServerModalButton from "../Modals/DeleteServerModal/DeleteServerModalButton";
 import DeleteChannelModalButton from "../Modals/DeleteChannelModal/DeleteChannelModalButton";
 import io from "socket.io-client";
+import { IoIosArrowDown } from "react-icons/io";
+import { RxCross2 } from "react-icons/rx";
+import { FaCirclePlus } from "react-icons/fa6";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 const socket = io.connect("/");
 
@@ -32,7 +36,10 @@ const Server = () => {
 
   const [usersInServer, setUsersInServer] = useState([]);
 
-  const [isSelected, setIsSelected] = useState(null);
+  const [channelIsSelected, setChannelIsSelected] = useState(null);
+  const [downArrowIsSelected, setDownArrowIsSelected] = useState(false);
+
+  useEffect(() => {}, [downArrowIsSelected]);
 
   // Find the server name based on serverId
   const currentServer = servers.find(
@@ -62,11 +69,31 @@ const Server = () => {
   return (
     <>
       <ul className={s.channels_container}>
-        <li className={s.server_name}>{serverName}</li>
+        <li className={s.server_bar}>
+          <span className={s.server_name}>{serverName}</span>
+          <span
+            className={s.arrow}
+            onClick={() => {
+              setDownArrowIsSelected((prev) => !prev);
+            }}
+          >
+            {!downArrowIsSelected && <IoIosArrowDown />}
+            {downArrowIsSelected && <RxCross2 />}
+          </span>
+        </li>
+        <li
+          className={s.server_menu_container}
+          style={{
+            display: downArrowIsSelected ? "" : "none",
+          }}
+        >
+          <CreateChannelButton Component={CreateChannelButtonComponent} />
+          <DeleteServerModalButton Component={DeleteServerButtonComponent} />
+        </li>
         {channels.map(({ name, id }) => {
           const navTo = `/servers/${serverId}/channels/${id}`;
           let channelClass;
-          if (isSelected === id) {
+          if (channelIsSelected === id) {
             channelClass = s.channel_item_selected;
           } else {
             channelClass = s.channel_item;
@@ -78,30 +105,36 @@ const Server = () => {
               onClick={(e) => {
                 e.preventDefault();
                 navigate(navTo);
-                setIsSelected(id);
-                console.log(isSelected);
+                setChannelIsSelected(id);
               }}
               to={navTo}
             >
               <span className={s.hashtag_symbol_inside_channel}>#</span>
-              <span className={s.server_name_text}>{name}</span>
+              <span className={s.channel_name_text}>{name}</span>
             </li>
-            // {/* <DeleteChannelModalButton channelId={id} /> */}
           );
         })}
-        <DeleteServerModalButton />
-        <CreateChannelButton />
       </ul>
-      {/* <div className="users">
-        <h3>Users in {serverName}</h3>
-        <ul>
-          {usersInServer.map((username, index) => (
-            <li key={index}>{username}</li>
-          ))}
-        </ul>
-      </div> */}
       <Outlet />
     </>
+  );
+};
+
+const CreateChannelButtonComponent = () => {
+  return (
+    <div className={s.create_channel_button}>
+      <span>Create Channel</span>
+      <FaCirclePlus className={s.create_channel_plus_symbol} />
+    </div>
+  );
+};
+
+const DeleteServerButtonComponent = () => {
+  return (
+    <div className={s.create_channel_button}>
+      <span>Delete Server</span>
+      <FaRegTrashAlt className={s.create_channel_plus_symbol} />
+    </div>
   );
 };
 
