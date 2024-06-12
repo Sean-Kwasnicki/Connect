@@ -8,6 +8,9 @@
   display: none; /* Initially hidden */
   position: absolute;
   right: 0;
+  border: none;
+  background: white;
+  margin-top: -30px;
 }
 
 .reaction-container:hover .emoji-picker-button {
@@ -17,4 +20,9 @@
 .reaction-counts {
   display: flex;
   gap: 5px;
+}
+
+.fas {
+  font-size: 24px; /* Adjust the size as needed */
+  color: #b9bbbe; /* Light grey color */
 }

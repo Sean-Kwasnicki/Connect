@@ -4,6 +4,8 @@ import { addReactionThunk, removeReactionThunk, getReactionsThunk, addReaction, 
 import EmojiPicker from 'emoji-picker-react';
 import io from 'socket.io-client';
 import './Reaction.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 const socket = io.connect('/');
 
@@ -86,7 +88,9 @@ const Reaction = ({ channelId, messageId }) => {
 
   return (
     <div className="reaction-container">
-      <button onClick={handleEmojiIconClick} className="emoji-picker-button">😊</button>
+      <button onClick={handleEmojiIconClick} className="emoji-picker-button">
+      <i className="fas fa-smile"></i>
+        </button>
       {showEmojiPicker && (
         <EmojiPicker onEmojiClick={handleEmojiClick} />
       )}
@@ -105,4 +109,3 @@ const Reaction = ({ channelId, messageId }) => {
 };
 
 export default Reaction;
-

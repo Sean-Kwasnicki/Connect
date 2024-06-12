@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMessagesThunk, createMessageThunk } from '../../redux/message';
-import { getReactionsThunk, addReaction, addReactionThunk } from '../../redux/reaction';
+import { getReactionsThunk } from '../../redux/reaction';
 import io from 'socket.io-client';
 import Reaction from '../Reaction/Reaction';
 import './MessagesPage.css';
@@ -22,15 +22,9 @@ const MessagesPage = ({ channelId }) => {
             dispatch(getMessagesThunk(channelId));
         });
 
-        // socket.on('new_reaction', (reaction) => {
-        //     dispatch(addReaction(reaction));
-        // });
-
-
         return () => {
             socket.emit('leave', { room: channelId });
             socket.off('message');
-            // socket.off('new_reaction');
         };
     }, [dispatch, channelId]);
 
@@ -56,7 +50,11 @@ const MessagesPage = ({ channelId }) => {
             <ul>
                 {Array.isArray(messages) && messages.map(({ user, content, id }) => (
                     <li key={id} className="message-item">
-                        <span>{user}</span>: {content}
+                        <div className="message-content">
+                            <span className="user-name">{user}</span>
+                            <span className="message-text">{content}</span>
+                            {/* <button className="emoji-picker-button">😊</button> */}
+                        </div>
                         <Reaction channelId={channelId} messageId={id} />
                     </li>
                 ))}
