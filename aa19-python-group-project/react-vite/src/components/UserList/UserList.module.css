@@ -1,0 +1,28 @@
+.userList {
+    width: 100%;
+    background-color: #2f3136;
+    color: white;
+    padding: 10px;
+}
+
+.userList h2 {
+    margin-bottom: 10px;
+}
+
+.userList ul {
+    list-style: none;
+    padding: 0;
+}
+
+.userList li {
+    margin-bottom: 10px;
+}
+
+.userList a {
+    color: white;
+    text-decoration: none;
+}
+
+.userList a:hover {
+    text-decoration: underline;
+}

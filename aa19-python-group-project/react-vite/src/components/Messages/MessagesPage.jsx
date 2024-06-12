@@ -21,15 +21,9 @@ const MessagesPage = ({ channelId }) => {
             dispatch(getMessagesThunk(channelId));
         });
 
-        // socket.on('new_reaction', (reaction) => {
-        //     dispatch(addReaction(reaction));
-        // });
-
-
         return () => {
             socket.emit('leave', { room: channelId });
             socket.off('message');
-            // socket.off('new_reaction');
         };
     }, [dispatch, channelId]);
 

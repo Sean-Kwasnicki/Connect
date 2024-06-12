@@ -1,3 +1,4 @@
+// src/Layout.jsx
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,22 +15,23 @@ export default function Layout() {
   const user = useSelector((state) => state.session.user);
 
   useEffect(() => {
-    dispatch(thunkAuthenticate())
-      .then(() => setIsLoaded(true))
-      .then(() => {
-        if (!user) {
-          navigate("/login");
-        }
-      });
-    //putting user in this array causes an infinite loop
-  }, []);
+    dispatch(thunkAuthenticate()).then(() => setIsLoaded(true));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!user && isLoaded) {
+      navigate("/login");
+    }
+  }, [user, isLoaded, navigate]);
 
   return (
     <>
       <ModalProvider>
         <div className={s.layout}>
-          <Navigation />
-          {isLoaded && <Outlet />}
+          <Navigation className={s.navigation} />
+          <div className={s.content}>
+            {isLoaded && <Outlet />}
+          </div>
           <Modal />
         </div>
       </ModalProvider>

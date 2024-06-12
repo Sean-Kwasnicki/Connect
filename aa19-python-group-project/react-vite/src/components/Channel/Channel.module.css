@@ -1,0 +1,53 @@
+/* src/components/Channel/Channel.module.css */
+.container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+.channels {
+    flex: 1;
+    background-color: #2f3136;
+    color: white;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.messages {
+    flex: 3;
+    background-color: #36393f;
+    color: white;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.users {
+    flex: 1;
+    background-color: #2f3136;
+    color: white;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.users h2 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.users ul {
+    list-style: none;
+    padding: 0;
+}
+
+.users li {
+    margin: 5px 0;
+}
+
+.users a {
+    color: white;
+    text-decoration: none;
+}
+
+.users a:hover {
+    text-decoration: underline;
+}
