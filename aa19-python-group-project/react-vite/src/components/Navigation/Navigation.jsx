@@ -79,9 +79,9 @@ function Navigation() {
       })}
       <CreateServerButton />
 
-      <div className={s.profile_button}>
+      {/* <div className={s.profile_button}>
         <ProfileButton />
-      </div>
+      </div> */}
     </nav>
   );
 }

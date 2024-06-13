@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ModalProvider, Modal } from "../context/Modal";
 import { thunkAuthenticate } from "../redux/session";
 import Navigation from "../components/Navigation/Navigation";
+import ProfileCard from "../components/ProfileCard";
 import s from "./Layout.module.css";
 
 export default function Layout() {
@@ -29,6 +30,7 @@ export default function Layout() {
       <ModalProvider>
         <div className={s.layout}>
           <Navigation />
+          <ProfileCard />
           {isLoaded && <Outlet />}
           <Modal />
         </div>
