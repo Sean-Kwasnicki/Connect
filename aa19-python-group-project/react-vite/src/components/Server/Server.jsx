@@ -42,6 +42,8 @@ const Server = () => {
   const [channelIsSelected, setChannelIsSelected] = useState(null);
   const [downArrowIsSelected, setDownArrowIsSelected] = useState(false);
 
+  const closeDropdown = () => setDownArrowIsSelected(false);
+
   useEffect(() => {}, [downArrowIsSelected]);
 
   const currentServer = servers.find(
@@ -91,7 +93,7 @@ const Server = () => {
         >
           <CreateChannelButton Component={CreateChannelButtonComponent} />
           <DeleteServerModalButton Component={DeleteServerButtonComponent} />
-          <ServerMemberButton Component={ServerMemberButtonComponent} />
+          <ServerMemberButton Component={ServerMemberButtonComponent} closeDropdown={closeDropdown} />
         </li>
         {channels.map(({ name, id }) => {
           const navTo = `/servers/${serverId}/channels/${id}`;

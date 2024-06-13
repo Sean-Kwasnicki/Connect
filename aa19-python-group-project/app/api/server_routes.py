@@ -207,6 +207,28 @@ def get_members(id):
     members = User.query.join(ServerMember).filter(ServerMember.server_id == id).all()
     return jsonify([member.to_dict() for member in members])
 
+@server_routes.route("/<id>/members/<member_id>", methods=["DELETE"])
+@login_required
+def delete_member(id, member_id):
+    print(f"Attempting to delete member: {member_id} from server: {id}")
+
+    server = Server.query.get(id)
+    if not server:
+        print("Server not found")
+        return {"message": "Server not found"}, 404
+
+    member = ServerMember.query.filter_by(user_id=member_id, server_id=id).first()
+    if not member:
+        print("Member not found")
+        return {"message": "Member not found"}, 404
+
+    print(f"Deleting member: {member_id}")
+    db.session.delete(member)
+    db.session.commit()
+
+    print("Member deleted")
+    return {"message": "Member deleted"}
+
 
 @server_routes.route('/<int:server_id>/channels', methods=['GET'])
 @login_required

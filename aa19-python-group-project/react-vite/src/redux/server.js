@@ -6,7 +6,7 @@ const JOIN_SERVER = "servers/joinServer";
 const LEAVE_SERVER = "servers/leaveServer";
 const GET_MEMBERS = 'servers/getMembers';
 const ADD_MEMBER = 'servers/addMember';
-
+const DELETE_MEMBER = 'servers/deleteMember';
 
 // Action Creators
 const getServers = (servers) => ({
@@ -42,6 +42,11 @@ const getMembers = (members) => ({
 const addMember = (member) => ({
   type: ADD_MEMBER,
   payload: member,
+});
+
+const deleteMember = (memberId) => ({
+  type: DELETE_MEMBER,
+  payload: memberId,
 });
 
 // Thunks
@@ -113,6 +118,27 @@ export const getMembersThunk = (serverId) => async (dispatch) => {
   }
 };
 
+
+export const deleteMemberThunk = (serverId, memberId) => async (dispatch) => {
+  console.log(`Attempting to delete member: ${memberId} from server: ${serverId}`);
+
+  const response = await fetch(`/api/servers/${serverId}/members/${memberId}`, {
+    method: 'DELETE',
+  });
+
+  if (response.ok) {
+    console.log("Member deleted successfully");
+    dispatch(deleteMember(memberId));
+    return { message: 'Member deleted' };
+  } else {
+    const errorData = await response.json();
+    console.log("Failed to delete member:", errorData);
+    return { errors: errorData };
+  }
+};
+
+
+
 export const leaveServerThunk = (user) => async (dispatch) => {
   dispatch(leaveServer(user));
 };
@@ -149,6 +175,12 @@ function serverReducer(state = initialState, action) {
     }
     case ADD_MEMBER: {
       return { ...state, members: [...state.members, action.payload] };
+    }
+    case DELETE_MEMBER: {
+      return {
+        ...state,
+        members: state.members.filter(member => member.id !== action.payload),
+      };
     }
     default:
       return state;
