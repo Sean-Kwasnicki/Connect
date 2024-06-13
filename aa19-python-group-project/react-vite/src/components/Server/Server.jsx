@@ -90,8 +90,14 @@ const Server = () => {
             display: downArrowIsSelected ? "" : "none",
           }}
         >
-          <CreateChannelButton Component={CreateChannelButtonComponent} />
-          <DeleteServerModalButton Component={DeleteServerButtonComponent} />
+          <CreateChannelButton
+            Component={CreateChannelButtonComponent}
+            closeDropdown={closeDropdown}
+          />
+          <DeleteServerModalButton
+            Component={DeleteServerButtonComponent}
+            closeDropdown={closeDropdown}
+          />
           <ServerMemberButton
             Component={ServerMemberButtonComponent}
             closeDropdown={closeDropdown}

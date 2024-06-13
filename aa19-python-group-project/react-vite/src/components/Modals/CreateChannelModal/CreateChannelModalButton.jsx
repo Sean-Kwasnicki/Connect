@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import OpenModalMenuItem from "../../Navigation/OpenModalMenuItem";
 import CreateChannelModal from "./CreateChannelModal";
 
-function CreateChannelModalButton({ Component }) {
+function CreateChannelModalButton({ Component, closeDropdown }) {
   const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
@@ -13,7 +13,10 @@ function CreateChannelModalButton({ Component }) {
     return () => document.removeEventListener("click", closeMenu);
   }, [showMenu]);
 
-  const closeMenu = () => setShowMenu(false);
+  const closeMenu = () => {
+    setShowMenu(false);
+    if (closeDropdown) closeDropdown();
+  };
 
   return (
     <OpenModalMenuItem

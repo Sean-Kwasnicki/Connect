@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import OpenModalMenuItem from "../../Navigation/OpenModalMenuItem";
 import DeleteServerModal from "./DeleteServerModal";
 
-function DeleteServerModalButton({ Component }) {
+function DeleteServerModalButton({ Component, closeDropdown }) {
   const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
@@ -13,7 +13,10 @@ function DeleteServerModalButton({ Component }) {
     return () => document.removeEventListener("click", closeMenu);
   }, [showMenu]);
 
-  const closeMenu = () => setShowMenu(false);
+  const closeMenu = () => {
+    setShowMenu(false);
+    if (closeDropdown) closeDropdown();
+  };
 
   return (
     <OpenModalMenuItem
