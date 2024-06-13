@@ -64,7 +64,15 @@ function Navigation() {
       {servers.map(({ name, id }) => {
         const navTo = `/servers/${id}`;
         return (
-          <div key={id} onClick={() => navigate(navTo)} className={s.server}>
+          <div
+            key={id}
+            onClick={(e) => {
+              navigate(navTo);
+              console.log(e);
+            }}
+            className={s.server}
+            onContextMenu={(e) => e.preventDefault()}
+          >
             {name[0].toUpperCase()}
           </div>
         );
