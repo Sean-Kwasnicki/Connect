@@ -8,13 +8,12 @@ function ServerMemberModal() {
   const dispatch = useDispatch();
   const { closeModal } = useModal();
   const { serverId } = useParams();
-  const { userId } = useParams()
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [errors, setErrors] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await dispatch(joinServerThunk(userId));
+    const response = await dispatch(joinServerThunk({ serverId, username }));
 
     if (!response.errors) {
       closeModal();
@@ -28,15 +27,15 @@ function ServerMemberModal() {
       <h1>Invite People</h1>
       <form onSubmit={handleSubmit}>
         <label>
-          Email:
+          Username:
           <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
         </label>
-        {errors.email && <p>{errors.email}</p>}
+        {errors.username && <p>{errors.username}</p>}
         <button type="button" onClick={closeModal}>Cancel</button>
         <button type="submit">Invite</button>
       </form>
