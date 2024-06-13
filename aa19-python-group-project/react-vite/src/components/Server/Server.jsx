@@ -42,7 +42,6 @@ const Server = () => {
 
   useEffect(() => {}, [downArrowIsSelected]);
 
-  // Find the server name based on serverId
   const currentServer = servers.find(
     (server) => server.id === parseInt(serverId)
   );
@@ -68,7 +67,7 @@ const Server = () => {
   }, [dispatch, serverId, user]);
 
   return (
-    <div className={s.container}> {/* Added container div */}
+    <div className={s.container}>
       <ul className={s.channels_container}>
         <li className={s.server_bar}>
           <span className={s.server_name}>{serverName}</span>
@@ -116,10 +115,8 @@ const Server = () => {
           );
         })}
       </ul>
-      <div className={s.main_content}> {/* Added main_content div */}
-        <Outlet />
-        <UserList />
-      </div>
+      <Outlet />
+      <UserList /> {/* Add UserList here */}
     </div>
   );
 };
