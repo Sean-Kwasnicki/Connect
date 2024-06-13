@@ -17,6 +17,8 @@ import s from "./Server.module.css";
 import CreateChannelButton from "../Modals/CreateChannelModal/CreateChannelModalButton";
 import DeleteServerModalButton from "../Modals/DeleteServerModal/DeleteServerModalButton";
 import DeleteChannelModalButton from "../Modals/DeleteChannelModal/DeleteChannelModalButton";
+import ServerMemberButton from "./ServerMemberModalButton";
+import ServerMemberModal from "./ServerMemberModal";
 import io from "socket.io-client";
 import { IoIosArrowDown } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
@@ -89,6 +91,7 @@ const Server = () => {
         >
           <CreateChannelButton Component={CreateChannelButtonComponent} />
           <DeleteServerModalButton Component={DeleteServerButtonComponent} />
+          <ServerMemberButton Component={ServerMemberButtonComponent} />
         </li>
         {channels.map(({ name, id }) => {
           const navTo = `/servers/${serverId}/channels/${id}`;
@@ -137,5 +140,15 @@ const DeleteServerButtonComponent = () => {
     </div>
   );
 };
+
+const ServerMemberButtonComponent = () => {
+  return (
+    <div className={s.create_channel_button}>
+      <span>Invite People</span>
+      <FaCirclePlus className={s.create_channel_plus_symbol} />
+    </div>
+  );
+};
+
 
 export default Server;
