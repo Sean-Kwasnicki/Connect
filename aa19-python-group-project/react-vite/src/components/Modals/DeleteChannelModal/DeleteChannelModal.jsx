@@ -27,20 +27,24 @@ function DeleteChannelModal({ serverChannels, serverId }) {
   };
 
   return (
-    <div className={s.modalBackdrop} onClick={closeModal}>
-      <div className={s.modalContent} onClick={(e) => e.stopPropagation()}>
-        <h2>Delete Channel</h2>
+    <div className={s.item_container} onClick={closeModal}>
+      <div className={s.item} onClick={(e) => e.stopPropagation()}>
+        <h2 className={s.header_1}>Delete Channel</h2>
         <form onSubmit={handleDelete}>
-          <p>Type the name of the channel to confirm deletion:</p>
+          <div className={s.form_input}>
+          <label>Type the name of the channel to confirm deletion:</label>
           <input
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             className={s.input}
           />
+          </div>
           {errors.name && <p className={s.error}>{errors.name}</p>}
-          <button type="submit" className={s.deleteButton}>Delete</button>
-          <button type="button" onClick={closeModal} className={s.cancelButton}>Cancel</button>
+          <div className={s.bottom_buttons}>
+          <button type="submit" className={s.submit_button}>Delete</button>
+          <button type="button" onClick={closeModal} className={s.back_button}>Cancel</button>
+          </div>
         </form>
       </div>
     </div>
