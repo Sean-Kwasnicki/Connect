@@ -1,24 +1,25 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { useModal } from "../../context/Modal";
-import { joinServerThunk } from "../../redux/server";
-import { useParams } from "react-router-dom";
+// src/components/ServerMemberModal/ServerMemberModal.js
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useModal } from '../../context/Modal';
+import { joinServerThunk } from '../../redux/server';
+import { useParams } from 'react-router-dom';
 
 function ServerMemberModal() {
   const dispatch = useDispatch();
   const { closeModal } = useModal();
   const { serverId } = useParams();
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState('');
   const [errors, setErrors] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await dispatch(joinServerThunk({ serverId, username }));
-
-    if (!response.errors) {
+    console.log('Invite response:', response); 
+    if (response && !response.errors) {
       closeModal();
     } else {
-      setErrors(response.errors);
+      setErrors(response?.errors || { message: 'Unknown error occurred' });
     }
   };
 
@@ -29,15 +30,15 @@ function ServerMemberModal() {
         <label>
           Username:
           <input
-            type="text"
+            type='text'
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
           />
         </label>
         {errors.username && <p>{errors.username}</p>}
-        <button type="button" onClick={closeModal}>Cancel</button>
-        <button type="submit">Invite</button>
+        <button type='button' onClick={closeModal}>Cancel</button>
+        <button type='submit'>Invite</button>
       </form>
     </>
   );

@@ -19,6 +19,7 @@ import DeleteServerModalButton from "../Modals/DeleteServerModal/DeleteServerMod
 import DeleteChannelModalButton from "../Modals/DeleteChannelModal/DeleteChannelModalButton";
 import ServerMemberButton from "./ServerMemberModalButton";
 import ServerMemberModal from "./ServerMemberModal";
+import ServerMembers from "./ServerMembers"
 import io from "socket.io-client";
 import { IoIosArrowDown } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
@@ -43,7 +44,6 @@ const Server = () => {
 
   useEffect(() => {}, [downArrowIsSelected]);
 
-  // Find the server name based on serverId
   const currentServer = servers.find(
     (server) => server.id === parseInt(serverId)
   );
@@ -118,6 +118,7 @@ const Server = () => {
           );
         })}
       </ul>
+      <ServerMembers usersInServer={usersInServer} />
       <Outlet />
     </>
   );

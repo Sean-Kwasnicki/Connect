@@ -4,6 +4,9 @@ const CREATE_SERVER = "servers/createServer";
 const DELETE_SERVER = "servers/deleteServer";
 const JOIN_SERVER = "servers/joinServer";
 const LEAVE_SERVER = "servers/leaveServer";
+const GET_MEMBERS = 'servers/getMembers';
+const ADD_MEMBER = 'servers/addMember';
+
 
 // Action Creators
 const getServers = (servers) => ({
@@ -29,6 +32,16 @@ const joinServer = (user) => ({
 const leaveServer = (user) => ({
   type: LEAVE_SERVER,
   payload: user,
+});
+
+const getMembers = (members) => ({
+  type: GET_MEMBERS,
+  payload: members,
+});
+
+const addMember = (member) => ({
+  type: ADD_MEMBER,
+  payload: member,
 });
 
 // Thunks
@@ -58,7 +71,6 @@ export const getServersThunk = () => async (dispatch) => {
 };
 
 export const deleteServerThunk = (serverId) => async (dispatch) => {
-  console.log(`/api/servers/${serverId}`);
   const response = await fetch(`/api/servers/${serverId}`, {
     method: "DELETE",
   });
@@ -69,8 +81,36 @@ export const deleteServerThunk = (serverId) => async (dispatch) => {
   return "bad";
 };
 
-export const joinServerThunk = (user) => async (dispatch) => {
-  dispatch(joinServer(user));
+export const joinServerThunk = ({ serverId, username }) => async (dispatch) => {
+  try {
+    const response = await fetch(`/api/servers/${serverId}/members`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      dispatch(addMember(data.user));
+      return data;
+    } else {
+      const errorData = await response.json();
+      return { errors: errorData };
+    }
+  } catch (error) {
+    return { errors: { message: 'Network error' } };
+  }
+};
+
+export const getMembersThunk = (serverId) => async (dispatch) => {
+  const response = await fetch(`/api/servers/${serverId}/members`);
+  if (response.ok) {
+    const data = await response.json();
+    dispatch(getMembers(data));
+    return data;
+  }
 };
 
 export const leaveServerThunk = (user) => async (dispatch) => {
@@ -78,7 +118,7 @@ export const leaveServerThunk = (user) => async (dispatch) => {
 };
 
 // Initial State
-const initialState = { servers: [], users: [] };
+const initialState = { servers: [], users: [], members: [] };
 
 // Reducer
 function serverReducer(state = initialState, action) {
@@ -103,6 +143,12 @@ function serverReducer(state = initialState, action) {
         ...state,
         users: state.users.filter((user) => user !== action.payload),
       };
+    }
+    case GET_MEMBERS: {
+      return { ...state, members: action.payload };
+    }
+    case ADD_MEMBER: {
+      return { ...state, members: [...state.members, action.payload] };
     }
     default:
       return state;

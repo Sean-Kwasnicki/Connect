@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from app.models import Server, ServerMember, Channel, ChannelMembers, db
+from app.models import User, Server, ServerMember, Channel, ChannelMembers, db
 from app.forms import CreateServerForm, ChannelForm
 from datetime import datetime
 
@@ -156,9 +156,11 @@ def update_server(id):
     return form.errors, 401
 
 
-@server_routes.route("/<id>/members", methods=["POST"])
+@server_routes.route('/<id>/members', methods=['POST'])
 @login_required
 def add_member(id):
+    data = request.json
+    username = data.get('username')
 
     server = Server.query.get(id)
     if not server:
@@ -170,28 +172,41 @@ def add_member(id):
         }
 
     elif current_user.id != server.owner_id:
-        return "You don't own the server"
+        return {"message": "You don't own the server"}, 403
 
-    else:
-        current_member = ServerMember.query.filter(
-            ServerMember.user_id == current_user and
-            ServerMember.server_id == server.id
-        ).first()
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return {
+            "message": "Bad request",
+            "errors": {
+                "username": "User not found"
+            }
+        }, 404
 
-        if not current_member:
+    existing_member = ServerMember.query.filter_by(user_id=user.id, server_id=server.id).first()
+    if existing_member:
+        return {"message": "User already a member"}, 400
 
-            new_member = ServerMember(
-                user_id=current_user.id,
-                server_id=id
-            )
+    new_member = ServerMember(
+        user_id=user.id,
+        server_id=id
+    )
 
-            db.session.add(new_member)
-            db.session.commit()
+    db.session.add(new_member)
+    db.session.commit()
 
-            return "Member added"
+    return {"message": "Member added", "user": user.to_dict()}
 
-        else:
-            return "All ready a member"
+@server_routes.route('/<id>/members', methods=['GET'])
+@login_required
+def get_members(id):
+    server = Server.query.get(id)
+    if not server:
+        return {"message": "Server not found"}, 404
+
+    members = User.query.join(ServerMember).filter(ServerMember.server_id == id).all()
+    return jsonify([member.to_dict() for member in members])
+
 
 @server_routes.route('/<int:server_id>/channels', methods=['GET'])
 @login_required
