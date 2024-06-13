@@ -1,0 +1,46 @@
+/* MessagesPage.css */
+
+.message-item {
+  position: relative;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.message-content {
+  display: flex;
+  align-items: center;
+}
+
+.user-name {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.message-text {
+  flex-grow: 1;
+}
+
+.emoji-picker-button {
+  display: none;
+  margin-left: 10px;
+}
+
+.message-item:hover .emoji-picker-button {
+  display: inline-block;
+}
+
+.reaction-counts {
+  margin-top: 5px;
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.reaction-item {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}

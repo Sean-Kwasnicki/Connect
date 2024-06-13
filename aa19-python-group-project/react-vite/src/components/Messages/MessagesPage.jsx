@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMessagesThunk, createMessageThunk, deleteMessageThunk } from '../../redux/message';
-import { getReactionsThunk, addReaction, addReactionThunk } from '../../redux/reaction';
+import { getMessagesThunk, createMessageThunk } from '../../redux/message';
+import { getReactionsThunk } from '../../redux/reaction';
 import io from 'socket.io-client';
 import Reaction from '../Reaction/Reaction';
+import './MessagesPage.css';
 
 const socket = io.connect('/');
 
 const MessagesPage = ({ channelId }) => {
     const dispatch = useDispatch();
-    const currentUser = useSelector((state) => state.session.user); 
+    const user = useSelector((state) => state.session.user);
     const messages = useSelector((state) => state.messages.messages || []);
     const [message, setMessage] = useState("");
 
@@ -21,15 +22,9 @@ const MessagesPage = ({ channelId }) => {
             dispatch(getMessagesThunk(channelId));
         });
 
-        // socket.on('new_reaction', (reaction) => {
-        //     dispatch(addReaction(reaction));
-        // });
-
-
         return () => {
             socket.emit('leave', { room: channelId });
             socket.off('message');
-            // socket.off('new_reaction');
         };
     }, [dispatch, channelId]);
 
@@ -43,14 +38,10 @@ const MessagesPage = ({ channelId }) => {
         e.preventDefault();
         await dispatch(createMessageThunk(channelId, { content: message }));
         socket.emit('message', {
-            message: { user: currentUser.username, content: message },
+            message: { user: user.username, content: message },
             room: channelId,
         });
-        setMessage(''); 
-    };
-
-    const handleDelete = (messageId) => {
-        dispatch(deleteMessageThunk(messageId));
+        setMessage('');
     };
 
     return (
@@ -58,12 +49,12 @@ const MessagesPage = ({ channelId }) => {
             <h1>Channel Messages</h1>
             <ul>
                 {Array.isArray(messages) && messages.map(({ user, content, id }) => (
-                    <li key={id}>
-                        <span>{user}</span>: {content}
-                        {currentUser.username === user && (
-                            <button onClick={() => handleDelete(id)}>Delete</button>
-                        )}
-                        <Reaction channelId={channelId} messageId={id} /> {/* Use the Reaction component here */}
+                    <li key={id} className="message-item">
+                        <div className="message-content">
+                            <span className="user-name">{user}</span>
+                            <span className="message-text">{content}</span>
+                        </div>
+                        <Reaction channelId={channelId} messageId={id} />
                     </li>
                 ))}
             </ul>

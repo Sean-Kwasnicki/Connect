@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { addReactionThunk, removeReactionThunk, getReactionsThunk, addReaction, removeReaction } from '../../redux/reaction';
+import EmojiPicker from 'emoji-picker-react';
 import io from 'socket.io-client';
+import './Reaction.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 const socket = io.connect('/');
 
@@ -12,6 +16,7 @@ const Reaction = ({ channelId, messageId }) => {
   );
   const user = useSelector((state) => state.session.user);
   const [Reactions, setReactions] = useState(new Set());
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   useEffect(() => {
     dispatch(getReactionsThunk(channelId, messageId));
@@ -41,7 +46,9 @@ const Reaction = ({ channelId, messageId }) => {
   }, [dispatch, channelId, messageId, Reactions]);
 
   const handleAddReaction = async (emoji) => {
+    console.log('Adding reaction:', emoji);  // Log the emoji being added
     const newReaction = await dispatch(addReactionThunk(channelId, messageId, emoji));
+    console.log('New Reaction:', newReaction);
     if (newReaction) {
       setReactions((prev) => new Set(prev).add(newReaction.id));
       socket.emit('reaction', {
@@ -64,23 +71,36 @@ const Reaction = ({ channelId, messageId }) => {
     });
   };
 
+  const handleEmojiClick = (emojiObject) => {
+    console.log('Selected Emoji:', emojiObject.emoji);
+    handleAddReaction(emojiObject.emoji);
+    setShowEmojiPicker(false);
+  };
+
   const reactionCounts = reactions.reduce((acc, reaction) => {
     acc[reaction.emoji] = (acc[reaction.emoji] || 0) + 1;
     return acc;
   }, {});
 
+  const handleEmojiIconClick = () => {
+    setShowEmojiPicker(!showEmojiPicker);
+  };
+
   return (
-    <div className="reactions">
-      <button onClick={() => handleAddReaction('👍')}>👍</button>
-      <button onClick={() => handleAddReaction('👎')}>👎</button>
-      <button onClick={() => handleAddReaction('❤️')}>❤️</button>
+    <div className="reaction-container">
+      <button onClick={handleEmojiIconClick} className="emoji-picker-button">
+      <i className="fas fa-smile"></i>
+        </button>
+      {showEmojiPicker && (
+        <EmojiPicker onEmojiClick={handleEmojiClick} />
+      )}
       <div className="reaction-counts">
-        {['👍', '👎', '❤️'].map((emoji) => (
-          <span key={emoji}>
+        {Object.keys(reactionCounts).map((emoji) => (
+          <span key={emoji} onClick={() => {
+            const reaction = reactions.find(r => r.emoji === emoji && r.user_id === user.id);
+            if (reaction) handleRemoveReaction(reaction.id);
+          }}>
             {emoji} {reactionCounts[emoji] || 0}
-            {reactions.filter(reaction => reaction.emoji === emoji && reaction.user_id === user.id).map(reaction => (
-              <button key={reaction.id} onClick={() => handleRemoveReaction(reaction.id)}>Remove</button>
-            ))}
           </span>
         ))}
       </div>
