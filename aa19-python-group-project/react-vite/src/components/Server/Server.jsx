@@ -90,6 +90,7 @@ const Server = () => {
             display: downArrowIsSelected ? "" : "none",
           }}
         >
+<<<<<<< HEAD
           <CreateChannelButton
             Component={CreateChannelButtonComponent}
             closeDropdown={closeDropdown}
@@ -102,6 +103,17 @@ const Server = () => {
             Component={ServerMemberButtonComponent}
             closeDropdown={closeDropdown}
           />
+=======
+          <CreateChannelButton Component={CreateChannelButtonComponent} />
+          <DeleteChannelModalButton
+            serverChannels={channels}
+            serverId={serverId}
+            Component={DeleteChannelButtonComponent}
+            closeDropdown={closeDropdown}
+          />
+          <DeleteServerModalButton Component={DeleteServerButtonComponent} />
+          <ServerMemberButton Component={ServerMemberButtonComponent} closeDropdown={closeDropdown} />
+>>>>>>> Debugging
         </li>
         {channels.map(({ name, id }) => {
           const navTo = `/servers/${serverId}/channels/${id}`;
@@ -139,6 +151,15 @@ const CreateChannelButtonComponent = () => {
     <div className={s.create_channel_button}>
       <span>Create Channel</span>
       <FaCirclePlus className={s.create_channel_plus_symbol} />
+    </div>
+  );
+};
+
+const DeleteChannelButtonComponent = () => {
+  return (
+    <div className={s.create_channel_button}>
+      <span>Delete Channel</span>
+      <FaRegTrashAlt className={s.create_channel_plus_symbol} />
     </div>
   );
 };
