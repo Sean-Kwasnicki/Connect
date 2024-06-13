@@ -92,6 +92,12 @@ const Server = () => {
           }}
         >
           <CreateChannelButton Component={CreateChannelButtonComponent} />
+          <DeleteChannelModalButton
+            serverChannels={channels}
+            serverId={serverId}
+            Component={DeleteChannelButtonComponent}
+            closeDropdown={closeDropdown}
+          />
           <DeleteServerModalButton Component={DeleteServerButtonComponent} />
           <ServerMemberButton Component={ServerMemberButtonComponent} closeDropdown={closeDropdown} />
         </li>
@@ -131,6 +137,15 @@ const CreateChannelButtonComponent = () => {
     <div className={s.create_channel_button}>
       <span>Create Channel</span>
       <FaCirclePlus className={s.create_channel_plus_symbol} />
+    </div>
+  );
+};
+
+const DeleteChannelButtonComponent = () => {
+  return (
+    <div className={s.create_channel_button}>
+      <span>Delete Channel</span>
+      <FaRegTrashAlt className={s.create_channel_plus_symbol} />
     </div>
   );
 };
