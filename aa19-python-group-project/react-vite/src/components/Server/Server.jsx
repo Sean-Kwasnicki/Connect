@@ -22,6 +22,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
 import { FaCirclePlus } from "react-icons/fa6";
 import { FaRegTrashAlt } from "react-icons/fa";
+import UserList from "../UserList/UserList"; // Import UserList
 
 const socket = io.connect("/");
 
@@ -67,7 +68,7 @@ const Server = () => {
   }, [dispatch, serverId, user]);
 
   return (
-    <>
+    <div className={s.container}> {/* Added container div */}
       <ul className={s.channels_container}>
         <li className={s.server_bar}>
           <span className={s.server_name}>{serverName}</span>
@@ -115,8 +116,11 @@ const Server = () => {
           );
         })}
       </ul>
-      <Outlet />
-    </>
+      <div className={s.main_content}> {/* Added main_content div */}
+        <Outlet />
+        <UserList />
+      </div>
+    </div>
   );
 };
 

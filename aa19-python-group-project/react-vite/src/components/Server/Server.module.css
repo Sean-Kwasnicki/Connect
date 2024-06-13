@@ -1,7 +1,6 @@
-.server {
-  &:hover {
-    background-color: gray;
-  }
+.container {
+  display: flex;
+  height: 100vh;
 }
 
 .channels_container {
@@ -16,93 +15,45 @@
   }
 }
 
-.server_bar {
+.main_content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.server_name {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 250px;
+  color: white;
   font-size: 30px;
   padding: 16px;
-  margin-right: 16px;
   border-bottom: 2px solid rgb(24, 24, 24);
   margin-bottom: 8px;
 }
 
-.server_name {
-  width: 80%;
-  color: white;
-  overflow-y: hidden;
-  overflow-x: hidden;
-}
-
-.arrow {
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-
-  &:hover {
-    background-color: rgb(73, 73, 73);
-  }
-}
-
-.server_menu_container {
-  display: flex;
-  position: absolute;
-  left: 127px;
-  top: 70px;
-  height: 100px;
-  width: 200px;
+.channel_item {
+  padding: 8px;
+  margin: 2px 8px;
   border-radius: 10px;
-  flex-direction: column;
-  background-color: rgb(0, 0, 0);
-  padding: 8px;
-}
+  overflow-y: hidden;
 
-.create_channel_button,
-.delete_server_button {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: unset;
-  border-radius: 5px;
-  font-size: 16px;
-  padding: 8px;
   &:hover {
-    background-color: #5865f2;
+    background-color: rgb(78, 78, 78);
+    cursor: pointer;
+    & > .server_name_text {
+      color: white;
+    }
   }
 }
 
-.create_channel_button {
-  & > span {
-    color: rgb(200, 200, 200);
-    font-size: 16px;
-  }
-
-  & > .create_channel_plus_symbol {
-    color: rgb(200, 200, 200);
-    font-size: 25px;
-  }
-}
-
-.channel_item,
 .channel_item_selected {
   padding: 8px;
   margin: 2px 8px;
-  height: 50px;
   border-radius: 10px;
-  overflow-y: hidden;
-  overflow-x: hidden;
-  cursor: pointer;
-}
-
-.channel_item:hover,
-.channel_item_selected {
   background-color: rgb(78, 78, 78);
-  & > .channel_name_text {
+  cursor: pointer;
+
+  & > .server_name_text {
     color: white;
   }
 }
@@ -113,7 +64,7 @@
   font-size: 30px;
 }
 
-.channel_name_text {
+.server_name_text {
   color: gray;
   font-size: 24px;
 }
