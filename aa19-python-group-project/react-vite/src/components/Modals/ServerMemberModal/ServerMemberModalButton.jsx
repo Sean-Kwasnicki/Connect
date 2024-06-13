@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import OpenModalMenuItem from "../Navigation/OpenModalMenuItem";
+import OpenModalMenuItem from "../../Navigation/OpenModalMenuItem";
 import ServerMemberModal from "./ServerMemberModal";
 
 function ServerMemberButton({ Component, closeDropdown }) {
@@ -13,7 +13,7 @@ function ServerMemberButton({ Component, closeDropdown }) {
     return () => document.removeEventListener("click", closeMenu);
   }, [showMenu]);
 
-   const closeMenu = () => {
+  const closeMenu = () => {
     setShowMenu(false);
     if (closeDropdown) closeDropdown();
   };

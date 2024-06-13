@@ -17,9 +17,8 @@ import s from "./Server.module.css";
 import CreateChannelButton from "../Modals/CreateChannelModal/CreateChannelModalButton";
 import DeleteServerModalButton from "../Modals/DeleteServerModal/DeleteServerModalButton";
 import DeleteChannelModalButton from "../Modals/DeleteChannelModal/DeleteChannelModalButton";
-import ServerMemberButton from "./ServerMemberModalButton";
-import ServerMemberModal from "./ServerMemberModal";
-import ServerMembers from "./ServerMembers"
+import ServerMemberButton from "../Modals/ServerMemberModal";
+import ServerMembers from "./ServerMembers";
 import io from "socket.io-client";
 import { IoIosArrowDown } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
@@ -93,7 +92,10 @@ const Server = () => {
         >
           <CreateChannelButton Component={CreateChannelButtonComponent} />
           <DeleteServerModalButton Component={DeleteServerButtonComponent} />
-          <ServerMemberButton Component={ServerMemberButtonComponent} closeDropdown={closeDropdown} />
+          <ServerMemberButton
+            Component={ServerMemberButtonComponent}
+            closeDropdown={closeDropdown}
+          />
         </li>
         {channels.map(({ name, id }) => {
           const navTo = `/servers/${serverId}/channels/${id}`;
@@ -152,6 +154,5 @@ const ServerMemberButtonComponent = () => {
     </div>
   );
 };
-
 
 export default Server;

@@ -6,7 +6,7 @@ function DeleteChannelModalButton({ channelId, serverId }) {
   const [showMenu, setShowMenu] = useState(false);
 
   const toggleMenu = (e) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     setShowMenu(!showMenu);
   };
 
