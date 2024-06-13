@@ -90,20 +90,6 @@ const Server = () => {
             display: downArrowIsSelected ? "" : "none",
           }}
         >
-<<<<<<< HEAD
-          <CreateChannelButton
-            Component={CreateChannelButtonComponent}
-            closeDropdown={closeDropdown}
-          />
-          <DeleteServerModalButton
-            Component={DeleteServerButtonComponent}
-            closeDropdown={closeDropdown}
-          />
-          <ServerMemberButton
-            Component={ServerMemberButtonComponent}
-            closeDropdown={closeDropdown}
-          />
-=======
           <CreateChannelButton Component={CreateChannelButtonComponent} />
           <DeleteChannelModalButton
             serverChannels={channels}
@@ -113,7 +99,6 @@ const Server = () => {
           />
           <DeleteServerModalButton Component={DeleteServerButtonComponent} />
           <ServerMemberButton Component={ServerMemberButtonComponent} closeDropdown={closeDropdown} />
->>>>>>> Debugging
         </li>
         {channels.map(({ name, id }) => {
           const navTo = `/servers/${serverId}/channels/${id}`;
