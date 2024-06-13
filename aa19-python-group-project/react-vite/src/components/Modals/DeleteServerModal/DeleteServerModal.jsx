@@ -4,6 +4,7 @@ import { useModal } from "../../../context/Modal";
 import { deleteServerThunk } from "../../../redux/server";
 import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../Navigation/Navigation";
+import s from "./DeleteServerModal.module.css";
 
 function DeleteServerModal() {
   const navigate = useNavigate();
@@ -26,15 +27,25 @@ function DeleteServerModal() {
   };
 
   return (
-    <>
-      <h1>Delete Server</h1>
-      <form onSubmit={handleSubmit}>
-        <label>Are you sure you want to delete this server??</label>
-        {errors.name && <p>{errors.name}</p>}
-        <button onClick={closeModal}>back</button>
-        <button type="submit">Delete Server</button>
-      </form>
-    </>
+    <div className={s.item_container}>
+      <div className={s.item}>
+        <h1 className={s.header_1}>Delete Server</h1>
+        <form onSubmit={handleSubmit}>
+          <div className={s.form_input}>
+            <label>Are you sure you want to delete this server??</label>
+          </div>
+          {errors.name && <p>{errors.name}</p>}
+          <div className={s.bottom_buttons}>
+            <button onClick={closeModal} className={s.back_button}>
+              back
+            </button>
+            <button type="submit" className={s.submit_button}>
+              Delete Server
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
 
