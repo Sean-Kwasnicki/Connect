@@ -97,8 +97,8 @@ const Server = () => {
             Component={DeleteChannelButtonComponent}
             closeDropdown={closeDropdown}
           />
-          <ServerMemberButton Component={ServerMemberButtonComponent} closeDropdown={closeDropdown} />
           <DeleteServerModalButton Component={DeleteServerButtonComponent} closeDropdown={closeDropdown}/>
+          <ServerMemberButton Component={ServerMemberButtonComponent} closeDropdown={closeDropdown} />
         </li>
         {channels.map(({ name, id }) => {
           const navTo = `/servers/${serverId}/channels/${id}`;

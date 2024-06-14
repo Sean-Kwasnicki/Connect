@@ -3,12 +3,10 @@ import { useDispatch } from "react-redux";
 import { useModal } from "../../../context/Modal";
 import { createChannelThunk } from "../../../redux/channel";
 import { useParams } from "react-router-dom";
-import io from "socket.io-client";
+import socket from "../../../socket"; 
 import s from "./CreateChannelModal.module.css";
 
-const socket = io.connect("/");
-
-function CreateChannelModal() {
+function CreateChannelModal({ closeDropdown }) {
   const { serverId } = useParams();
   const dispatch = useDispatch();
   const [name, setName] = useState("");
@@ -17,16 +15,25 @@ function CreateChannelModal() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("handleSubmit called");
     const response = await dispatch(createChannelThunk(serverId, { name }));
+    console.log("Channel creation response:", response);
 
     if (response) {
       socket.emit("channel", {
         room: `server_${serverId}`,
         channel: response,
       });
+      console.log("Emitted channel creation event to socket");
       closeModal();
+      console.log("Closed modal");
+      if (closeDropdown) {
+        closeDropdown();
+        console.log("Closed dropdown");
+      }
     } else {
       setErrors(response.errors);
+      console.log("Error in response:", response.errors);
     }
   };
 

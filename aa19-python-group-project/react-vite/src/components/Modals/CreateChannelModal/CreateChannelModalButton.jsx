@@ -8,21 +8,24 @@ function CreateChannelModalButton({ Component, closeDropdown }) {
   useEffect(() => {
     if (!showMenu) return;
 
+    const closeMenu = () => {
+      console.log("closeMenu called");
+      setShowMenu(false);
+      if (closeDropdown) closeDropdown();
+    };
+
     document.addEventListener("click", closeMenu);
 
-    return () => document.removeEventListener("click", closeMenu);
-  }, [showMenu]);
-
-  const closeMenu = () => {
-    setShowMenu(false);
-    if (closeDropdown) closeDropdown();
-  };
+    return () => {
+      document.removeEventListener("click", closeMenu);
+    };
+  }, [showMenu, closeDropdown]);
 
   return (
     <OpenModalMenuItem
       itemText="Create Channel"
-      onItemClick={closeMenu}
-      modalComponent={<CreateChannelModal />}
+      onItemClick={() => setShowMenu(false)}
+      modalComponent={<CreateChannelModal closeDropdown={closeDropdown} />}
       Component={Component}
     />
   );
