@@ -5,7 +5,8 @@ import { getReactionsThunk, addReaction, addReactionThunk } from '../../redux/re
 import io from 'socket.io-client';
 import { FaPencilAlt } from 'react-icons/fa';
 import Reaction from '../Reaction/Reaction';
-import './MessagesPage.css';  
+import './MessagesPage.css';
+import { FaRegTrashAlt } from "react-icons/fa";
 
 const socket = io.connect('/');
 
@@ -63,7 +64,7 @@ const MessagesPage = ({ channelId }) => {
                         <Reaction channelId={channelId} messageId={id} />
                         {currentUser.username === user && (
                                 <button className="delete-button" onClick={() => handleDelete(id)}>
-                                    <FaPencilAlt />
+                                    <FaRegTrashAlt />
                                 </button>
                             )}
                     </li>
