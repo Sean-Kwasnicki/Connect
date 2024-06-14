@@ -10,7 +10,7 @@ import './MessagesPage.css';
 
 const socket = io.connect('/');
 
-const MessagesPage = ({ channelId }) => {
+const MessagesPage = ({ channelId, channelName }) => {
     const dispatch = useDispatch();
     const currentUser = useSelector((state) => state.session.user);
     const messages = useSelector((state) => state.messages.messages || []);
@@ -61,7 +61,7 @@ const MessagesPage = ({ channelId }) => {
 
     return (
         <div className="channel-messages">
-            <h1>Channel Messages</h1>
+            <h1>{channelName} Channel Messages</h1>
             <ul>
                 {Array.isArray(messages) && messages.map(({ user, content, id }) => (
                     <li key={id} className="message-item">

@@ -1,20 +1,32 @@
 import { Outlet, useParams } from "react-router-dom";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import io from "socket.io-client";
 import { getMessagesThunk } from "../../redux/message";
 import MessagesPage from "../Messages/MessagesPage";
-import { createChannel, deleteChannel } from "../../redux/channel";
+import { getChannelsThunk, createChannel, deleteChannel } from "../../redux/channel";
 
 const socket = io.connect("/");
 
 const Channel = () => {
   const { channelId } = useParams();
   const dispatch = useDispatch();
+  const channels = useSelector((state) => state.channels.channels);
+  const [channelName, setChannelName] = useState("");
 
   useEffect(() => {
     dispatch(getMessagesThunk(channelId));
+    dispatch(getChannelsThunk()); // Assuming you have a thunk to fetch all channels
   }, [dispatch, channelId]);
+
+  useEffect(() => {
+    if (channelId && channels.length > 0) {
+      const channel = channels.find((ch) => ch.id === parseInt(channelId, 10));
+      if (channel) {
+        setChannelName(channel.name);
+      }
+    }
+  }, [channels, channelId]);
 
   useEffect(() => {
     if (channelId) {
@@ -38,10 +50,11 @@ const Channel = () => {
 
   return (
     <>
-      <MessagesPage channelId={channelId} />
-      <Outlet /> {/* for the nested routes */}
+      <MessagesPage channelId={channelId} channelName={channelName} />
+      <Outlet />
     </>
   );
 };
 
 export default Channel;
+
