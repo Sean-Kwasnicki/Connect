@@ -25,12 +25,14 @@ import { RxCross2 } from "react-icons/rx";
 import { FaCirclePlus } from "react-icons/fa6";
 import { FaRegTrashAlt } from "react-icons/fa";
 
+
 const socket = io.connect("/");
 
 const Server = () => {
   const { serverId } = useParams("serverId");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
 
   const channels = useSelector((state) => state.channels.channels);
   const user = useSelector((state) => state.session.user);
