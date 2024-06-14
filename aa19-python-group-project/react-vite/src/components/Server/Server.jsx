@@ -90,14 +90,14 @@ const Server = () => {
             display: downArrowIsSelected ? "" : "none",
           }}
         >
-          <CreateChannelButton Component={CreateChannelButtonComponent} />
+          <CreateChannelButton Component={CreateChannelButtonComponent} closeDropdown={closeDropdown}/>
           <DeleteChannelModalButton
             serverChannels={channels}
             serverId={serverId}
             Component={DeleteChannelButtonComponent}
             closeDropdown={closeDropdown}
           />
-          <DeleteServerModalButton Component={DeleteServerButtonComponent} />
+          <DeleteServerModalButton Component={DeleteServerButtonComponent} closeDropdown={closeDropdown}/>
           <ServerMemberButton Component={ServerMemberButtonComponent} closeDropdown={closeDropdown} />
         </li>
         {channels.map(({ name, id }) => {
