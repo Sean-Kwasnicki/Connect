@@ -42,8 +42,8 @@ function DeleteChannelModal({ serverChannels, serverId }) {
           </div>
           {errors.name && <p className={s.error}>{errors.name}</p>}
           <div className={s.bottom_buttons}>
-          <button type="submit" className={s.submit_button}>Delete</button>
           <button type="button" onClick={closeModal} className={s.back_button}>Cancel</button>
+          <button type="submit" className={s.submit_button}>Delete</button>
           </div>
         </form>
       </div>
