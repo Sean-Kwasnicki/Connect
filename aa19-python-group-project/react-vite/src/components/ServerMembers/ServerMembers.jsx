@@ -1,18 +1,10 @@
-// src/components/ServerMembers/ServerMembers.js
-<<<<<<< HEAD:aa19-python-group-project/react-vite/src/components/ServerMembers/ServerMembers.jsx
-import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
-import { getMembersThunk, deleteMemberThunk } from "../../redux/server";
-import s from "./ServerMembers.module.css";
-=======
+
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getMembersThunk, deleteMemberThunk } from '../../redux/server';
 import io from 'socket.io-client';
-import './ServerMembers.css';
->>>>>>> Dev4Test:aa19-python-group-project/react-vite/src/components/Server/ServerMembers.jsx
+import s from './ServerMembers.module.css'
 import { FaRegTrashAlt } from "react-icons/fa";
 
 const socket = io.connect('/');
@@ -27,10 +19,6 @@ const ServerMembers = () => {
   }, [dispatch, serverId]);
 
   useEffect(() => {
-<<<<<<< HEAD:aa19-python-group-project/react-vite/src/components/ServerMembers/ServerMembers.jsx
-    console.log("Updated members:", members);
-  }, [members]);
-=======
     socket.emit('join', { room: serverId });
     console.log(`Emitting join event for room: ${serverId}`);
 
@@ -47,14 +35,10 @@ const ServerMembers = () => {
       socket.off('update_users');
     };
   }, [dispatch, serverId]);
->>>>>>> Dev4Test:aa19-python-group-project/react-vite/src/components/Server/ServerMembers.jsx
 
   const handleDelete = async (memberId) => {
 
     const response = await dispatch(deleteMemberThunk(serverId, memberId));
-<<<<<<< HEAD:aa19-python-group-project/react-vite/src/components/ServerMembers/ServerMembers.jsx
-    console.log("Delete response:", response);
-=======
 
     if (response) {
       const member = members.find(m => m.id === memberId);
@@ -63,7 +47,6 @@ const ServerMembers = () => {
         socket.emit('leave_server', { server: serverId, user: member.username });
       }
     }
->>>>>>> Dev4Test:aa19-python-group-project/react-vite/src/components/Server/ServerMembers.jsx
   };
 
   return (
