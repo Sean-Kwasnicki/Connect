@@ -125,7 +125,7 @@ const Server = () => {
           );
         })}
       </ul>
-      <ServerMembers usersInServer={usersInServer} />
+      <ServerMembers className={s.members_container} usersInServer={usersInServer} />
       <Outlet />
     </>
   );

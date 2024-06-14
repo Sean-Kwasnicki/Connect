@@ -117,3 +117,19 @@
   color: gray;
   font-size: 24px;
 }
+
+.members_container {
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  background-color: #2b2d31;
+  height: calc(100vh - 70px);
+  border-left: 2px solid rgb(24, 24, 24);
+  padding: 10px;
+  position: fixed;
+  right: 0;
+  top: 70px;
+  & > li {
+    list-style: none;
+  }
+}
