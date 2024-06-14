@@ -117,3 +117,13 @@
   color: gray;
   font-size: 24px;
 }
+
+.right_container {
+  display: flex;
+  width: calc(100vw - 340px);
+  height: 100vh;
+}
+
+.messages_page_sizing_container {
+  width: calc(100vw - 605px);
+}

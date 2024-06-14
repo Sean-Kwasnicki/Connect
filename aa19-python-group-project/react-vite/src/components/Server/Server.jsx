@@ -18,13 +18,12 @@ import CreateChannelButton from "../Modals/CreateChannelModal/CreateChannelModal
 import DeleteServerModalButton from "../Modals/DeleteServerModal/DeleteServerModalButton";
 import DeleteChannelModalButton from "../Modals/DeleteChannelModal/DeleteChannelModalButton";
 import ServerMemberButton from "../Modals/ServerMemberModal";
-import ServerMembers from "./ServerMembers";
+import ServerMembers from "../ServerMembers";
 import io from "socket.io-client";
 import { IoIosArrowDown } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
 import { FaCirclePlus } from "react-icons/fa6";
 import { FaRegTrashAlt } from "react-icons/fa";
-
 
 const socket = io.connect("/");
 
@@ -32,7 +31,6 @@ const Server = () => {
   const { serverId } = useParams("serverId");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
 
   const channels = useSelector((state) => state.channels.channels);
   const user = useSelector((state) => state.session.user);
@@ -92,15 +90,24 @@ const Server = () => {
             display: downArrowIsSelected ? "" : "none",
           }}
         >
-          <CreateChannelButton Component={CreateChannelButtonComponent} closeDropdown={closeDropdown}/>
+          <CreateChannelButton
+            Component={CreateChannelButtonComponent}
+            closeDropdown={closeDropdown}
+          />
           <DeleteChannelModalButton
             serverChannels={channels}
             serverId={serverId}
             Component={DeleteChannelButtonComponent}
             closeDropdown={closeDropdown}
           />
-          <ServerMemberButton Component={ServerMemberButtonComponent} closeDropdown={closeDropdown} />
-          <DeleteServerModalButton Component={DeleteServerButtonComponent} closeDropdown={closeDropdown}/>
+          <ServerMemberButton
+            Component={ServerMemberButtonComponent}
+            closeDropdown={closeDropdown}
+          />
+          <DeleteServerModalButton
+            Component={DeleteServerButtonComponent}
+            closeDropdown={closeDropdown}
+          />
         </li>
         {channels.map(({ name, id }) => {
           const navTo = `/servers/${serverId}/channels/${id}`;
@@ -127,8 +134,12 @@ const Server = () => {
           );
         })}
       </ul>
-      <ServerMembers usersInServer={usersInServer} />
-      <Outlet />
+      <div className={s.right_container}>
+        <div className={s.messages_page_sizing_container}>
+          <Outlet />
+        </div>
+        <ServerMembers usersInServer={usersInServer} />
+      </div>
     </>
   );
 };

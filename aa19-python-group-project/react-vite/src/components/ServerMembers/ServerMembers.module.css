@@ -1,0 +1,40 @@
+.server_members_container {
+  width: 265px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  background-color: rgb(43, 45, 49);
+  overflow-x: hidden;
+  text-align: right;
+}
+
+.server_members {
+  all: unset;
+  width: 100%;
+}
+
+.member_container {
+  all: unset;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+
+  & > span {
+    padding: 8px 16px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+
+  & > button {
+    all: unset;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    background-color: rgb(88, 101, 242);
+    &:hover {
+      background-color: rgb(126, 137, 253);
+    }
+  }
+}
