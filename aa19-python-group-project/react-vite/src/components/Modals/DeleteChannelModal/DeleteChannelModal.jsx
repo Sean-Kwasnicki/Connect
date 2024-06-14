@@ -16,6 +16,7 @@ function DeleteChannelModal({ serverChannels, serverId }) {
 
     if (channel) {
       const response = await dispatch(deleteChannelThunk(channel.id));
+      console.log("Delete response:", response); // Debugging line
       if (!response.errors) {
         closeModal();
       } else {
@@ -32,18 +33,19 @@ function DeleteChannelModal({ serverChannels, serverId }) {
         <h2 className={s.header_1}>Delete Channel</h2>
         <form onSubmit={handleDelete}>
           <div className={s.form_input}>
-          <label>Type the name of the channel to confirm deletion:</label>
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            className={s.input}
-          />
+            <label>Type the name of the channel to confirm deletion:</label>
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              className={s.input}
+              required
+            />
           </div>
           {errors.name && <p className={s.error}>{errors.name}</p>}
           <div className={s.bottom_buttons}>
-          <button type="button" onClick={closeModal} className={s.back_button}>Cancel</button>
-          <button type="submit" className={s.submit_button}>Delete</button>
+            <button type="button" onClick={closeModal} className={s.back_button}>Cancel</button>
+            <button type="submit" className={s.submit_button}>Delete</button>
           </div>
         </form>
       </div>

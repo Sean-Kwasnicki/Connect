@@ -47,7 +47,6 @@ export const createChannelThunk = (serverId, channel) => async (dispatch) => {
   if (response.ok) {
     const newChannel = await response.json();
     dispatch(createChannel(newChannel));
-    socket.emit("create_channel", { channel: newChannel, server: serverId }); // Emit the event
     return newChannel;
   }
   return "bad";
@@ -60,7 +59,6 @@ export const deleteChannelThunk = (channelId, serverId) => async (dispatch) => {
 
   if (response.ok) {
     dispatch(deleteChannel(channelId));
-    socket.emit("delete_channel", { channelId, server: serverId }); // Emit the event
     return "good";
   }
   return "bad";
