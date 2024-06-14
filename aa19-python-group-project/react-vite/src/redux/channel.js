@@ -18,7 +18,7 @@ export const createChannel = (channel) => {
   };
 };
 
-const deleteChannel = (channelId) => {
+export const deleteChannel = (channelId) => {
   return {
     type: DELETE_CHANNEL,
     payload: channelId,
@@ -47,18 +47,20 @@ export const createChannelThunk = (serverId, channel) => async (dispatch) => {
   if (response.ok) {
     const newChannel = await response.json();
     dispatch(createChannel(newChannel));
+    socket.emit("create_channel", { channel: newChannel, server: serverId }); // Emit the event
     return newChannel;
   }
   return "bad";
 };
 
-export const deleteChannelThunk = (channelId) => async (dispatch) => {
+export const deleteChannelThunk = (channelId, serverId) => async (dispatch) => {
   const response = await fetch(`/api/channels/${channelId}`, {
     method: "DELETE",
   });
 
   if (response.ok) {
     dispatch(deleteChannel(channelId));
+    socket.emit("delete_channel", { channelId, server: serverId }); // Emit the event
     return "good";
   }
   return "bad";

@@ -118,6 +118,19 @@ def handle_reaction(data):
     else:
         emit('new_reaction', reaction, to=room)
 
+@socketio.on('create_channel')
+def handle_create_channel(data):
+    server = data['server']
+    channel = data['channel']
+    emit('new_channel', {'server': server, 'channel': channel}, to=server)
+
+@socketio.on('delete_channel')
+def handle_delete_channel(data):
+    server = data['server']
+    channel_id = data['channel_id']
+    emit('remove_channel', {'server': server, 'channel_id': channel_id}, to=server)
+
+
 if __name__ == '__main__':
     socketio.run(app)
 
