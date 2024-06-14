@@ -71,33 +71,35 @@ def get_channel_by_id(id):
 @channel_routes.route('/<int:id>', methods=['PATCH'])
 @login_required
 def update_channel(id):
-	"""
-	Updates a channel by id.
-	Authentication: Required
-	Authorization: Required (user must be the server owner or channel creator)
-	"""
-	if current_user.is_authenticated:
-		channel = Channel.query.get(id)
-		if not channel:
-			return {'errors': {'message': 'Channel not found'}}, 404
+    """
+    Updates a channel by id.
+    Authentication: Required
+    Authorization: Required (user must be the server owner or channel creator)
+    """
+    if current_user.is_authenticated:
+        channel = Channel.query.get(id)
+        if not channel:
+            return {'errors': {'message': 'Channel not found'}}, 404
 
-		server_member = is_server_member(current_user.id, channel.server_id)
-		if not server_member:
-			return {'errors': {'message': 'Forbidden'}}, 403
+        server_member = is_server_member(current_user.id, channel.server_id)
+        if not server_member:
+            return {'errors': {'message': 'Forbidden'}}, 403
 
-		form = ChannelForm()
-		form['csrf_token'].data = request.cookies['csrf_token']
+        data = request.get_json()
+        new_name = data.get('name', None)
 
-		if form.validate_on_submit():
-			server = Server.query.get(channel.server_id)
-			if server.owner_id != current_user.id and channel.creator_id != current_user.id:
-				return {'errors': {'message': 'Unauthorized'}}, 403
+        if new_name is None:
+            return {'errors': {'message': 'New channel name is required'}}, 400
 
-			channel.name = form.name.data if form.name.data else channel.name
-			db.session.commit()
-			return channel_to_dict(channel)
-		return {'errors': form.errors}, 400
-	return {'errors': {'message': 'Unauthorized'}}, 401
+        server = Server.query.get(channel.server_id)
+        if server.owner_id != current_user.id and channel.creator_id != current_user.id:
+            return {'errors': {'message': 'Unauthorized'}}, 403
+
+        channel.name = new_name
+        db.session.commit()
+        return channel_to_dict(channel)
+    return {'errors': {'message': 'Unauthorized'}}, 401
+
 
 @channel_routes.route('/<int:id>', methods=['DELETE'])
 @login_required
@@ -143,8 +145,8 @@ def create_message(channel_id):
     return jsonify({
         "id": new_message.id,
         "content": new_message.content,
-        "user": current_user.username, 
-        "user_id": current_user.id, 
+        "user": current_user.username,
+        "user_id": current_user.id,
     }), 201
 
 
