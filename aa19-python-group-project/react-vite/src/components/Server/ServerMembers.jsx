@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getMembersThunk, deleteMemberThunk } from '../../redux/server'
 import './ServerMembers.css';
+import { FaRegTrashAlt } from "react-icons/fa";
 
 const ServerMembers = () => {
   const { serverId } = useParams();
@@ -31,7 +32,7 @@ const ServerMembers = () => {
         {members.map((member) => (
           <li key={member.id}>
             {member.username}
-            <button onClick={() => handleDelete(member.id)}>Delete</button>
+            <button className='member_delete' onClick={() => handleDelete(member.id)}><FaRegTrashAlt /></button>
           </li>
         ))}
       </ul>
