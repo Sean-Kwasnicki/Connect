@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMessagesThunk, createMessageThunk } from '../../redux/message';
-import { getReactionsThunk } from '../../redux/reaction';
+import { getMessagesThunk, createMessageThunk, deleteMessageThunk } from '../../redux/message';
+import { getReactionsThunk, addReaction, addReactionThunk } from '../../redux/reaction';
 import io from 'socket.io-client';
+import { FaPencilAlt } from 'react-icons/fa';
 import Reaction from '../Reaction/Reaction';
-import './MessagesPage.css';
+import './MessagesPage.css';  
 
 const socket = io.connect('/');
 
 const MessagesPage = ({ channelId }) => {
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.session.user);
+    const currentUser = useSelector((state) => state.session.user);
     const messages = useSelector((state) => state.messages.messages || []);
     const [message, setMessage] = useState("");
 
@@ -38,14 +39,18 @@ const MessagesPage = ({ channelId }) => {
         e.preventDefault();
         await dispatch(createMessageThunk(channelId, { content: message }));
         socket.emit('message', {
-            message: { user: user.username, content: message },
+            message: { user: currentUser.username, content: message },
             room: channelId,
         });
         setMessage('');
     };
 
+    const handleDelete = (messageId) => {
+        dispatch(deleteMessageThunk(messageId));
+    };
+
     return (
-        <div>
+        <div className="channel-messages">
             <h1>Channel Messages</h1>
             <ul>
                 {Array.isArray(messages) && messages.map(({ user, content, id }) => (
@@ -53,18 +58,25 @@ const MessagesPage = ({ channelId }) => {
                         <div className="message-content">
                             <span className="user-name">{user}</span>
                             <span className="message-text">{content}</span>
+
                         </div>
                         <Reaction channelId={channelId} messageId={id} />
+                        {currentUser.username === user && (
+                                <button className="delete-button" onClick={() => handleDelete(id)}>
+                                    <FaPencilAlt />
+                                </button>
+                            )}
                     </li>
                 ))}
             </ul>
-            <form onSubmit={handleSubmit}>
+            <form className="message-form" onSubmit={handleSubmit}>
                 <input
                     type='text'
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
+                    className="message-input"
                 />
-                <button type='submit'>Send</button>
+                <button type='submit' className="message-button">Send</button>
             </form>
         </div>
     );
