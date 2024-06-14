@@ -20,13 +20,18 @@ const MessagesPage = ({ channelId }) => {
         dispatch(getMessagesThunk(channelId));
         socket.emit('join', { room: channelId });
 
-        socket.on('message', (data) => {
+        socket.on('message', () => {
+            dispatch(getMessagesThunk(channelId));
+        });
+
+        socket.on('delete_message', () => {
             dispatch(getMessagesThunk(channelId));
         });
 
         return () => {
             socket.emit('leave', { room: channelId });
             socket.off('message');
+            socket.off('delete_message');
         };
     }, [dispatch, channelId]);
 
@@ -46,8 +51,12 @@ const MessagesPage = ({ channelId }) => {
         setMessage('');
     };
 
-    const handleDelete = (messageId) => {
-        dispatch(deleteMessageThunk(messageId));
+    const handleDelete = async (messageId) => {
+        await dispatch(deleteMessageThunk(messageId));
+        socket.emit('delete_message', {
+            message_id: messageId,
+            room: channelId,
+        });
     };
 
     return (
@@ -59,14 +68,13 @@ const MessagesPage = ({ channelId }) => {
                         <div className="message-content">
                             <span className="user-name">{user}</span>
                             <span className="message-text">{content}</span>
-
                         </div>
                         <Reaction channelId={channelId} messageId={id} />
                         {currentUser.username === user && (
-                                <button className="delete-button" onClick={() => handleDelete(id)}>
-                                    <FaRegTrashAlt />
-                                </button>
-                            )}
+                            <button className="delete-button" onClick={() => handleDelete(id)}>
+                                <FaRegTrashAlt />
+                            </button>
+                        )}
                     </li>
                 ))}
             </ul>
