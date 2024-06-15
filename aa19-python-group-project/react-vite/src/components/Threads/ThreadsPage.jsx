@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchThreads, createThread } from "../../redux/threads";
-import io from "socket.io-client";
-
-const socket = io.connect("/");
+import socket from "../../context/Socket"
 
 const ThreadsPage = () => {
     const dispatch = useDispatch();
@@ -16,7 +14,7 @@ const ThreadsPage = () => {
 
     useEffect(() => {
         socket.on("thread_created", (data) => {
-            dispatch(fetchThreads()); 
+            dispatch(fetchThreads());
         });
 
         return () => {

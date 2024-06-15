@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useModal } from "../../../context/Modal";
 import { deleteServerThunk } from "../../../redux/server";
 import { useNavigate, useParams } from "react-router-dom";
-import { socket } from "../../Navigation/Navigation";
+import socket from "../../../context/Socket";
 import s from "./DeleteServerModal.module.css";
 
 function DeleteServerModal() {

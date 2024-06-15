@@ -3,8 +3,7 @@ import { useDispatch } from "react-redux";
 import { useModal } from "../../../context/Modal";
 import { deleteChannelThunk } from "../../../redux/channel";
 import s from "./DeleteChannelModal.module.css";
-
-import { socket } from "../../Server/Server";
+import socket from "../../../context/Socket"
 
 function DeleteChannelModal({ serverChannels, serverId }) {
   const [channelName, setChannelName] = useState("");
