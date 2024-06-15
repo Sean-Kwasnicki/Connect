@@ -16,7 +16,6 @@ const Channel = () => {
 
   useEffect(() => {
     dispatch(getMessagesThunk(channelId));
-    dispatch(getChannelsThunk()); // Assuming you have a thunk to fetch all channels
   }, [dispatch, channelId]);
 
   useEffect(() => {
@@ -57,4 +56,3 @@ const Channel = () => {
 };
 
 export default Channel;
-

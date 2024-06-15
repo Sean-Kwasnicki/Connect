@@ -9,6 +9,7 @@ import {
   getChannelsThunk,
   createChannelThunk,
   createChannel,
+  deleteChannel,
 } from "../../redux/channel";
 import { deleteServerThunk } from "../../redux/server";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,9 +28,9 @@ import { FaCirclePlus } from "react-icons/fa6";
 import { FaRegTrashAlt } from "react-icons/fa";
 import UpdateServerModalButton from "../Modals/UpdateServerModal/UpdateServerModalButton";
 import { PiNotePencil } from "react-icons/pi";
-import { FaPencilAlt } from 'react-icons/fa';
+import { FaPencilAlt } from "react-icons/fa";
 
-const socket = io.connect("/");
+export const socket = io.connect("/");
 
 const Server = () => {
   const { serverId } = useParams("serverId");
@@ -41,7 +42,6 @@ const Server = () => {
   const servers = useSelector((state) => state.servers.servers);
 
   const [usersInServer, setUsersInServer] = useState([]);
-
   const [channelIsSelected, setChannelIsSelected] = useState(null);
   const [downArrowIsSelected, setDownArrowIsSelected] = useState(false);
 
@@ -58,7 +58,11 @@ const Server = () => {
     dispatch(getChannelsThunk(serverId));
 
     if (serverId && user) {
-      socket.emit("join_server", { server: serverId, user: user.username });
+      console.log(Number(serverId));
+      socket.emit("join_server", {
+        server: Number(serverId),
+        user: user.username,
+      });
 
       socket.on("update_users", (data) => {
         if (data.server === serverId) {
@@ -66,8 +70,14 @@ const Server = () => {
         }
       });
 
+      socket.on("delete_channel", (data) => {
+        console.log(data.channel_id);
+        dispatch(deleteChannel(data.channel_id));
+      });
+
       return () => {
         socket.emit("leave_server", { server: serverId, user: user.username });
+        socket.off("delete_channel");
         socket.off("update_users");
       };
     }
@@ -78,15 +88,17 @@ const Server = () => {
       <ul className={s.channels_container}>
         <li className={s.server_bar}>
           <span className={s.server_name}>{serverName}</span>
-          {user && user.id === currentServer.owner_id && <span
-            className={s.arrow}
-            onClick={() => {
-              setDownArrowIsSelected((prev) => !prev);
-            }}
-          >
-            {!downArrowIsSelected && <IoIosArrowDown />}
-            {downArrowIsSelected && <RxCross2 />}
-          </span>}
+          {user && user.id === currentServer.owner_id && (
+            <span
+              className={s.arrow}
+              onClick={() => {
+                setDownArrowIsSelected((prev) => !prev);
+              }}
+            >
+              {!downArrowIsSelected && <IoIosArrowDown />}
+              {downArrowIsSelected && <RxCross2 />}
+            </span>
+          )}
         </li>
         <li
           className={s.server_menu_container}

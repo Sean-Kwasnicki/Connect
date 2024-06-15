@@ -66,37 +66,35 @@ export const deleteChannelThunk = (channelId, serverId) => async (dispatch) => {
   });
 
   if (response.ok) {
-    dispatch(deleteChannel(channelId));
     return "good";
   }
   return "bad";
 };
 
-export const updateChannelThunk = (channelId, channelData) => async (dispatch) => {
-  try {
-    const response = await fetch(`/api/channels/${channelId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(channelData),
-    });
+export const updateChannelThunk =
+  (channelId, channelData) => async (dispatch) => {
+    try {
+      const response = await fetch(`/api/channels/${channelId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(channelData),
+      });
 
-    if (response.ok) {
-      const updatedChannel = await response.json();
-      dispatch(updateChannel(updatedChannel));  
-      return updatedChannel;
-    } else {
-      const errorData = await response.json();
-      return { errors: errorData.errors };
+      if (response.ok) {
+        const updatedChannel = await response.json();
+        dispatch(updateChannel(updatedChannel));
+        return updatedChannel;
+      } else {
+        const errorData = await response.json();
+        return { errors: errorData.errors };
+      }
+    } catch (error) {
+      console.error("Failed to update channel:", error);
+      return { errors: { message: "Failed to update channel." } };
     }
-  } catch (error) {
-    console.error("Failed to update channel:", error);
-    return { errors: { message: "Failed to update channel." } };
-  }
-};
-
-
+  };
 
 ///////////////////////////////////////////////////////
 
@@ -109,13 +107,14 @@ function channelReducer(state = initialState, action) {
     case CREATE_CHANNEL:
       return { ...state, channels: [...state.channels, action.payload] };
     case DELETE_CHANNEL: {
+      console.log(state.channels);
       const currentChannels = state.channels.filter(
-        ({ id }) => id !== Number(action.payload)
+        ({ id }) => Number(id) !== Number(action.payload)
       );
       return { ...state, channels: [...currentChannels] };
     }
     case UPDATE_CHANNEL: {
-      const updatedChannels = state.channels.map(channel =>
+      const updatedChannels = state.channels.map((channel) =>
         channel.id === action.payload.id ? action.payload : channel
       );
       return { ...state, channels: updatedChannels };
