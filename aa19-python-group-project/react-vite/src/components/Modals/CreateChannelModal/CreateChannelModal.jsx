@@ -17,15 +17,17 @@ function CreateChannelModal() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Creating channel with name:", name);
     const response = await dispatch(createChannelThunk(serverId, { name }));
 
+    console.log("Create channel response:", response);
+
     if (response) {
-      socket.emit("channel", {
-        room: `server_${serverId}`,
-        channel: response,
-      });
+      console.log("Emitting create_channel with data:", { server: Number(serverId), channel: response });
+      socket.emit("create_channel", { server: Number(serverId), channel: response });
       closeModal();
     } else {
+      console.log("Errors:", response.errors);
       setErrors(response.errors);
     }
   };
@@ -58,5 +60,6 @@ function CreateChannelModal() {
     </div>
   );
 }
+
 
 export default CreateChannelModal;

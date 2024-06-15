@@ -70,6 +70,12 @@ const Server = () => {
         }
       });
 
+      socket.on("create_channel", (data) => {
+        console.log("Received create_channel:", data);
+        dispatch(createChannel(data.channel));
+      });
+
+
       socket.on("delete_channel", (data) => {
         console.log(data.channel_id);
         dispatch(deleteChannel(data.channel_id));
