@@ -30,7 +30,6 @@ def on_join(data):
             servers[server].append(user)
         join_room(server)
         emit('update_users', {'server': server, 'users': servers[server]}, to=server)
-    else:
 
 @socketio.on('leave_server')
 def on_leave(data):
