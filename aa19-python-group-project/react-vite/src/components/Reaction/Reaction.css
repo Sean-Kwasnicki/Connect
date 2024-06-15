@@ -1,0 +1,29 @@
+/* Reaction.css */
+
+.reaction-container {
+  position: relative;
+}
+
+.emoji-picker-button {
+  display: none;
+  position: absolute;
+  right: 0;
+  border: none;
+  background: white;
+  margin-top: -30px;
+  margin-left: -30px;
+}
+
+.reaction-container:hover .emoji-picker-button {
+  display: inline-block;
+}
+
+.reaction-counts {
+  display: flex;
+  gap: 5px;
+}
+
+.icon {
+  font-size: 24px;
+  color: #b9bbbe;
+}

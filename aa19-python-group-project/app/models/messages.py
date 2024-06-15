@@ -15,5 +15,15 @@ class Message(db.Model):
 
     user = db.relationship('User', back_populates='messages')
     channel = db.relationship('Channel', back_populates='messages')
-    threads = db.relationship('Thread', back_populates='messages')
-    reactions = db.relationship('Reaction')
+    threads = db.relationship('Thread', back_populates='messages', cascade = "all,delete")
+    reactions = db.relationship('Reaction', cascade = "all,delete")
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'content': self.content,
+            'user_id': self.user_id,
+            'channel_id': self.channel_id,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
+        }

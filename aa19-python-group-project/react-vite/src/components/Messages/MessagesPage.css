@@ -1,0 +1,89 @@
+.message-item {
+  position: relative;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.message-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user-name {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.message-text {
+  flex-grow: 1;
+}
+
+.emoji-picker-button {
+  display: none;
+  margin-left: 10px;
+}
+
+.message-item:hover .emoji-picker-button {
+  display: inline-block;
+}
+
+.message-item:hover .delete-button {
+  display: inline-block;
+}
+
+.delete-button {
+  display: none;
+  margin-left: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #8c8d8d;
+}
+
+.reaction-counts {
+  margin-top: 5px;
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.reaction-item {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.channel-messages {
+  padding: 20px;
+}
+
+.message-form {
+  display: flex;
+  margin-top: 20px;
+}
+
+.message-input {
+  flex-grow: 1;
+  padding: 10px;
+  margin-right: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+.message-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.message-button:hover {
+  background-color: #0056b3;
+}

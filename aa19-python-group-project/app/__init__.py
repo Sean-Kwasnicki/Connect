@@ -4,11 +4,20 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect, generate_csrf
 from flask_login import LoginManager
-from .models import db, User
+from .models import db, User, Message, DirectMessage, Thread, Reaction, Server, ServerMember, Channel, ChannelMembers
 from .api.user_routes import user_routes
 from .api.auth_routes import auth_routes
+from .api.server_routes import server_routes
+from .api.channel_routes import channel_routes
+from .api.channel_members_routes import channel_members_routes
+from .api.messages import messages_routes
+from .api.direct_messages import direct_messages_routes
+from .api.threads import threads_routes
 from .seeds import seed_commands
 from .config import Config
+from flask_socketio import SocketIO
+from flask import Flask, send_from_directory
+from flask_socketio import SocketIO, join_room, leave_room, send, emit
 
 app = Flask(__name__, static_folder='../react-vite/dist', static_url_path='/')
 
@@ -28,12 +37,121 @@ app.cli.add_command(seed_commands)
 app.config.from_object(Config)
 app.register_blueprint(user_routes, url_prefix='/api/users')
 app.register_blueprint(auth_routes, url_prefix='/api/auth')
+app.register_blueprint(channel_routes, url_prefix='/api/channels')
+app.register_blueprint(server_routes, url_prefix='/api/servers')
+app.register_blueprint(channel_members_routes, url_prefix='/api/channels')
+app.register_blueprint(messages_routes, url_prefix='/api/messages')
+app.register_blueprint(direct_messages_routes, url_prefix='/api/direct_messages')
+app.register_blueprint(threads_routes, url_prefix='/api/threads')
 db.init_app(app)
 Migrate(app, db)
 
 # Application Security
 CORS(app)
 
+# Initialize SocketIO
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+
+# Server dictionary to keep track of users in each server
+# Single source of truth for the current state of each room.
+servers = {}
+
+
+@socketio.on('join_server')
+def on_join(data):
+    print(f"Received join_server event with data: {data}")
+    server = data.get('server')
+    user = data.get('user')
+    if server and user:
+        if server not in servers:
+            servers[server] = []
+        if user not in servers[server]:
+            servers[server].append(user)
+        join_room(server)
+        print(f"User {user} joined server {server}. Current users: {servers[server]}")
+        emit('update_users', {'server': server, 'users': servers[server]}, to=server)
+    else:
+        print("Invalid data received for join_server event")
+
+@socketio.on('leave_server')
+def on_leave(data):
+    print(f"Received leave_server event with data: {data}")
+    server = data.get('server')
+    user = data.get('user')
+    if server and user:
+        leave_room(server)
+        if server in servers and user in servers[server]:
+            servers[server].remove(user)
+            print(f"User {user} left server {server}. Current users: {servers[server]}")
+            emit('update_users', {'server': server, 'users': servers[server]}, to=server)
+        else:
+            print(f"User {user} not found in server {server}")
+    else:
+        print("Invalid data received for leave_server event")
+
+@socketio.on('join')
+def handle_join(data):
+    room = data['room']
+    join_room(room)
+    emit('user_joined', {'msg': f"{data['user']} has joined the room {room}."}, to=room)
+
+@socketio.on('leave')
+def handle_leave(data):
+    room = data['room']
+    leave_room(room)
+    emit('user_left', {'msg': f"{data['user']} has left the room {room}."}, to=room)
+
+@socketio.on('message')
+def handle_message(data):
+    room = data['room']
+    emit('message', data['message'], to=room)
+
+@socketio.on('delete_message')
+def handle_delete_message(data):
+    room = data['room']
+    message_id = data['message_id']
+    emit('delete_message', {'message_id': message_id}, to=room)
+
+@socketio.on('create_server')
+def create_server(data):
+    emit('create_server', data['server'], to=-1)
+
+
+@socketio.on('update_server')
+def update_server(data):
+    emit('update_server', data['payload'], to=-1)
+
+
+@socketio.on('delete_server')
+def delete_server(data):
+    emit('delete_server', data['serverId'], to=-1)
+
+@socketio.on('reaction')
+def handle_reaction(data):
+    room = data['room']
+    reaction = data['reaction']
+    if 'remove' in reaction and reaction['remove']:
+        emit('remove_reaction', {'reactionId': reaction['reactionId'], 'messageId': reaction['messageId']}, to=room)
+    else:
+        emit('new_reaction', reaction, to=room)
+
+@socketio.on('create_channel')
+def handle_create_channel(data):
+    server = data['server']
+    channel = data['channel']
+    emit('new_channel', {'server': server, 'channel': channel}, to=server)
+
+@socketio.on('delete_channel')
+def handle_delete_channel(data):
+    print(data)
+    server = data['server']
+    channel_id = data['channel_id']
+    emit('delete_channel', {'server': server, 'channel_id': channel_id}, to=server)
+
+
+if __name__ == '__main__':
+    socketio.run(app)
 
 # Since we are deploying with Docker and Flask,
 # we won't be using a buildpack when we deploy to Heroku.
@@ -89,3 +207,6 @@ def react_root(path):
 @app.errorhandler(404)
 def not_found(e):
     return app.send_static_file('index.html')
+
+if __name__ == '__main__':
+    socketio.run(app)

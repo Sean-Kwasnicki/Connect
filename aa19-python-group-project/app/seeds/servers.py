@@ -6,6 +6,7 @@ def seed_servers():
     demo = Server(
         name="Demo Server!!!",
         owner_id="1",
+        public=True,
         updated_at=datetime.now(),
         created_at=datetime.now()
     )
