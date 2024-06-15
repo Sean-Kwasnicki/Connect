@@ -20,10 +20,8 @@ const ServerMembers = () => {
 
   useEffect(() => {
     socket.emit('join', { room: serverId });
-    console.log(`Emitting join event for room: ${serverId}`);
 
     socket.on('update_users', (data) => {
-      console.log(`Received update_users event with data: ${JSON.stringify(data)}`);
       if (data.server === serverId) {
         dispatch(getMembersThunk(serverId));
       }
@@ -31,7 +29,6 @@ const ServerMembers = () => {
 
     return () => {
       socket.emit('leave', { room: serverId });
-      console.log(`Emitting leave event for room: ${serverId}`);
       socket.off('update_users');
     };
   }, [dispatch, serverId]);
@@ -43,7 +40,6 @@ const ServerMembers = () => {
     if (response) {
       const member = members.find(m => m.id === memberId);
       if (member) {
-        console.log(`Emitting leave_server event with server: ${serverId}, user: ${member.username}`);
         socket.emit('leave_server', { server: serverId, user: member.username });
       }
     }

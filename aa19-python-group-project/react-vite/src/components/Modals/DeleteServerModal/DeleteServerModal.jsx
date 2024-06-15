@@ -17,7 +17,6 @@ function DeleteServerModal() {
     e.preventDefault();
     const response = await dispatch(deleteServerThunk(serverId));
 
-    console.log(response);
 
     if (response === "good") {
       closeModal();

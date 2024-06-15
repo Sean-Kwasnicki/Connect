@@ -14,12 +14,9 @@ function CreateServerModal() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ name, public: isPublic });
     const response = await dispatch(
       createServerThunk({ name, public: isPublic })
     );
-    console.log();
-    console.log(response);
     if (response.message !== "Bad Request") {
       socket.emit("create_server", { room: -1, server: response });
       closeModal();
@@ -29,7 +26,6 @@ function CreateServerModal() {
   };
 
   useEffect(() => {
-    console.log(isPublic);
   }, [isPublic]);
 
   return (

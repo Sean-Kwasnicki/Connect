@@ -20,7 +20,6 @@ function ServerMemberModal() {
     e.preventDefault();
     const response = await dispatch(joinServerThunk({ serverId, username }));
     if (response && !response.errors) {
-      console.log(`Emitting join_server event with server: ${serverId}, user: ${username}`);
       socket.emit('join_server', { server: serverId, user: username });
       closeModal();
     } else {

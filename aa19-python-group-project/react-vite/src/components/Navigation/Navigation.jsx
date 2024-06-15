@@ -35,15 +35,12 @@ function Navigation() {
 
     socket.on("create_server", (data) => {
       //update store with new server
-      console.log(data, user);
       if (data.public === true || (user && user.id === data.owner_id)) {
         dispatch(createServer(data));
       }
     });
 
     socket.on("update_server", (payload) => {
-      console.log("update server hit!");
-      console.log(payload);
       dispatch(updateServer(payload.server, payload.serverId));
     });
 
@@ -77,7 +74,6 @@ function Navigation() {
               key={id}
               onClick={(e) => {
                 navigate(navTo);
-                console.log(e);
               }}
               className={s.server}
               onContextMenu={(e) => e.preventDefault()}
