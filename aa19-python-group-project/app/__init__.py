@@ -55,28 +55,41 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Server dictionary to keep track of users in each server
 # Single source of truth for the current state of each room.
-servers = {} # Was previously 'rooms'
+servers = {}
+
 
 @socketio.on('join_server')
 def on_join(data):
-    server = data['server'] # Was previously 'room'
-    user = data['user']
-    if server not in servers:
-        servers[server] = []
-    if user not in servers[server]:
-        servers[server].append(user)
-    join_room(server)
-    emit('update_users', {'server': server, 'users': servers[server]}, to=server)
+    print(f"Received join_server event with data: {data}")
+    server = data.get('server')
+    user = data.get('user')
+    if server and user:
+        if server not in servers:
+            servers[server] = []
+        if user not in servers[server]:
+            servers[server].append(user)
+        join_room(server)
+        print(f"User {user} joined server {server}. Current users: {servers[server]}")
+        emit('update_users', {'server': server, 'users': servers[server]}, to=server)
+    else:
+        print("Invalid data received for join_server event")
 
 @socketio.on('leave_server')
 def on_leave(data):
-    server = data['server'] # Was previously 'room'
-    user = data['user']
-    leave_room(server)
-    if server in servers and user in servers[server]:
-        servers[server].remove(user)
-        emit('update_users', {'server': server, 'users': servers[server]}, to=server)
-
+    print(f"Received leave_server event with data: {data}")
+    server = data.get('server')
+    user = data.get('user')
+    if server and user:
+        leave_room(server)
+        if server in servers and user in servers[server]:
+            servers[server].remove(user)
+            print(f"User {user} left server {server}. Current users: {servers[server]}")
+            emit('update_users', {'server': server, 'users': servers[server]}, to=server)
+        else:
+            print(f"User {user} not found in server {server}")
+    else:
+        print("Invalid data received for leave_server event")
+        
 @socketio.on('join')
 def handle_join(data):
     room = data['room']
@@ -98,7 +111,7 @@ def handle_message(data):
 def handle_delete_message(data):
     room = data['room']
     message_id = data['message_id']
-    emit('message_deleted', {'message_id': message_id}, to=room)
+    emit('delete_message', {'message_id': message_id}, to=room)
 
 @socketio.on('create_server')
 def create_server(data):

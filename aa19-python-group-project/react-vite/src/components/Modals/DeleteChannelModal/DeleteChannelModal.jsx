@@ -16,7 +16,7 @@ function DeleteChannelModal({ serverChannels, serverId }) {
 
     if (channel) {
       const response = await dispatch(deleteChannelThunk(channel.id));
-      console.log("Delete response:", response); // Debugging line
+      console.log("Delete response:", response); 
       if (!response.errors) {
         closeModal();
       } else {

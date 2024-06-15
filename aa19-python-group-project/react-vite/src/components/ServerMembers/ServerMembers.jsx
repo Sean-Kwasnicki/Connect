@@ -1,10 +1,13 @@
-// src/components/ServerMembers/ServerMembers.js
-import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
-import { getMembersThunk, deleteMemberThunk } from "../../redux/server";
-import s from "./ServerMembers.module.css";
+
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { getMembersThunk, deleteMemberThunk } from '../../redux/server';
+import io from 'socket.io-client';
+import s from './ServerMembers.module.css'
 import { FaRegTrashAlt } from "react-icons/fa";
+
+const socket = io.connect('/');
 
 const ServerMembers = () => {
   const { serverId } = useParams();
@@ -16,13 +19,34 @@ const ServerMembers = () => {
   }, [dispatch, serverId]);
 
   useEffect(() => {
-    console.log("Updated members:", members);
-  }, [members]);
+    socket.emit('join', { room: serverId });
+    console.log(`Emitting join event for room: ${serverId}`);
+
+    socket.on('update_users', (data) => {
+      console.log(`Received update_users event with data: ${JSON.stringify(data)}`);
+      if (data.server === serverId) {
+        dispatch(getMembersThunk(serverId));
+      }
+    });
+
+    return () => {
+      socket.emit('leave', { room: serverId });
+      console.log(`Emitting leave event for room: ${serverId}`);
+      socket.off('update_users');
+    };
+  }, [dispatch, serverId]);
 
   const handleDelete = async (memberId) => {
-    console.log(`Deleting member with ID: ${memberId}`);
+
     const response = await dispatch(deleteMemberThunk(serverId, memberId));
-    console.log("Delete response:", response);
+
+    if (response) {
+      const member = members.find(m => m.id === memberId);
+      if (member) {
+        console.log(`Emitting leave_server event with server: ${serverId}, user: ${member.username}`);
+        socket.emit('leave_server', { server: serverId, user: member.username });
+      }
+    }
   };
 
   return (

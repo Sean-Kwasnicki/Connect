@@ -19,6 +19,7 @@ import DeleteServerModalButton from "../Modals/DeleteServerModal/DeleteServerMod
 import DeleteChannelModalButton from "../Modals/DeleteChannelModal/DeleteChannelModalButton";
 import ServerMemberButton from "../Modals/ServerMemberModal";
 import ServerMembers from "../ServerMembers";
+import UpdateChannelButton from "../Modals/UpdateChannelModal/UpdateChannelButton";
 import io from "socket.io-client";
 import { IoIosArrowDown } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
@@ -26,6 +27,7 @@ import { FaCirclePlus } from "react-icons/fa6";
 import { FaRegTrashAlt } from "react-icons/fa";
 import UpdateServerModalButton from "../Modals/UpdateServerModal/UpdateServerModalButton";
 import { PiNotePencil } from "react-icons/pi";
+import { FaPencilAlt } from 'react-icons/fa';
 
 const socket = io.connect("/");
 
@@ -96,6 +98,12 @@ const Server = () => {
             Component={CreateChannelButtonComponent}
             closeDropdown={closeDropdown}
           />
+          <UpdateChannelButton
+            serverChannels={channels}
+            serverId={serverId}
+            Component={UpdateChannelButtonComponent}
+            closeDropdown={closeDropdown}
+          />
           <DeleteChannelModalButton
             serverChannels={channels}
             serverId={serverId}
@@ -164,6 +172,15 @@ const DeleteChannelButtonComponent = () => {
     <div className={s.create_channel_button}>
       <span>Delete Channel</span>
       <FaRegTrashAlt className={s.create_channel_plus_symbol} />
+    </div>
+  );
+};
+
+const UpdateChannelButtonComponent = () => {
+  return (
+    <div className={s.create_channel_button}>
+      <span>Update Channel</span>
+      <FaPencilAlt className={s.create_channel_plus_symbol} />
     </div>
   );
 };
