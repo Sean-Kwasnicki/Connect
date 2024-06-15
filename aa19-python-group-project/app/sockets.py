@@ -21,7 +21,6 @@ servers = {}
 
 @socketio.on('join_server')
 def on_join(data):
-    print(f"Received join_server event with data: {data}")
     server = data.get('server')
     user = data.get('user')
     if server and user:
@@ -30,26 +29,21 @@ def on_join(data):
         if user not in servers[server]:
             servers[server].append(user)
         join_room(server)
-        print(f"User {user} joined server {server}. Current users: {servers[server]}")
         emit('update_users', {'server': server, 'users': servers[server]}, to=server)
     else:
-        print("Invalid data received for join_server event")
 
 @socketio.on('leave_server')
 def on_leave(data):
-    print(f"Received leave_server event with data: {data}")
     server = data.get('server')
     user = data.get('user')
     if server and user:
         leave_room(server)
         if server in servers and user in servers[server]:
             servers[server].remove(user)
-            print(f"User {user} left server {server}. Current users: {servers[server]}")
             emit('update_users', {'server': server, 'users': servers[server]}, to=server)
         else:
-            print(f"User {user} not found in server {server}")
-    else:
-        print("Invalid data received for leave_server event")
+    
+
 
 @socketio.on('join')
 def handle_join(data):
@@ -103,7 +97,6 @@ def handle_create_channel(data):
 
 @socketio.on('delete_channel')
 def handle_delete_channel(data):
-    print(data)
     server = data['server']
     channel_id = data['channel_id']
     emit('delete_channel', {'server': server, 'channel_id': channel_id}, to=server)

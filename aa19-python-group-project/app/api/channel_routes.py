@@ -3,7 +3,6 @@ from flask_login import login_required, current_user
 from app.models import Channel, Server, ServerMember, db, Message, ChannelMembers, Reaction
 from app.forms import ChannelForm
 from datetime import datetime
-import logging
 
 channel_routes = Blueprint('channels', __name__)
 

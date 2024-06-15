@@ -103,8 +103,6 @@ def create_server():
         # grad server
         new_server = Server.query.filter(Server.name == form.data["name"]).first()
 
-        print()
-        print(new_server.id)
 
         # create server membership
         server_member = ServerMember(
@@ -188,7 +186,6 @@ def update_server(id):
     form['csrf_token'].data = request.cookies['csrf_token']
     if form.validate_on_submit():
 
-        print()
         # update server
         server.name =  form.data["name"]
         server.public = form.data["public"]
@@ -266,23 +263,18 @@ def get_members(id):
 @server_routes.route("/<id>/members/<member_id>", methods=["DELETE"])
 @login_required
 def delete_member(id, member_id):
-    print(f"Attempting to delete member: {member_id} from server: {id}")
 
     server = Server.query.get(id)
     if not server:
-        print("Server not found")
         return {"message": "Server not found"}, 404
 
     member = ServerMember.query.filter_by(user_id=member_id, server_id=id).first()
     if not member:
-        print("Member not found")
         return {"message": "Member not found"}, 404
 
-    print(f"Deleting member: {member_id}")
     db.session.delete(member)
     db.session.commit()
 
-    print("Member deleted")
     return {"message": "Member deleted"}
 
 
