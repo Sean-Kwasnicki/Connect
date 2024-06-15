@@ -9,14 +9,13 @@ import { getChannelsThunk, createChannel, deleteChannel } from "../../redux/chan
 const socket = io.connect("/");
 
 const Channel = () => {
-  const { channelId } = useParams();
+  const { channelId, serverId } = useParams();
   const dispatch = useDispatch();
   const channels = useSelector((state) => state.channels.channels);
   const [channelName, setChannelName] = useState("");
 
   useEffect(() => {
     dispatch(getMessagesThunk(channelId));
-    dispatch(getChannelsThunk()); // Assuming you have a thunk to fetch all channels
   }, [dispatch, channelId]);
 
   useEffect(() => {
@@ -32,8 +31,12 @@ const Channel = () => {
     if (channelId) {
       socket.emit("join", { room: channelId });
 
-      socket.on("new_channel", (channel) => {
-        dispatch(createChannel(channel));
+      // Listen for new channel event
+      socket.on("channel", (data) => {
+        if (data.server === serverId) {
+          console.log("New channel received:", data.channel);
+          dispatch(getChannelsThunk(serverId));
+        }
       });
 
       socket.on("remove_channel", (channelId) => {
@@ -42,11 +45,11 @@ const Channel = () => {
 
       return () => {
         socket.emit("leave", { room: channelId });
-        socket.off("new_channel");
+        socket.off("channel");
         socket.off("remove_channel");
       };
     }
-  }, [channelId, dispatch]);
+  }, [channelId, serverId, dispatch]);
 
   return (
     <>
@@ -57,4 +60,3 @@ const Channel = () => {
 };
 
 export default Channel;
-

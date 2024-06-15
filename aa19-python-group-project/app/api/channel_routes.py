@@ -104,28 +104,30 @@ def update_channel(id):
 @channel_routes.route('/<int:id>', methods=['DELETE'])
 @login_required
 def delete_channel(id):
-	"""
-	Deletes a channel by id.
-	Authentication: Required
-	Authorization: Required (user must be the server owner)
-	"""
-	if current_user.is_authenticated:
-		channel = Channel.query.get(id)
-		if not channel:
-			return {'errors': {'message': 'Channel not found'}}, 404
+    """
+    Deletes a channel by id.
+    Authentication: Required
+    Authorization: Required (user must be the server owner)
+    """
+    if current_user.is_authenticated:
+        channel = Channel.query.get(id)
+        if not channel:
+            return jsonify({'errors': {'message': 'Channel not found'}}), 404
 
-		server_member = is_server_member(current_user.id, channel.server_id)
-		if not server_member:
-			return {'errors': {'message': 'Forbidden'}}, 403
+        server_member = is_server_member(current_user.id, channel.server_id)
+        if not server_member:
+            return jsonify({'errors': {'message': 'Forbidden'}}), 403
 
-		server = Server.query.get(channel.server_id)
-		if server.owner_id != current_user.id:
-			return {'errors': {'message': 'Unauthorized'}}, 403
+        server = Server.query.get(channel.server_id)
+        if server.owner_id != current_user.id:
+            return jsonify({'errors': {'message': 'Unauthorized'}}), 403
 
-		db.session.delete(channel)
-		db.session.commit()
-		return {'message': 'Channel deleted'}
-	return {'errors': {'message': 'Unauthorized'}}, 401
+        db.session.delete(channel)
+        db.session.commit()
+
+        return jsonify({'message': 'Channel deleted', 'channel_id': id, 'server_id': channel.server_id})
+
+    return jsonify({'errors': {'message': 'Unauthorized'}}), 401
 
 
 @channel_routes.route('<int:channel_id>/messages', methods=['POST'])

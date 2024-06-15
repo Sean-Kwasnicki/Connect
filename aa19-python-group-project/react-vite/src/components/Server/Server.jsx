@@ -66,9 +66,18 @@ const Server = () => {
         }
       });
 
+      // Listen for new channel event
+      socket.on("channel", (data) => {
+        if (data.server === serverId) {
+          console.log("New channel received:", data.channel);
+          dispatch(getChannelsThunk(serverId));
+        }
+      });
+
       return () => {
         socket.emit("leave_server", { server: serverId, user: user.username });
         socket.off("update_users");
+        socket.off("channel");
       };
     }
   }, [dispatch, serverId, user]);

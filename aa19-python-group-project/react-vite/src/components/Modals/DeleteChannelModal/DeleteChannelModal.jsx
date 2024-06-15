@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useModal } from "../../../context/Modal";
 import { deleteChannelThunk } from "../../../redux/channel";
+import { socket } from "../../Navigation/Navigation";
 import s from "./DeleteChannelModal.module.css";
 
 function DeleteChannelModal({ serverChannels, serverId }) {
@@ -16,8 +17,9 @@ function DeleteChannelModal({ serverChannels, serverId }) {
 
     if (channel) {
       const response = await dispatch(deleteChannelThunk(channel.id));
-      console.log("Delete response:", response); 
+      console.log("Delete response:", response);
       if (!response.errors) {
+        socket.emit('delete_channel', { server: serverId, channel_id: channel.id });
         closeModal();
       } else {
         setErrors(response.errors);

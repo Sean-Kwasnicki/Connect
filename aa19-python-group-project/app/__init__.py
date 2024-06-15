@@ -89,7 +89,7 @@ def on_leave(data):
             print(f"User {user} not found in server {server}")
     else:
         print("Invalid data received for leave_server event")
-        
+
 @socketio.on('join')
 def handle_join(data):
     room = data['room']
@@ -136,11 +136,13 @@ def handle_reaction(data):
     else:
         emit('new_reaction', reaction, to=room)
 
-@socketio.on('create_channel')
+
+@socketio.on('channel')
 def handle_create_channel(data):
-    server = data['server']
+    server_id = data['server_id']
     channel = data['channel']
-    emit('new_channel', {'server': server, 'channel': channel}, to=server)
+    print(f"Emitting new channel to room server_{server_id}: {channel}")
+    emit('channel', {'server': server_id, 'channel': channel}, room=f'server_{server_id}')
 
 @socketio.on('delete_channel')
 def handle_delete_channel(data):
