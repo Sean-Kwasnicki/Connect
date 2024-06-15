@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useModal } from "../../context/Modal";
-import { createServerThunk } from "../../redux/server";
-import { socket } from "./Navigation";
-import s from "./CreateServerModal.module.css";
+import { useModal } from "../../../context/Modal";
+import { updateServerThunk } from "../../../redux/server";
+import { useParams } from "react-router-dom";
+import { socket } from "../../Navigation/Navigation";
+import s from "./UpdateServerModal.module.css";
 
-function CreateServerModal() {
+function UpdateServerModal() {
+  const { serverId } = useParams();
   const dispatch = useDispatch();
   const [name, setName] = useState("");
   const [isPublic, setIsPublic] = useState(true);
@@ -14,31 +16,30 @@ function CreateServerModal() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ name, public: isPublic });
     const response = await dispatch(
-      createServerThunk({ name, public: isPublic })
+      updateServerThunk(serverId, { name, public: isPublic })
     );
-    console.log();
-    console.log(response);
-    if (response.message !== "Bad Request") {
-      socket.emit("create_server", { room: -1, server: response });
+
+    if (response) {
+      socket.emit("update_server", {
+        payload: {
+          server: response,
+          serverId: response.id,
+        },
+      });
       closeModal();
     } else {
       setErrors(response.errors);
     }
   };
 
-  useEffect(() => {
-    console.log(isPublic);
-  }, [isPublic]);
-
   return (
     <div className={s.item_container}>
       <div className={s.item}>
-        <h1 className={s.header_1}>Create Server</h1>
+        <h1 className={s.header_1}>Update Server</h1>
         <form onSubmit={handleSubmit}>
           <div className={s.form_input}>
-            <label>Enter a name for your server!</label>
+            <label>Server Name</label>
             <input
               type="text"
               value={name}
@@ -72,7 +73,7 @@ function CreateServerModal() {
               Back
             </button>
             <button type="submit" className={s.submit_button}>
-              Create Server
+              Update Server
             </button>
           </div>
         </form>
@@ -81,4 +82,4 @@ function CreateServerModal() {
   );
 }
 
-export default CreateServerModal;
+export default UpdateServerModal;

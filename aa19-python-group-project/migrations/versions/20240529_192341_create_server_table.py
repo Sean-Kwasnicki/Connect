@@ -26,6 +26,7 @@ def upgrade():
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(50), nullable=False),
         sa.Column("owner_id", sa.Integer(), nullable=False),
+        sa.Column("public", sa.Integer(), nullable=False),
         sa.Column("created_at", sa.Date()),
         sa.Column("updated_at", sa.Date()),
         sa.PrimaryKeyConstraint('id'),

@@ -24,6 +24,8 @@ import { IoIosArrowDown } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
 import { FaCirclePlus } from "react-icons/fa6";
 import { FaRegTrashAlt } from "react-icons/fa";
+import UpdateServerModalButton from "../Modals/UpdateServerModal/UpdateServerModalButton";
+import { PiNotePencil } from "react-icons/pi";
 
 const socket = io.connect("/");
 
@@ -104,6 +106,10 @@ const Server = () => {
             Component={ServerMemberButtonComponent}
             closeDropdown={closeDropdown}
           />
+          <UpdateServerModalButton
+            Component={UpdateServerButtonComponent}
+            closeDropdown={closeDropdown}
+          />
           <DeleteServerModalButton
             Component={DeleteServerButtonComponent}
             closeDropdown={closeDropdown}
@@ -176,6 +182,15 @@ const ServerMemberButtonComponent = () => {
     <div className={s.create_channel_button}>
       <span>Invite People</span>
       <FaCirclePlus className={s.create_channel_plus_symbol} />
+    </div>
+  );
+};
+
+const UpdateServerButtonComponent = () => {
+  return (
+    <div className={s.create_channel_button}>
+      <span>Update Server</span>
+      <PiNotePencil className={s.create_channel_plus_symbol} />
     </div>
   );
 };

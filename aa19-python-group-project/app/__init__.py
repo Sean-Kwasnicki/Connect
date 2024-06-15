@@ -105,6 +105,11 @@ def create_server(data):
     emit('create_server', data['server'], to=-1)
 
 
+@socketio.on('update_server')
+def update_server(data):
+    emit('update_server', data['payload'], to=-1)
+
+
 @socketio.on('delete_server')
 def delete_server(data):
     emit('delete_server', data['serverId'], to=-1)

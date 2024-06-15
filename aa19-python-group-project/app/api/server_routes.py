@@ -13,6 +13,27 @@ def is_server_member(user_id, server_id):
 		ServerMember.server_id == server_id
 	).first()
 
+def should_show_server(server):
+    # is it a public server
+    if server.public:
+         return True
+
+    # is the user the server owner
+    if server.owner_id == current_user.id:
+         return True
+
+    # does the user have server membership
+    server_membership = ServerMember.query.filter(
+		ServerMember.user_id == current_user.id,
+		ServerMember.server_id == current_user.id
+	).first()
+    if server_membership:
+         return True
+
+    # otherwise don't show server
+    else:
+         return False
+
 # Helper function to convert a channel to a dictionary
 def channel_to_dict(channel):
 	return {
@@ -27,24 +48,29 @@ def channel_to_dict(channel):
 @server_routes.route('')
 @login_required
 def all_servers():
+    # get a list of all server
     servers = Server.query.all()
-    servers_list = [server.to_dict() for server in servers]
 
-    return servers_list
+    # filter list to only be public servers, or server a member is part off
+    return [server.to_dict() for server in servers if should_show_server(server)]
 
 
 @server_routes.route('/<id>')
 @login_required
 def server_by_id(id):
+    # get server
     server = Server.query.get(id)
 
+    # if server doesn't exist return error
     if not server:
         return {
             "message": "Bad request",
             "errors": {
                 "server": "Server not found"
             }
-        }
+        }, 404
+
+    # if server does exist return server info
     return {
             "id": server.id,
             "name": server.name,
@@ -58,121 +84,151 @@ def server_by_id(id):
 @login_required
 def create_server():
 
+    # get server data and validate it with a form
     data = request.get_json()
     form = CreateServerForm(data=data)
     form['csrf_token'].data = request.cookies['csrf_token']
-
     if form.validate_on_submit():
-        # Add the user to the session, we are logged in!
+
+        # create server
         server = Server(
             name=form.data["name"],
             owner_id=current_user.id,
+            public=data["public"],
             updated_at=datetime.now(),
             created_at=datetime.now()
         )
-
         db.session.add(server)
 
+        # grad server
         new_server = Server.query.filter(Server.name == form.data["name"]).first()
 
+        print()
+        print(new_server.id)
+
+        # create server membership
         server_member = ServerMember(
             user_id=current_user.id,
             server_id=new_server.id,
             updated_at=datetime.now(),
             created_at=datetime.now()
             )
-
         db.session.add(server_member)
+
+        # commit db changes
         db.session.commit()
 
-        return {
-            "id": new_server.id,
-            "name": new_server.name,
-            "owner_id": new_server.owner_id,
-            "created_at": new_server.created_at,
-            "updated_at": new_server.updated_at,
-        }
+        # return new server info
+        return new_server.to_dict()
 
+    # otherwise return errors
     return form.errors, 401
+
 
 @server_routes.route("/<id>", methods=["DELETE"])
 @login_required
 def delete_server(id):
 
-
+    # grab server
     server = Server.query.get(id)
 
-
+    # if no serve return error
     if not server:
         return {
             "message": "Bad request",
             "errors": {
                 "server": "Server not found"
             }
-        }
-    elif current_user.id == server.owner_id:
-        print("\n\n")
-        print(server.id)
+        }, 404
+
+    # if user is not the owner of the server return error
+    elif current_user.id != server.owner_id:
+        return {
+            "message": "Bad request",
+            "errors": {
+                "user": "User is not the owner of the server"
+            }
+        }, 403
+
+    # otherwise delete server
+    else:
         db.session.delete(server)
         db.session.commit()
         return { "message": "Successfully deleted server"}
-    else:
-        return "You don't own the server"
+
 
 @server_routes.route("/<id>", methods=["PATCH"])
 @login_required
 def update_server(id):
 
-    form = CreateServerForm()
+    # grab server
+    server = Server.query.get(id)
 
+    # if no server return error
+    if not server:
+        return {
+            "message": "Bad request",
+            "errors": {
+                "server": "Server not found"
+            }
+        }, 404
+
+    # if user is not the owner of the server return error
+    elif current_user.id != server.owner_id:
+        return {
+            "message": "Bad request",
+            "errors": {
+                "user": "User is not the owner of the server"
+            }
+        }, 403
+
+    # get server data and validate it with a form
+    data = request.get_json()
+    form = CreateServerForm(data=data)
     form['csrf_token'].data = request.cookies['csrf_token']
     if form.validate_on_submit():
 
-        server = Server.query.get(id)
+        print()
+        # update server
+        server.name =  form.data["name"]
+        server.public = form.data["public"]
+        db.session.commit()
 
-        if not server:
-            return {
-                "message": "Bad request",
-                "errors": {
-                    "server": "Server not found"
-                }
-            }
-        elif current_user.id == server.owner_id:
-            db.session.update({"name": form.data.name})
-            db.session.commit()
+        # grab and return updated server
+        updated_server = Server.query.get(id)
+        return updated_server.to_dict()
 
-            updated_server = Server.query.get(id)
-
-            return {
-                "id": updated_server.id,
-                "name": updated_server.name,
-                "owner_id": updated_server.owner_id,
-                "created_at": updated_server.create_at,
-                "updated_at": updated_server.updated_at,
-            }
-        else:
-            return "You don't own the server"
-
+    # otherwise return form errors
     return form.errors, 401
 
 
 @server_routes.route('/<id>/members', methods=['POST'])
 @login_required
 def add_member(id):
-    data = request.json
-    username = data.get('username')
 
+    # grab server
     server = Server.query.get(id)
+
+    # if no server return error
     if not server:
         return {
             "message": "Bad request",
             "errors": {
                 "server": "Server not found"
             }
-        }
+        }, 404
 
+    # if user is not the owner of the server return error
     elif current_user.id != server.owner_id:
-        return {"message": "You don't own the server"}, 403
+        return {
+            "message": "Bad request",
+            "errors": {
+                "user": "User is not the owner of the server"
+            }
+        }, 403
+
+    data = request.json
+    username = data.get('username')
 
     user = User.query.filter_by(username=username).first()
     if not user:

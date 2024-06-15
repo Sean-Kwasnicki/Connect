@@ -1,9 +1,13 @@
 import { NavLink, useNavigate, useParams } from "react-router-dom";
-import ProfileButton from "./ProfileButton";
 import s from "./Navigation.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
-import { getServersThunk } from "../../redux/server";
+import {
+  getServersThunk,
+  createServer,
+  updateServer,
+  deleteServer,
+} from "../../redux/server";
 import CreateServerButton from "./CreateServerButton";
 import io from "socket.io-client";
 import { IoIosHome } from "react-icons/io";
@@ -11,9 +15,9 @@ import { IoIosHome } from "react-icons/io";
 export const socket = io.connect("/");
 
 function Navigation() {
-  const [servers, setServers] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const servers = useSelector((state) => state.servers.servers);
   const username = useSelector((state) => {
     if (state.session.user) {
       return state.session.user.username;
@@ -24,29 +28,30 @@ function Navigation() {
 
   //get servers on initial render
   useEffect(() => {
-    const getServers = async () => {
-      const servers = await dispatch(getServersThunk());
-      setServers(servers);
-      socket.emit("join", { user: username, room: -1 });
-    };
-    getServers();
+    //grab servers from api and update store
+    dispatch(getServersThunk());
+    //join room -1 that is for server updates
+    socket.emit("join", { user: username, room: -1 });
 
     socket.on("create_server", (data) => {
-      setServers((prevServers) => [...prevServers, data]);
+      //update store with new server
+      dispatch(createServer(data));
     });
 
     socket.on("delete_server", (serverId) => {
-      console.log("hit delete server emit");
-      setServers((prevServers) =>
-        prevServers.filter(({ id }) => {
-          return id !== Number(serverId);
-        })
-      );
+      dispatch(deleteServer(serverId));
+    });
+
+    socket.on("update_server", (payload) => {
+      console.log("update server hit!");
+      console.log(payload);
+      dispatch(updateServer(payload.server, payload.serverId));
     });
 
     return () => {
       socket.emit("leave", { user: username, room: -1 });
       socket.off("create_server");
+      socket.off("update_server");
       socket.off("delete_server");
     };
   }, []);
@@ -61,27 +66,24 @@ function Navigation() {
       >
         <IoIosHome className={s.home_icon} />
       </div>
-      {servers.map(({ name, id }) => {
-        const navTo = `/servers/${id}`;
-        return (
-          <div
-            key={id}
-            onClick={(e) => {
-              navigate(navTo);
-              console.log(e);
-            }}
-            className={s.server}
-            onContextMenu={(e) => e.preventDefault()}
-          >
-            {name[0].toUpperCase()}
-          </div>
-        );
-      })}
+      {servers &&
+        servers.map(({ name, id }) => {
+          const navTo = `/servers/${id}`;
+          return (
+            <div
+              key={id}
+              onClick={(e) => {
+                navigate(navTo);
+                console.log(e);
+              }}
+              className={s.server}
+              onContextMenu={(e) => e.preventDefault()}
+            >
+              {name[0].toUpperCase()}
+            </div>
+          );
+        })}
       <CreateServerButton />
-
-      {/* <div className={s.profile_button}>
-        <ProfileButton />
-      </div> */}
     </nav>
   );
 }
