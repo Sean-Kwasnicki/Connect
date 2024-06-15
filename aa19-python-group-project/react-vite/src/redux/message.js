@@ -5,7 +5,7 @@ import axios from "axios";
 const GET_MESSAGES = "messages/getMessages";
 const CREATE_MESSAGE = "messages/createMessage";
 const DELETE_MESSAGE = "messages/deleteMessage";
-
+const UPDATE_MESSAGE = "messages/updateMessage";
 
 // Actions
 const getMessages = (messages) => ({
@@ -21,6 +21,11 @@ const createMessage = (message) => ({
 const deleteMessage = (messageId) => ({
   type: DELETE_MESSAGE,
   payload: messageId,
+});
+
+const updateMessage = (message) => ({
+  type: UPDATE_MESSAGE,
+  payload: message,
 });
 
 
@@ -40,7 +45,7 @@ export const getMessagesThunk = (channelId) => async (dispatch) => {
 
 export const createMessageThunk = (channelId, content) => async (dispatch, getState) => {
   try {
-    const { session: { user } } = getState(); 
+    const { session: { user } } = getState();
     const response = await fetch(`/api/channels/${channelId}/messages`, {
       method: "POST",
       headers: {
@@ -74,6 +79,29 @@ export const deleteMessageThunk = (messageId) => async (dispatch) => {
   }
 };
 
+export const updateMessageThunk = (messageId, content) => async (dispatch) => {
+  try {
+    const response = await fetch(`/api/messages/${messageId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(content),
+    });
+
+    if (response.ok) {
+      const updatedMessage = await response.json();
+      dispatch(updateMessage(updatedMessage));
+      return updatedMessage;
+    } else {
+      const errorData = await response.json();
+      return { errors: errorData.errors };
+    }
+  } catch (error) {
+    console.error("Failed to update message:", error);
+    return { errors: { message: "Failed to update message." } };
+  }
+};
 
 // Initial State
 const initialState = {
@@ -89,6 +117,13 @@ const messageReducer = (state = initialState, action) => {
       return { ...state, messages: [...state.messages, action.payload] };
     case DELETE_MESSAGE:
       return { ...state, messages: state.messages.filter(message => message.id !== action.payload) };
+    case UPDATE_MESSAGE:
+      return {
+        ...state,
+        messages: state.messages.map(message =>
+          message.id === action.payload.id ? action.payload : message
+        ),
+      };
     default:
       return state;
   }

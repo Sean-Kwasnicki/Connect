@@ -3,6 +3,15 @@
   padding: 10px;
   margin-bottom: 10px;
   border-bottom: 1px solid #e0e0e0;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+
+.message-item:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: scale(1.02);
 }
 
 .message-content {
@@ -29,18 +38,21 @@
   display: inline-block;
 }
 
-.message-item:hover .delete-button {
+.message-item:hover .edit-icon {
   display: inline-block;
 }
 
-.delete-button {
+.edit-icon {
   display: none;
-  margin-left: 10px;
   background: none;
   border: none;
+  color: inherit;
   cursor: pointer;
   font-size: 16px;
-  color: #8c8d8d;
+}
+
+.edit-icon:hover {
+  color: #007bff; /* Change to desired hover color */
 }
 
 .reaction-counts {
@@ -60,6 +72,8 @@
 
 .channel-messages {
   padding: 20px;
+  background-color: rgb(91, 91, 91);
+  height: 100%;
 }
 
 .message-form {
@@ -86,4 +100,12 @@
 
 .message-button:hover {
   background-color: #0056b3;
+}
+
+.message-content {
+  color: white;
+}
+
+.channel-label {
+  color: white;
 }

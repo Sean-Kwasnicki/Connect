@@ -84,7 +84,7 @@ export const updateChannelThunk = (channelId, channelData) => async (dispatch) =
 
     if (response.ok) {
       const updatedChannel = await response.json();
-      dispatch(updateChannel(updatedChannel));  
+      dispatch(updateChannel(updatedChannel));
       return updatedChannel;
     } else {
       const errorData = await response.json();

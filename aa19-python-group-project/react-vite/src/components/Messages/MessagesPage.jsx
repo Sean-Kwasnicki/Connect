@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMessagesThunk, createMessageThunk, deleteMessageThunk } from '../../redux/message';
-import { getReactionsThunk, addReaction, addReactionThunk } from '../../redux/reaction';
+import { getMessagesThunk, createMessageThunk } from '../../redux/message';
+import { getReactionsThunk } from '../../redux/reaction';
 import io from 'socket.io-client';
-import { FaPencilAlt } from 'react-icons/fa';
-import { FaRegTrashAlt } from "react-icons/fa";
 import Reaction from '../Reaction/Reaction';
+import UpdateMessageModalButton from './UpdateMessageModalButton';
 import './MessagesPage.css';
+import { FaPencilAlt } from 'react-icons/fa';
 
 const socket = io.connect('/');
 
@@ -43,7 +43,8 @@ const MessagesPage = ({ channelId, channelName }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await dispatch(createMessageThunk(channelId, { content: message }));
+        const formattedMessage = `${currentUser.username}: ${message}`;
+        await dispatch(createMessageThunk(channelId, { content: formattedMessage }));
         socket.emit('message', {
             message: { user: currentUser.username, content: message },
             room: channelId,
@@ -51,29 +52,33 @@ const MessagesPage = ({ channelId, channelName }) => {
         setMessage('');
     };
 
-    const handleDelete = async (messageId) => {
-        await dispatch(deleteMessageThunk(messageId));
-        socket.emit('delete_message', {
-            message_id: messageId,
-            room: channelId,
-        });
-    };
-
     return (
         <div className="channel-messages">
-            <h1>{channelName} Channel Messages</h1>
+            <h1 className="channel-label">{channelName} Channel Messages</h1>
             <ul>
                 {Array.isArray(messages) && messages.map(({ user, content, id }) => (
                     <li key={id} className="message-item">
-                        <div className="message-content">
+                        <div className="message-content" onClick={() => {
+                            if (currentUser.username === user) {
+                                const modalButton = document.getElementById(`update-modal-trigger-${id}`);
+                                if (modalButton) {
+                                    modalButton.click();
+                                }
+                            }
+                        }}>
                             <span className="user-name">{user}</span>
-                            <span className="message-text">{content}</span>
+                            <span className="message-text">{content.replace(`${user}: `, '')}</span>
                         </div>
                         <Reaction channelId={channelId} messageId={id} />
                         {currentUser.username === user && (
-                            <button className="delete-button" onClick={() => handleDelete(id)}>
-                                <FaRegTrashAlt />
-                            </button>
+                            <UpdateMessageModalButton
+                                messageId={id}
+                                initialContent={content.replace(`${user}: `, '')}
+                                initialUsername={user}
+                                Component={UpdateMessageButtonComponent}
+                                closeDropdown={() => {}}
+                                id={`update-modal-trigger-${id}`}
+                            />
                         )}
                     </li>
                 ))}
@@ -88,6 +93,14 @@ const MessagesPage = ({ channelId, channelName }) => {
                 <button type='submit' className="message-button">Send</button>
             </form>
         </div>
+    );
+};
+
+const UpdateMessageButtonComponent = ({ onClick }) => {
+    return (
+        <button onClick={onClick} className="edit-icon">
+            <FaPencilAlt />
+        </button>
     );
 };
 

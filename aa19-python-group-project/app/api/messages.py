@@ -58,25 +58,62 @@ def create_message():
         return jsonify(new_message.to_dict()), 201
     return form.errors, 401
 
+# @messages_routes.route('/<int:id>', methods=['PUT'])
+# @login_required
+# def update_message(id):
+#     form = MessageForm()
+#     form['csrf_token'].data = request.cookies['csrf_token']
+#     if form.validate_on_submit():
+#         message = Message.query.get(id)
+#         if not message or message.user_id != current_user.id:
+#             return {
+#                 "message": "Bad request",
+#                 "errors": {
+#                     "message": "Message not found or unauthorized"
+#                 }
+#             }
+#         message.content = form.data['content']
+#         message.updated_at = datetime.now()
+#         db.session.commit()
+#         return jsonify(message.to_dict())
+#     return form.errors, 401
+
+# @messages_routes.route('/<int:id>', methods=['PUT'])
+# @login_required
+# def update_message(id):
+#     data = request.get_json()
+#     content = data.get('content')
+
+#     if not content:
+#         return {"message": "Bad request", "errors": {"content": "Content is required"}}, 400
+
+#     message = Message.query.get(id)
+#     if not message or message.user_id != current_user.id:
+#         return {"message": "Bad request", "errors": {"message": "Message not found or unauthorized"}}, 401
+
+#     message.content = content
+#     message.updated_at = datetime.now()
+#     db.session.commit()
+#     return jsonify(message.to_dict()), 200
+
 @messages_routes.route('/<int:id>', methods=['PUT'])
 @login_required
 def update_message(id):
-    form = MessageForm()
-    form['csrf_token'].data = request.cookies['csrf_token']
-    if form.validate_on_submit():
-        message = Message.query.get(id)
-        if not message or message.user_id != current_user.id:
-            return {
-                "message": "Bad request",
-                "errors": {
-                    "message": "Message not found or unauthorized"
-                }
+    data = request.get_json()
+    message = Message.query.get(id)
+    if not message or message.user_id != current_user.id:
+        return {
+            "message": "Bad request",
+            "errors": {
+                "message": "Message not found or unauthorized"
             }
-        message.content = form.data['content']
-        message.updated_at = datetime.now()
-        db.session.commit()
-        return jsonify(message.to_dict())
-    return form.errors, 401
+        }, 401
+    message.content = data.get('content')
+    message.updated_at = datetime.now()
+    db.session.commit()
+    return jsonify(message.to_dict())
+
+
 
 @messages_routes.route('/<int:id>', methods=['DELETE'])
 @login_required
