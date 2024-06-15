@@ -40,7 +40,6 @@ def on_leave(data):
         if server in servers and user in servers[server]:
             servers[server].remove(user)
             emit('update_users', {'server': server, 'users': servers[server]}, to=server)
-        else:
     
 
 
