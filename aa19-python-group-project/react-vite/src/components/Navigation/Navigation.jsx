@@ -26,6 +26,8 @@ function Navigation() {
     }
   });
 
+  const user = useSelector((state) => state.session.user);
+
   //get servers on initial render
   useEffect(() => {
     //grab servers from api and update store
@@ -35,17 +37,20 @@ function Navigation() {
 
     socket.on("create_server", (data) => {
       //update store with new server
-      dispatch(createServer(data));
-    });
-
-    socket.on("delete_server", (serverId) => {
-      dispatch(deleteServer(serverId));
+      console.log(data, user);
+      if (data.public === true || (user && user.id === data.owner_id)) {
+        dispatch(createServer(data));
+      }
     });
 
     socket.on("update_server", (payload) => {
       console.log("update server hit!");
       console.log(payload);
       dispatch(updateServer(payload.server, payload.serverId));
+    });
+
+    socket.on("delete_server", (serverId) => {
+      dispatch(deleteServer(serverId));
     });
 
     return () => {

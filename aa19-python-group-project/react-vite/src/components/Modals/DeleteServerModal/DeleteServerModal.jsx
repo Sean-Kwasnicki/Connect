@@ -17,7 +17,9 @@ function DeleteServerModal() {
     e.preventDefault();
     const response = await dispatch(deleteServerThunk(serverId));
 
-    if (!response.errors) {
+    console.log(response);
+
+    if (response === "good") {
       closeModal();
       socket.emit("delete_server", { serverId });
       navigate("/");

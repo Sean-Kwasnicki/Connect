@@ -78,7 +78,7 @@ const Server = () => {
       <ul className={s.channels_container}>
         <li className={s.server_bar}>
           <span className={s.server_name}>{serverName}</span>
-          <span
+          {user && user.id === currentServer.owner_id && <span
             className={s.arrow}
             onClick={() => {
               setDownArrowIsSelected((prev) => !prev);
@@ -86,7 +86,7 @@ const Server = () => {
           >
             {!downArrowIsSelected && <IoIosArrowDown />}
             {downArrowIsSelected && <RxCross2 />}
-          </span>
+          </span>}
         </li>
         <li
           className={s.server_menu_container}
