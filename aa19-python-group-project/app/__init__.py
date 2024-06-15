@@ -15,9 +15,7 @@ from .api.direct_messages import direct_messages_routes
 from .api.threads import threads_routes
 from .seeds import seed_commands
 from .config import Config
-from flask_socketio import SocketIO
-from flask import Flask, send_from_directory
-from flask_socketio import SocketIO, join_room, leave_room, send, emit
+from .sockets import socketio
 
 app = Flask(__name__, static_folder='../react-vite/dist', static_url_path='/')
 
@@ -25,11 +23,9 @@ app = Flask(__name__, static_folder='../react-vite/dist', static_url_path='/')
 login = LoginManager(app)
 login.login_view = 'auth.unauthorized'
 
-
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
-
 
 # Tell flask about our seed commands
 app.cli.add_command(seed_commands)
@@ -50,114 +46,8 @@ Migrate(app, db)
 CORS(app)
 
 # Initialize SocketIO
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio.init_app(app)
 
-
-# Server dictionary to keep track of users in each server
-# Single source of truth for the current state of each room.
-servers = {}
-
-
-@socketio.on('join_server')
-def on_join(data):
-    print(f"Received join_server event with data: {data}")
-    server = data.get('server')
-    user = data.get('user')
-    if server and user:
-        if server not in servers:
-            servers[server] = []
-        if user not in servers[server]:
-            servers[server].append(user)
-        join_room(server)
-        print(f"User {user} joined server {server}. Current users: {servers[server]}")
-        emit('update_users', {'server': server, 'users': servers[server]}, to=server)
-    else:
-        print("Invalid data received for join_server event")
-
-@socketio.on('leave_server')
-def on_leave(data):
-    print(f"Received leave_server event with data: {data}")
-    server = data.get('server')
-    user = data.get('user')
-    if server and user:
-        leave_room(server)
-        if server in servers and user in servers[server]:
-            servers[server].remove(user)
-            print(f"User {user} left server {server}. Current users: {servers[server]}")
-            emit('update_users', {'server': server, 'users': servers[server]}, to=server)
-        else:
-            print(f"User {user} not found in server {server}")
-    else:
-        print("Invalid data received for leave_server event")
-
-@socketio.on('join')
-def handle_join(data):
-    room = data['room']
-    join_room(room)
-    emit('user_joined', {'msg': f"{data['user']} has joined the room {room}."}, to=room)
-
-@socketio.on('leave')
-def handle_leave(data):
-    room = data['room']
-    leave_room(room)
-    emit('user_left', {'msg': f"{data['user']} has left the room {room}."}, to=room)
-
-@socketio.on('message')
-def handle_message(data):
-    room = data['room']
-    emit('message', data['message'], to=room)
-
-@socketio.on('delete_message')
-def handle_delete_message(data):
-    room = data['room']
-    message_id = data['message_id']
-    emit('delete_message', {'message_id': message_id}, to=room)
-
-@socketio.on('create_server')
-def create_server(data):
-    emit('create_server', data['server'], to=-1)
-
-
-@socketio.on('update_server')
-def update_server(data):
-    emit('update_server', data['payload'], to=-1)
-
-
-@socketio.on('delete_server')
-def delete_server(data):
-    emit('delete_server', data['serverId'], to=-1)
-
-@socketio.on('reaction')
-def handle_reaction(data):
-    room = data['room']
-    reaction = data['reaction']
-    if 'remove' in reaction and reaction['remove']:
-        emit('remove_reaction', {'reactionId': reaction['reactionId'], 'messageId': reaction['messageId']}, to=room)
-    else:
-        emit('new_reaction', reaction, to=room)
-
-@socketio.on('create_channel')
-def handle_create_channel(data):
-    server = data['server']
-    channel = data['channel']
-    emit('new_channel', {'server': server, 'channel': channel}, to=server)
-
-@socketio.on('delete_channel')
-def handle_delete_channel(data):
-    print(data)
-    server = data['server']
-    channel_id = data['channel_id']
-    emit('delete_channel', {'server': server, 'channel_id': channel_id}, to=server)
-
-
-if __name__ == '__main__':
-    socketio.run(app)
-
-# Since we are deploying with Docker and Flask,
-# we won't be using a buildpack when we deploy to Heroku.
-# Therefore, we need to make sure that in production any
-# request made over http is redirected to https.
-# Well.........
 @app.before_request
 def https_redirect():
     if os.environ.get('FLASK_ENV') == 'production':
@@ -165,7 +55,6 @@ def https_redirect():
             url = request.url.replace('http://', 'https://', 1)
             code = 301
             return redirect(url, code=code)
-
 
 @app.after_request
 def inject_csrf_token(response):
@@ -178,7 +67,6 @@ def inject_csrf_token(response):
         httponly=True)
     return response
 
-
 @app.route("/api/docs")
 def api_help():
     """
@@ -189,7 +77,6 @@ def api_help():
                     app.view_functions[rule.endpoint].__doc__ ]
                     for rule in app.url_map.iter_rules() if rule.endpoint != 'static' }
     return route_list
-
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
@@ -202,7 +89,6 @@ def react_root(path):
     if path == 'favicon.ico':
         return app.send_from_directory('public', 'favicon.ico')
     return app.send_static_file('index.html')
-
 
 @app.errorhandler(404)
 def not_found(e):
