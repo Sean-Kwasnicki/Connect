@@ -15,7 +15,6 @@ from .api.direct_messages import direct_messages_routes
 from .api.threads import threads_routes
 from .seeds import seed_commands
 from .config import Config
-from flask_socketio import SocketIO
 from flask import Flask, send_from_directory
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
 
