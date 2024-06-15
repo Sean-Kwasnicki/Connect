@@ -15,8 +15,8 @@ def all_messages():
         "content": message.content,
         "user_id": message.user_id,
         "channel_id": message.channel_id,
-        "created_at": message.created_at,
-        "updated_at": message.updated_at
+        "created_at": message.created_at.isoformat(),
+        "updated_at": message.updated_at.isoformat()
     } for message in messages]
     return {"Messages": messages_list}
 
@@ -36,8 +36,8 @@ def message_by_id(id):
         "content": message.content,
         "user_id": message.user_id,
         "channel_id": message.channel_id,
-        "created_at": message.created_at,
-        "updated_at": message.updated_at
+        "created_at": message.created_at.isoformat(),
+        "updated_at": message.updated_at.isoformat()
     }
 
 @messages_routes.route('', methods=['POST'])

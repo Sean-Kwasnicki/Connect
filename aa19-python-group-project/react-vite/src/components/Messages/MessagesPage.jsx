@@ -5,8 +5,8 @@ import { getReactionsThunk } from '../../redux/reaction';
 import io from 'socket.io-client';
 import Reaction from '../Reaction/Reaction';
 import UpdateMessageModalButton from './UpdateMessageModalButton';
-import './MessagesPage.css';
 import { FaPencilAlt } from 'react-icons/fa';
+import './MessagesPage.css';
 
 const socket = io.connect('/');
 
@@ -52,12 +52,21 @@ const MessagesPage = ({ channelId, channelName }) => {
         setMessage('');
     };
 
+    const formatTimestamp = (timestamp) => {
+        const date = new Date(timestamp);
+        return date.toLocaleString();
+    };
+
     return (
         <div className="channel-messages">
             <h1 className="channel-label">{channelName} Channel Messages</h1>
             <ul>
-                {Array.isArray(messages) && messages.map(({ user, content, id }) => (
+                {Array.isArray(messages) && messages.map(({ user, content, id, created_at }) => (
                     <li key={id} className="message-item">
+                        <div className="message-header">
+                            <span className="user-name">{user}</span>
+                            <span className="timestamp">{created_at}</span>
+                        </div>
                         <div className="message-content" onClick={() => {
                             if (currentUser.username === user) {
                                 const modalButton = document.getElementById(`update-modal-trigger-${id}`);
@@ -66,7 +75,6 @@ const MessagesPage = ({ channelId, channelName }) => {
                                 }
                             }
                         }}>
-                            <span className="user-name">{user}</span>
                             <span className="message-text">{content.replace(`${user}: `, '')}</span>
                         </div>
                         <Reaction channelId={channelId} messageId={id} />

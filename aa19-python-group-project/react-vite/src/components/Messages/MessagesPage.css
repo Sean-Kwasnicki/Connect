@@ -14,19 +14,33 @@
   transform: scale(1.02);
 }
 
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.message-header .user-name {
+  font-weight: bold;
+  color: white; /* Make username white */
+}
+
+.message-header .timestamp {
+  font-size: 0.85em;
+  color: #8c8d8d;
+}
+
 .message-content {
+  margin-top: 5px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.user-name {
-  font-weight: bold;
-  margin-right: 5px;
+  color: white; /* Make message content white */
 }
 
 .message-text {
   flex-grow: 1;
+  margin-right: 10px;
 }
 
 .emoji-picker-button {
@@ -100,10 +114,6 @@
 
 .message-button:hover {
   background-color: #0056b3;
-}
-
-.message-content {
-  color: white;
 }
 
 .channel-label {

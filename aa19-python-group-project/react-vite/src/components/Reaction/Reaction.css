@@ -23,6 +23,7 @@
   display: flex;
   gap: 5px;
   cursor: pointer;
+  color: white;
 }
 
 .icon {
