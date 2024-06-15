@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useModal } from "../../context/Modal";
 import { createServerThunk } from "../../redux/server";
-import { socket } from "./Navigation";
 import s from "./CreateServerModal.module.css";
+import socket from "../../context/Socket";
 
 function CreateServerModal() {
   const dispatch = useDispatch();

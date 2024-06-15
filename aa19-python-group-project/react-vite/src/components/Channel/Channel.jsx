@@ -1,12 +1,14 @@
 import { Outlet, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import io from "socket.io-client";
 import { getMessagesThunk } from "../../redux/message";
 import MessagesPage from "../Messages/MessagesPage";
-import { getChannelsThunk, createChannel, deleteChannel } from "../../redux/channel";
-
-const socket = io.connect("/");
+import {
+  getChannelsThunk,
+  createChannel,
+  deleteChannel,
+} from "../../redux/channel";
+import socket from "../../context/Socket";
 
 const Channel = () => {
   const { channelId } = useParams();

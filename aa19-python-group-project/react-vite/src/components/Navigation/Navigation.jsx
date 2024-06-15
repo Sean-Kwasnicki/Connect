@@ -9,10 +9,8 @@ import {
   deleteServer,
 } from "../../redux/server";
 import CreateServerButton from "./CreateServerButton";
-import io from "socket.io-client";
 import { IoIosHome } from "react-icons/io";
-
-export const socket = io.connect("/");
+import socket from "../../context/Socket";
 
 function Navigation() {
   const dispatch = useDispatch();

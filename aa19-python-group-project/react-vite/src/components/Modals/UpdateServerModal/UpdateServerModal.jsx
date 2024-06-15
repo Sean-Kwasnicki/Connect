@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useModal } from "../../../context/Modal";
 import { updateServerThunk } from "../../../redux/server";
 import { useParams } from "react-router-dom";
-import { socket } from "../../Navigation/Navigation";
+import socket from "../../../context/Socket";
 import s from "./UpdateServerModal.module.css";
 
 function UpdateServerModal() {

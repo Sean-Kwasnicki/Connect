@@ -3,10 +3,8 @@ import { useDispatch } from "react-redux";
 import { useModal } from "../../../context/Modal";
 import { createChannelThunk } from "../../../redux/channel";
 import { useParams } from "react-router-dom";
-import io from "socket.io-client";
+import socket from "../../../context/Socket"
 import s from "./CreateChannelModal.module.css";
-
-const socket = io.connect("/");
 
 function CreateChannelModal() {
   const { serverId } = useParams();
