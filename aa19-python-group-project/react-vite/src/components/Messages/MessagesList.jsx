@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 
 const MessageList = ({ channelId }) => {
     const [messages, setMessages] = useState([]);
@@ -7,7 +6,12 @@ const MessageList = ({ channelId }) => {
     useEffect(() => {
         const fetchMessages = async () => {
             const response = await fetch(`/api/channels/${channelId}/messages`);
-            setMessages(response.data.messages);
+            if (response.ok) {
+                const data = await response.json();  
+                setMessages(data.messages);         
+            } else {
+                console.error("Failed to fetch messages:", response.statusText);
+            }
         };
 
         fetchMessages();

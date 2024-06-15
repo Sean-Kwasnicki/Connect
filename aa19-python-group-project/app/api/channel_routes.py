@@ -31,23 +31,24 @@ def channel_to_dict(channel):
 # get all message in channel based on channel id, return dict with message id, user username
 # , and content of the message
 # pretty sure I missing check to see if user is part of the server
+# Wei added check for user/server, tested and working.
 @channel_routes.route('/<int:channel_id>/messages')
 @login_required
 def get_all_messages_in_channel(channel_id):
     channel = Channel.query.get(channel_id)
     if not channel:
-        return {
-            "message": "Bad request",
-            "errors": {
-                "channel": "Channel not found"
-            }
-        }
+        return jsonify({"message": "Bad request", "errors": {"channel": "Channel not found"}}), 404
+
+    if not is_server_member(current_user.id, channel.server_id):
+        return jsonify({'message': 'Forbidden', 'errors': {'server': 'Not a member of the server'}}), 403
+
     messages = Message.query.filter(Message.channel_id == channel_id).all()
-    return [{
+    return jsonify([{
         "id": message.id,
-        "user": message.user.username,
+        "user": message.user.username, 
         "content": message.content
-    } for message in messages]
+    } for message in messages]), 200
+
 
 @channel_routes.route('/<int:id>', methods=['GET'])
 @login_required

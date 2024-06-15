@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMessagesThunk, createMessageThunk, deleteMessageThunk } from '../../redux/message';
+import { getMessagesThunk, createMessageThunk, deleteMessageThunk, updateMessageThunk } from '../../redux/message';
 import { getReactionsThunk, addReaction, addReactionThunk } from '../../redux/reaction';
 import io from 'socket.io-client';
 import { FaPencilAlt } from 'react-icons/fa';
@@ -15,6 +15,8 @@ const MessagesPage = ({ channelId, channelName }) => {
     const currentUser = useSelector((state) => state.session.user);
     const messages = useSelector((state) => state.messages.messages || []);
     const [message, setMessage] = useState("");
+    const [editingMessageId, setEditingMessageId] = useState(null);
+    const [editedContent, setEditedContent] = useState("");
 
     useEffect(() => {
         dispatch(getMessagesThunk(channelId));
@@ -59,24 +61,57 @@ const MessagesPage = ({ channelId, channelName }) => {
         });
     };
 
+    const handleEdit = (messageId, content) => {
+        setEditingMessageId(messageId);
+        setEditedContent(content);
+    };
+
+    const handleUpdate = async (messageId) => {
+        await dispatch(updateMessageThunk(messageId, { content: editedContent }));
+        socket.emit('update_message', {
+            message_id: messageId,
+            content: editedContent,
+            room: channelId,
+        });
+        setEditingMessageId(null);
+        setEditedContent('');
+    };
+
     return (
         <div className="channel-messages">
             <h1>{channelName} Channel Messages</h1>
             <ul>
-                {Array.isArray(messages) && messages.map(({ user, content, id }) => (
-                    <li key={id} className="message-item">
-                        <div className="message-content">
-                            <span className="user-name">{user}</span>
-                            <span className="message-text">{content}</span>
-                        </div>
-                        <Reaction channelId={channelId} messageId={id} />
-                        {currentUser.username === user && (
-                            <button className="delete-button" onClick={() => handleDelete(id)}>
-                                <FaRegTrashAlt />
-                            </button>
-                        )}
-                    </li>
-                ))}
+                {Array.isArray(messages) && messages.map(({ user, content, id }) =>
+                    editingMessageId === id ? (
+                        <li key={id} className="message-item">
+                            <input
+                                value={editedContent}
+                                onChange={(e) => setEditedContent(e.target.value)}
+                                className="message-edit-input"
+                            />
+                            <button onClick={() => handleUpdate(id)} className="save-button">Save</button>
+                            <button onClick={() => setEditingMessageId(null)} className="cancel-button">Cancel</button>
+                        </li>
+                    ) : (
+                        <li key={id} className="message-item">
+                            <div className="message-content">
+                                <span className="user-name">{user}</span>
+                                <span className="message-text">{content}</span>
+                            </div>
+                            <Reaction channelId={channelId} messageId={id} />
+                            {currentUser.username === user && (
+                                <div>
+                                    <button className="edit-button" onClick={() => handleEdit(id, content)}>
+                                        <FaPencilAlt />
+                                    </button>
+                                    <button className="delete-button" onClick={() => handleDelete(id)}>
+                                        <FaRegTrashAlt />
+                                    </button>
+                                </div>
+                            )}
+                        </li>
+                    )
+                )}
             </ul>
             <form className="message-form" onSubmit={handleSubmit}>
                 <input

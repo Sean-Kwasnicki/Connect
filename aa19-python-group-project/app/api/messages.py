@@ -71,12 +71,12 @@ def update_message(id):
                 "errors": {
                     "message": "Message not found or unauthorized"
                 }
-            }
+            }, 403
         message.content = form.data['content']
         message.updated_at = datetime.now()
         db.session.commit()
-        return jsonify(message.to_dict())
-    return form.errors, 401
+        return jsonify(message.to_dict()), 200
+    return form.errors, 400
 
 @messages_routes.route('/<int:id>', methods=['DELETE'])
 @login_required

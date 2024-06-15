@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, session, redirect,  send_from_directory
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect, generate_csrf
@@ -15,8 +15,6 @@ from .api.direct_messages import direct_messages_routes
 from .api.threads import threads_routes
 from .seeds import seed_commands
 from .config import Config
-from flask_socketio import SocketIO
-from flask import Flask, send_from_directory
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
 
 app = Flask(__name__, static_folder='../react-vite/dist', static_url_path='/')
@@ -33,7 +31,6 @@ def load_user(id):
 
 # Tell flask about our seed commands
 app.cli.add_command(seed_commands)
-
 app.config.from_object(Config)
 app.register_blueprint(user_routes, url_prefix='/api/users')
 app.register_blueprint(auth_routes, url_prefix='/api/auth')
@@ -143,10 +140,6 @@ def handle_delete_channel(data):
     channel_id = data['channel_id']
     emit('remove_channel', {'server': server, 'channel_id': channel_id}, to=server)
 
-
-if __name__ == '__main__':
-    socketio.run(app)
-
 # Since we are deploying with Docker and Flask,
 # we won't be using a buildpack when we deploy to Heroku.
 # Therefore, we need to make sure that in production any
@@ -191,12 +184,14 @@ def react_root(path):
     """
     This route will direct to the public directory in our
     react builds in the production environment for favicon
-    or index.html requests
+    or index.html requests unless the path starts with 'api'.
     """
+    if path.startswith('api/'):
+        return "API endpoint not found", 404
+
     if path == 'favicon.ico':
         return app.send_from_directory('public', 'favicon.ico')
     return app.send_static_file('index.html')
-
 
 @app.errorhandler(404)
 def not_found(e):

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 
 const MessageForm = ({ channelId }) => {
     const [content, setContent] = useState('');
@@ -7,7 +6,18 @@ const MessageForm = ({ channelId }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`/api/channels/${channelId}/messages`, { content });
+            const response = await fetch(`/api/messages`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content, channel_id: channelId }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to send message');
+            }
+
             setContent('');
         } catch (error) {
             console.error("Failed to send message:", error);

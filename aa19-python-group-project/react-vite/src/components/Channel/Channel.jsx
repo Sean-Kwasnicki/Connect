@@ -16,7 +16,7 @@ const Channel = () => {
 
   useEffect(() => {
     dispatch(getMessagesThunk(channelId));
-    dispatch(getChannelsThunk()); // Assuming you have a thunk to fetch all channels
+    dispatch(getChannelsThunk()); 
   }, [dispatch, channelId]);
 
   useEffect(() => {
