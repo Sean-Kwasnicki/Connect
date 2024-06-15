@@ -101,8 +101,15 @@ def handle_leave(data):
 
 @socketio.on('message')
 def handle_message(data):
-    room = data['room']
-    emit('message', data['message'], to=room)
+    user = data.get('user')
+    if not user:
+        emit('error', {'error': 'User data is required'})
+        return
+    message = data.get('message')
+    if not message:
+        emit('error', {'error': 'Message content is required'})
+        return
+    emit('new_message', {'user': user, 'message': message}, room=data.get('room'))
 
 @socketio.on('delete_message')
 def handle_delete_message(data):

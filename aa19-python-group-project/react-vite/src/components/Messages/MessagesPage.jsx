@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMessagesThunk, createMessageThunk, deleteMessageThunk, updateMessageThunk } from '../../redux/message';
-import { getReactionsThunk, addReaction, addReactionThunk } from '../../redux/reaction';
 import io from 'socket.io-client';
-import { FaPencilAlt } from 'react-icons/fa';
-import { FaRegTrashAlt } from "react-icons/fa";
+import { FaPencilAlt, FaRegTrashAlt } from 'react-icons/fa';
 import Reaction from '../Reaction/Reaction';
 import './MessagesPage.css';
 
@@ -12,112 +10,95 @@ const socket = io.connect('/');
 
 const MessagesPage = ({ channelId, channelName }) => {
     const dispatch = useDispatch();
-    const currentUser = useSelector((state) => state.session.user);
     const messages = useSelector((state) => state.messages.messages || []);
-    const [message, setMessage] = useState("");
-    const [editingMessageId, setEditingMessageId] = useState(null);
-    const [editedContent, setEditedContent] = useState("");
+    const currentUser = useSelector((state) => state.session.user);
+    const [newMessage, setNewMessage] = useState("");
+    const [editState, setEditState] = useState({ id: null, content: "" });
 
     useEffect(() => {
         dispatch(getMessagesThunk(channelId));
         socket.emit('join', { room: channelId });
 
-        socket.on('message', () => {
-            dispatch(getMessagesThunk(channelId));
-        });
-
-        socket.on('delete_message', () => {
-            dispatch(getMessagesThunk(channelId));
-        });
+        const onMessageReceived = () => dispatch(getMessagesThunk(channelId));
+        socket.on('message', onMessageReceived);
+        socket.on('delete_message', onMessageReceived);
 
         return () => {
+            socket.off('message', onMessageReceived);
+            socket.off('delete_message', onMessageReceived);
             socket.emit('leave', { room: channelId });
-            socket.off('message');
-            socket.off('delete_message');
         };
     }, [dispatch, channelId]);
 
-    useEffect(() => {
-        messages.forEach(message => {
-            dispatch(getReactionsThunk(channelId, message.id));
-        });
-    }, [dispatch, channelId, messages]);
-
-    const handleSubmit = async (e) => {
+    const handleSend = async (e) => {
         e.preventDefault();
-        await dispatch(createMessageThunk(channelId, { content: message }));
-        socket.emit('message', {
-            message: { user: currentUser.username, content: message },
-            room: channelId,
-        });
-        setMessage('');
+        if (newMessage.trim()) {
+            await dispatch(createMessageThunk(channelId, { content: newMessage }));
+            setNewMessage('');
+        }
     };
 
     const handleDelete = async (messageId) => {
         await dispatch(deleteMessageThunk(messageId));
-        socket.emit('delete_message', {
-            message_id: messageId,
-            room: channelId,
-        });
     };
 
-    const handleEdit = (messageId, content) => {
-        setEditingMessageId(messageId);
-        setEditedContent(content);
+    const handleEdit = (message) => {
+        setEditState({ id: message.id, content: message.content });
     };
 
-    const handleUpdate = async (messageId) => {
-        await dispatch(updateMessageThunk(messageId, { content: editedContent }));
-        socket.emit('update_message', {
-            message_id: messageId,
-            content: editedContent,
-            room: channelId,
-        });
-        setEditingMessageId(null);
-        setEditedContent('');
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+        console.log("Updating message with ID:", editState.id);
+        console.log("Content to update:", editState.content);
+        if (editState.content.trim()) {
+            await dispatch(updateMessageThunk(editState.id, { content: editState.content }));
+            setEditState({ id: null, content: "" });
+        }
     };
 
     return (
         <div className="channel-messages">
             <h1>{channelName} Channel Messages</h1>
             <ul>
-                {Array.isArray(messages) && messages.map(({ user, content, id }) =>
-                    editingMessageId === id ? (
-                        <li key={id} className="message-item">
-                            <input
-                                value={editedContent}
-                                onChange={(e) => setEditedContent(e.target.value)}
-                                className="message-edit-input"
-                            />
-                            <button onClick={() => handleUpdate(id)} className="save-button">Save</button>
-                            <button onClick={() => setEditingMessageId(null)} className="cancel-button">Cancel</button>
+                {messages.map((message) =>
+                    editState.id === message.id ? (
+                        <li key={message.id} className="message-item">
+                            <form onSubmit={handleUpdate}>
+                                <input
+                                    value={editState.content}
+                                    onChange={(e) => setEditState({ ...editState, content: e.target.value })}
+                                    className="message-edit-input"
+                                />
+                                <button type="submit" className="save-button">Save</button>
+                                <button onClick={() => setEditState({ id: null, content: "" })} className="cancel-button">Cancel</button>
+                            </form>
                         </li>
                     ) : (
-                        <li key={id} className="message-item">
+                        <li key={message.id} className="message-item">
                             <div className="message-content">
-                                <span className="user-name">{user}</span>
-                                <span className="message-text">{content}</span>
+                                <span className="user-name">{message.user}</span>
+                                <span className="message-text">{message.content}</span>
+                                <Reaction channelId={channelId} messageId={message.id} />
+                                {currentUser.username === message.user && (
+                                    <div>
+                                        <button onClick={() => handleEdit(message)} className="edit-button">
+                                            <FaPencilAlt />
+                                        </button>
+                                        <button onClick={() => handleDelete(message.id)} className="delete-button">
+                                            <FaRegTrashAlt />
+                                        </button>
+                                    </div>
+                                )}
                             </div>
-                            <Reaction channelId={channelId} messageId={id} />
-                            {currentUser.username === user && (
-                                <div>
-                                    <button className="edit-button" onClick={() => handleEdit(id, content)}>
-                                        <FaPencilAlt />
-                                    </button>
-                                    <button className="delete-button" onClick={() => handleDelete(id)}>
-                                        <FaRegTrashAlt />
-                                    </button>
-                                </div>
-                            )}
                         </li>
                     )
                 )}
             </ul>
-            <form className="message-form" onSubmit={handleSubmit}>
+            <form className="message-form" onSubmit={handleSend}>
                 <input
                     type='text'
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
                     className="message-input"
                 />
                 <button type='submit' className="message-button">Send</button>

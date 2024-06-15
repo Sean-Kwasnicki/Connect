@@ -80,26 +80,26 @@ export const deleteMessageThunk = (messageId) => async (dispatch) => {
   }
 };
 
-export const updateMessageThunk = (messageId, content) => async (dispatch, getState) => {
-  try {
-    const response = await fetch(`/api/messages/${messageId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ content }),
-    });
+export const updateMessageThunk = (messageId, content) => async (dispatch) => {
+  const response = await fetch(`/api/messages/${messageId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ content: content })
+  });
 
-    if (response.ok) {
-      const updatedMessage = await response.json();
-      dispatch(updateMessage(updatedMessage));
-    } else {
-      throw new Error('Failed to update message');
-    }
-  } catch (error) {
-    console.error("Error updating message:", error);
+  if (response.ok) {
+    const updatedMessage = await response.json();
+    dispatch(updateMessage(updatedMessage));
+  } else {
+    const errorResponse = await response.text(); // Getting the text of the error response
+    console.error("Failed to update message:", errorResponse);
+    throw new Error('Failed to update message');
   }
 };
+
+
 
 // Initial State
 const initialState = {
@@ -111,20 +111,28 @@ const messageReducer = (state = initialState, action) => {
   switch (action.type) {
     case GET_MESSAGES:
       return { ...state, messages: action.payload };
+
     case CREATE_MESSAGE:
       return { ...state, messages: [...state.messages, action.payload] };
+
     case DELETE_MESSAGE:
-      return { ...state, messages: state.messages.filter(message => message.id !== action.payload) };
+      return {
+        ...state,
+        messages: state.messages.filter(message => message.id !== action.payload)
+      };
+
     case UPDATE_MESSAGE:
       return {
         ...state,
-        messages: state.messages.map((msg) =>
+        messages: state.messages.map(msg =>
           msg.id === action.payload.id ? action.payload : msg
-        ),
+        )
       };
+
     default:
       return state;
   }
 };
 
 export default messageReducer;
+
