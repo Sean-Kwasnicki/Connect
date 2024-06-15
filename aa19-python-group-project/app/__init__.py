@@ -138,10 +138,12 @@ def handle_reaction(data):
 
 @socketio.on('create_channel')
 def handle_create_channel(data):
+    print("Handling create_channel with data:", data)
     server = data['server']
     channel = data['channel']
-    emit('new_channel', {'server': server, 'channel': channel}, to=server)
-
+    print(f"Emitting new channel to room server_{server}: {channel}")
+    emit('create_channel', {'server': server, 'channel': channel}, to=server)
+    
 @socketio.on('delete_channel')
 def handle_delete_channel(data):
     print(data)

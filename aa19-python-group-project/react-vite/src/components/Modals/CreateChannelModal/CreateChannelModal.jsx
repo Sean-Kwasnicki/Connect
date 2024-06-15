@@ -19,13 +19,12 @@ function CreateChannelModal() {
     e.preventDefault();
     const response = await dispatch(createChannelThunk(serverId, { name }));
 
-    if (response) {
-      socket.emit("channel", {
-        room: `server_${serverId}`,
-        channel: response,
-      });
-      closeModal();
-    } else {
+
+if (response) {
+  console.log("Emitting create_channel with data:", { server: Number(serverId), channel: response });
+  socket.emit("create_channel", { server: Number(serverId), channel: response });
+  closeModal();
+} else {
       setErrors(response.errors);
     }
   };
