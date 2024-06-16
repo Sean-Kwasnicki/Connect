@@ -19,52 +19,52 @@ socketio = SocketIO(cors_allowed_origins="*")
 # Single source of truth for the current state of each room.
 servers = {}
 
-@socketio.on('join_server')
-def on_join(data):
-    server = data.get('server')
-    user = data.get('user')
-    if server and user:
-        if server not in servers:
-            servers[server] = []
-        if user not in servers[server]:
-            servers[server].append(user)
-        join_room(server)
-        emit('update_users', {'server': server, 'users': servers[server]}, to=server)
+# @socketio.on('join_server')
+# def on_join(data):
+#     server = data.get('server')
+#     user = data.get('user')
+#     if server and user:
+#         if server not in servers:
+#             servers[server] = []
+#         if user not in servers[server]:
+#             servers[server].append(user)
+#         join_room(server)
+#         emit('update_users', {'server': server, 'users': servers[server]}, to=server)
 
-@socketio.on('leave_server')
-def on_leave(data):
-    server = data.get('server')
-    user = data.get('user')
-    if server and user:
-        leave_room(server)
-        if server in servers and user in servers[server]:
-            servers[server].remove(user)
-            emit('update_users', {'server': server, 'users': servers[server]}, to=server)
-    
+# @socketio.on('leave_server')
+# def on_leave(data):
+#     server = data.get('server')
+#     user = data.get('user')
+#     if server and user:
+#         leave_room(server)
+#         if server in servers and user in servers[server]:
+#             servers[server].remove(user)
+#             emit('update_users', {'server': server, 'users': servers[server]}, to=server)
 
 
-@socketio.on('join')
-def handle_join(data):
-    room = data['room']
-    join_room(room)
-    emit('user_joined', {'msg': f"{data['user']} has joined the room {room}."}, to=room)
 
-@socketio.on('leave')
-def handle_leave(data):
-    room = data['room']
-    leave_room(room)
-    emit('user_left', {'msg': f"{data['user']} has left the room {room}."}, to=room)
+# @socketio.on('join')
+# def handle_join(data):
+#     room = data['room']
+#     join_room(room)
+#     emit('user_joined', {'msg': f"{data['user']} has joined the room {room}."}, to=room)
 
-@socketio.on('message')
-def handle_message(data):
-    room = data['room']
-    emit('message', data['message'], to=room)
+# @socketio.on('leave')
+# def handle_leave(data):
+#     room = data['room']
+#     leave_room(room)
+#     emit('user_left', {'msg': f"{data['user']} has left the room {room}."}, to=room)
 
-@socketio.on('delete_message')
-def handle_delete_message(data):
-    room = data['room']
-    message_id = data['message_id']
-    emit('delete_message', {'message_id': message_id}, to=room)
+# @socketio.on('message')
+# def handle_message(data):
+#     room = data['room']
+#     emit('message', data['message'], to=room)
+
+# @socketio.on('delete_message')
+# def handle_delete_message(data):
+#     room = data['room']
+#     message_id = data['message_id']
+#     emit('delete_message', {'message_id': message_id}, to=room)
 
 # @socketio.on('create_server')
 # def create_server(data):
