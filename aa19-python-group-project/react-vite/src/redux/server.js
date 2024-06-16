@@ -67,6 +67,7 @@ export const createServerThunk = (server) => async (dispatch) => {
     body: JSON.stringify(server),
   });
   const data = await response.json();
+  dispatch(createServer(data));
   return data;
 };
 
@@ -89,10 +90,10 @@ export const updateServerThunk = (serverId, server) => async (dispatch) => {
     },
     body: JSON.stringify(server),
   });
+
   if (response.ok) {
     const data = await response.json();
     dispatch(updateServer(data, serverId));
-    console.log(data);
     return data;
   }
   return;
@@ -182,12 +183,14 @@ function serverReducer(state = initialState, action) {
     case UPDATE_SERVER: {
       let serverIndex;
       for (let i = 0; i < state.servers.length; i++) {
-        if (state.servers[i].id === action.payload.serverId) {
+        if (state.servers[i].id === Number(action.payload.serverId)) {
           serverIndex = i;
         }
       }
       const serversCopy = [...state.servers];
+      console.log(serversCopy);
       serversCopy[serverIndex] = action.payload.server;
+      console.log(serversCopy, serverIndex);
       return { ...state, servers: serversCopy };
     }
     case DELETE_SERVER: {

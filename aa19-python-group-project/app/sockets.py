@@ -61,17 +61,17 @@ def handle_delete_message(data):
     message_id = data['message_id']
     emit('delete_message', {'message_id': message_id}, to=room)
 
-@socketio.on('create_server')
-def create_server(data):
-    emit('create_server', data['server'], to=-1)
+# @socketio.on('create_server')
+# def create_server(data):
+#     emit('create_server', data['server'], to=-1)
 
-@socketio.on('update_server')
-def update_server(data):
-    emit('update_server', data['payload'], to=-1)
+# @socketio.on('update_server')
+# def update_server(data):
+#     emit('update_server', data['payload'], to=-1)
 
-@socketio.on('delete_server')
-def delete_server(data):
-    emit('delete_server', data['serverId'], to=-1)
+# @socketio.on('delete_server')
+# def delete_server(data):
+#     emit('delete_server', data['serverId'], to=-1)
 
 @socketio.on('reaction')
 def handle_reaction(data):
