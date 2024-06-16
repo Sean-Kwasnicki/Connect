@@ -31,32 +31,32 @@ function Navigation() {
     //grab servers from api and update store
     dispatch(getServersThunk());
     //join room -1 that is for server updates
-    socket.emit("join", { user: username, room: -1 });
+    // socket.emit("join", { user: username, room: -1 });
 
-    socket.on("create_server", (data) => {
-      //update store with new server
-      console.log(data, user);
-      if (data.public === true || (user && user.id === data.owner_id)) {
-        dispatch(createServer(data));
-      }
-    });
+    // socket.on("create_server", (data) => {
+    //   //update store with new server
+    //   console.log(data, user);
+    //   if (data.public === true || (user && user.id === data.owner_id)) {
+    //     dispatch(createServer(data));
+    //   }
+    // });
 
-    socket.on("update_server", (payload) => {
-      console.log("update server hit!");
-      console.log(payload);
-      dispatch(updateServer(payload.server, payload.serverId));
-    });
+    // socket.on("update_server", (payload) => {
+    //   console.log("update server hit!");
+    //   console.log(payload);
+    //   dispatch(updateServer(payload.server, payload.serverId));
+    // });
 
-    socket.on("delete_server", (serverId) => {
-      dispatch(deleteServer(serverId));
-    });
+    // socket.on("delete_server", (serverId) => {
+    //   dispatch(deleteServer(serverId));
+    // });
 
-    return () => {
-      socket.emit("leave", { user: username, room: -1 });
-      socket.off("create_server");
-      socket.off("update_server");
-      socket.off("delete_server");
-    };
+    // return () => {
+    //   socket.emit("leave", { user: username, room: -1 });
+    //   socket.off("create_server");
+    //   socket.off("update_server");
+    //   socket.off("delete_server");
+    // };
   }, []);
 
   return (

@@ -164,6 +164,7 @@ def update_server(id):
     # grab server
     server = Server.query.get(id)
 
+
     # if no server return error
     if not server:
         return {
@@ -188,7 +189,6 @@ def update_server(id):
     form['csrf_token'].data = request.cookies['csrf_token']
     if form.validate_on_submit():
 
-        print()
         # update server
         server.name =  form.data["name"]
         server.public = form.data["public"]
