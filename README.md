@@ -1,4 +1,43 @@
-# Discord-Project
+# Connect Project
+Welcome to our Discord clone project for App Academy! We recreated a web page where users can create their own private or public servers and channels where you can invite friends or strangers in order to trade messages with them in real time. This project was done by Sean Kwasnicki, Eli Suffridge, and WeiCheng Chen.
+
+# Link to Live Site
+https://connect-imdc.onrender.com/
+
+# WikiLinks
+
+# Technologies used to create this project. 
+![Python]
+
+![JavaScript]
+
+![Flask]
+
+![React]
+
+![Postgres]
+
+![CSS3]
+
+![Redux]
+
+![HTML5]
+
+![Socket.io]
+
+![Flask]
+
+![Docker]
+
+
+
+
+
+
+
+
+
+
 
 # Discord API Routes (In Review)
 ![db-schema]
