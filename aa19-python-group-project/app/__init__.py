@@ -20,7 +20,7 @@ from .seeds import seed_commands
 from .config import Config
 # from .sockets import socketio
 
-app = Flask(name, static_folder='../react-vite/dist', static_url_path='/')
+app = Flask(__name__, static_folder='../react-vite/dist', static_url_path='/')
 
 # Setup login manager
 login = LoginManager(app)
