@@ -31,21 +31,21 @@ const Channel = () => {
 
   useEffect(() => {
     if (channelId) {
-      socket.emit("join", { room: channelId });
+      // socket.emit("join", { room: channelId });
 
-      socket.on("new_channel", (channel) => {
-        dispatch(createChannel(channel));
-      });
+      // socket.on("new_channel", (channel) => {
+      //   dispatch(createChannel(channel));
+      // });
 
-      socket.on("remove_channel", (channelId) => {
-        dispatch(deleteChannel(channelId));
-      });
+      // socket.on("remove_channel", (channelId) => {
+      //   dispatch(deleteChannel(channelId));
+      // });
 
-      return () => {
-        socket.emit("leave", { room: channelId });
-        socket.off("new_channel");
-        socket.off("remove_channel");
-      };
+      // return () => {
+      //   socket.emit("leave", { room: channelId });
+      //   socket.off("new_channel");
+      //   socket.off("remove_channel");
+      // };
     }
   }, [channelId, dispatch]);
 

@@ -34,10 +34,10 @@ const DirectMessagesPage = () => {
       await dispatch(
         createDirectMessage({ receiverId: recipientId, content: message })
       );
-      socket.emit("direct_message", {
-        message: { user: user.username, content: message },
-        room: `user_${recipientId}`,
-      });
+      // socket.emit("direct_message", {
+      //   message: { user: user.username, content: message },
+      //   room: `user_${recipientId}`,
+      // });
       setMessage("");
     }
   };

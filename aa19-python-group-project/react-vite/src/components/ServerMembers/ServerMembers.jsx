@@ -19,18 +19,18 @@ const ServerMembers = () => {
   }, [dispatch, serverId]);
 
   useEffect(() => {
-    socket.emit('join', { room: serverId });
+    // socket.emit('join', { room: serverId });
 
-    socket.on('update_users', (data) => {
-      if (data.server === serverId) {
-        dispatch(getMembersThunk(serverId));
-      }
-    });
+    // socket.on('update_users', (data) => {
+    //   if (data.server === serverId) {
+    //     dispatch(getMembersThunk(serverId));
+    //   }
+    // });
 
-    return () => {
-      socket.emit('leave', { room: serverId });
-      socket.off('update_users');
-    };
+    // return () => {
+    //   socket.emit('leave', { room: serverId });
+    //   socket.off('update_users');
+    // };
   }, [dispatch, serverId]);
 
   const handleDelete = async (memberId) => {

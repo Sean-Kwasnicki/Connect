@@ -25,7 +25,7 @@ const ThreadsPage = () => {
     const createNewThread = async () => {
         if (messageId) {
             await dispatch(createThread(messageId));
-            socket.emit("create_thread", { message_id: messageId });
+            // socket.emit("create_thread", { message_id: messageId });
             setMessageId("");
         }
     };

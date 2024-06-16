@@ -21,7 +21,7 @@ const Reaction = ({ channelId, messageId }) => {
   useEffect(() => {
     dispatch(getReactionsThunk(channelId, messageId));
 
-    socket.emit('join', { room: `channel_${channelId}` });
+    // socket.emit('join', { room: `channel_${channelId}` });
 
     const handleNewReaction = (reaction) => {
       if (reaction.message_id === messageId && !Reactions.has(reaction.id)) {
@@ -35,24 +35,24 @@ const Reaction = ({ channelId, messageId }) => {
       }
     };
 
-    socket.on('new_reaction', handleNewReaction);
-    socket.on('remove_reaction', handleRemoveReaction);
+    // socket.on('new_reaction', handleNewReaction);
+    // socket.on('remove_reaction', handleRemoveReaction);
 
-    return () => {
-      socket.emit('leave', { room: `channel_${channelId}` });
-      socket.off('new_reaction', handleNewReaction);
-      socket.off('remove_reaction', handleRemoveReaction);
-    };
+    // return () => {
+    //   socket.emit('leave', { room: `channel_${channelId}` });
+    //   socket.off('new_reaction', handleNewReaction);
+    //   socket.off('remove_reaction', handleRemoveReaction);
+    // };
   }, [dispatch, channelId, messageId, Reactions]);
 
   const handleAddReaction = async (emoji) => {
     const newReaction = await dispatch(addReactionThunk(channelId, messageId, emoji));
     if (newReaction) {
       setReactions((prev) => new Set(prev).add(newReaction.id));
-      socket.emit('reaction', {
-        room: `channel_${channelId}`,
-        reaction: newReaction,
-      });
+      // socket.emit('reaction', {
+      //   room: `channel_${channelId}`,
+      //   reaction: newReaction,
+      // });
     }
   };
 
@@ -63,10 +63,10 @@ const Reaction = ({ channelId, messageId }) => {
       updated.delete(reactionId);
       return updated;
     });
-    socket.emit('reaction', {
-      room: `channel_${channelId}`,
-      reaction: { remove: true, reactionId, messageId },
-    });
+    // socket.emit('reaction', {
+    //   room: `channel_${channelId}`,
+    //   reaction: { remove: true, reactionId, messageId },
+    // });
   };
 
   const handleEmojiClick = (emojiObject) => {

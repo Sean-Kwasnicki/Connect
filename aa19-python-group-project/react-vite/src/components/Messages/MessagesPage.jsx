@@ -18,21 +18,21 @@ const MessagesPage = ({ channelId, channelName }) => {
 
     useEffect(() => {
         dispatch(getMessagesThunk(channelId));
-        socket.emit('join', { room: channelId });
+        // socket.emit('join', { room: channelId });
 
-        socket.on('message', () => {
-            dispatch(getMessagesThunk(channelId));
-        });
+        // socket.on('message', () => {
+        //     dispatch(getMessagesThunk(channelId));
+        // });
 
-        socket.on('delete_message', () => {
-            dispatch(getMessagesThunk(channelId));
-        });
+        // socket.on('delete_message', () => {
+        //     dispatch(getMessagesThunk(channelId));
+        // });
 
-        return () => {
-            socket.emit('leave', { room: channelId });
-            socket.off('message');
-            socket.off('delete_message');
-        };
+        // return () => {
+        //     socket.emit('leave', { room: channelId });
+        //     socket.off('message');
+        //     socket.off('delete_message');
+        // };
     }, [dispatch, channelId]);
 
     useEffect(() => {
@@ -44,19 +44,19 @@ const MessagesPage = ({ channelId, channelName }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         await dispatch(createMessageThunk(channelId, { content: message }));
-        socket.emit('message', {
-            message: { user: currentUser.username, content: message },
-            room: channelId,
-        });
+        // socket.emit('message', {
+        //     message: { user: currentUser.username, content: message },
+        //     room: channelId,
+        // });
         setMessage('');
     };
 
     const handleDelete = async (messageId) => {
         await dispatch(deleteMessageThunk(messageId));
-        socket.emit('delete_message', {
-            message_id: messageId,
-            room: channelId,
-        });
+        // socket.emit('delete_message', {
+        //     message_id: messageId,
+        //     room: channelId,
+        // });
     };
 
     return (

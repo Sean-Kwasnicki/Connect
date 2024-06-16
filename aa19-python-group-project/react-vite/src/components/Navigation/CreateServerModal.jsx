@@ -18,7 +18,7 @@ function CreateServerModal() {
       createServerThunk({ name, public: isPublic })
     );
     if (response.message !== "Bad Request") {
-      socket.emit("create_server", { room: -1, server: response });
+      // socket.emit("create_server", { room: -1, server: response });
       closeModal();
     } else {
       setErrors(response.errors);

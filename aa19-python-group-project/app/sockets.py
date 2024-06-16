@@ -78,23 +78,23 @@ servers = {}
 # def delete_server(data):
 #     emit('delete_server', data['serverId'], to=-1)
 
-@socketio.on('reaction')
-def handle_reaction(data):
-    room = data['room']
-    reaction = data['reaction']
-    if 'remove' in reaction and reaction['remove']:
-        emit('remove_reaction', {'reactionId': reaction['reactionId'], 'messageId': reaction['messageId']}, to=room)
-    else:
-        emit('new_reaction', reaction, to=room)
+# @socketio.on('reaction')
+# def handle_reaction(data):
+#     room = data['room']
+#     reaction = data['reaction']
+#     if 'remove' in reaction and reaction['remove']:
+#         emit('remove_reaction', {'reactionId': reaction['reactionId'], 'messageId': reaction['messageId']}, to=room)
+#     else:
+#         emit('new_reaction', reaction, to=room)
 
-@socketio.on('create_channel')
-def handle_create_channel(data):
-    server = data['server']
-    channel = data['channel']
-    emit('new_channel', {'server': server, 'channel': channel}, to=server)
+# @socketio.on('create_channel')
+# def handle_create_channel(data):
+#     server = data['server']
+#     channel = data['channel']
+#     emit('new_channel', {'server': server, 'channel': channel}, to=server)
 
-@socketio.on('delete_channel')
-def handle_delete_channel(data):
-    server = data['server']
-    channel_id = data['channel_id']
-    emit('delete_channel', {'server': server, 'channel_id': channel_id}, to=server)
+# @socketio.on('delete_channel')
+# def handle_delete_channel(data):
+#     server = data['server']
+#     channel_id = data['channel_id']
+#     emit('delete_channel', {'server': server, 'channel_id': channel_id}, to=server)

@@ -21,10 +21,10 @@ function DeleteChannelModal({ serverChannels, serverId }) {
       const response = await dispatch(deleteChannelThunk(channel.id));
       if (response === "good") {
         closeModal();
-        socket.emit("delete_channel", {
-          server: Number(serverId),
-          channel_id: channel.id,
-        });
+        // socket.emit("delete_channel", {
+        //   server: Number(serverId),
+        //   channel_id: channel.id,
+        // });
       }
     } else {
       setErrors({ name: "Channel name does not match." });
