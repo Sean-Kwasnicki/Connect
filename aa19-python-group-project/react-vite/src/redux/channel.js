@@ -66,6 +66,7 @@ export const deleteChannelThunk = (channelId, serverId) => async (dispatch) => {
   });
 
   if (response.ok) {
+    dispatch(deleteChannel(channelId));
     return "good";
   }
   return "bad";
