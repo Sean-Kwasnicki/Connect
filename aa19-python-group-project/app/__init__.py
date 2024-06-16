@@ -86,10 +86,22 @@ def not_found(e):
 
 # ###################################################################
 # socket stuff
+from flask_socketio import SocketIO, emit, join_room, leave_room,send
 
 # Initialize SocketIO
-from flask_socketio import SocketIO, join_room, leave_room, emit
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO()
+
+if os.environ.get("FLASK_ENV") == "production":
+    origins = [
+        "https://connect-0hg1.onrender.com/",
+        "http://connect-0hg1.onrender.com/"
+    ]
+else:
+    origins = "*"
+
+socketio = SocketIO(cors_allowed_origins=origins)
+
+socketio.init_app(app)
 
 @socketio.on('join')
 def handle_join(data):
