@@ -88,6 +88,9 @@ def not_found(e):
 # socket stuff
 from flask_socketio import SocketIO, emit, join_room, leave_room,send
 
+import eventlet
+
+eventlet.monkey_patch()
 # Initialize SocketIO
 socketio = SocketIO()
 
@@ -100,7 +103,6 @@ else:
     origins = "*"
 
 socketio = SocketIO(cors_allowed_origins=origins)
-
 socketio.init_app(app)
 
 @socketio.on('join')
@@ -121,4 +123,4 @@ def handle_message(data):
     emit("message", data['message'], to=room)
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app, host='0.0.0.0', port=5000)

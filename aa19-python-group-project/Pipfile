@@ -32,6 +32,7 @@ pycodestyle = "*"
 pylint = "*"
 rope = "*"
 flask-socketio = "==5.3.6"
+eventlet = "*"
 
 [dev-packages]
 

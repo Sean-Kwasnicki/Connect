@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "42a810c160f9f5b344f85f8adc23dcf62292ef6e9fed2971085e60e1894ad6f5"
+            "sha256": "6559f7360c4a55390bf284f75f001e06c2286f3f4e8278972adfe7fca4db8fbd"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -57,6 +57,23 @@
             ],
             "markers": "python_version < '3.11'",
             "version": "==0.3.8"
+        },
+        "dnspython": {
+            "hashes": [
+                "sha256:5ef3b9680161f6fa89daf8ad451b5f1a33b18ae8a1c6778cdf4b43f08c0a6e50",
+                "sha256:e8f0f9c23a7b7cb99ded64e6c3a6f3e701d78f50c55e002b839dea7225cff7cc"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==2.6.1"
+        },
+        "eventlet": {
+            "hashes": [
+                "sha256:d227fe76a63d9e6a6cef53beb8ad0b2dc40a5e7737c801f4b474cfae1db07bc5",
+                "sha256:e42d0f73b718e654c223a033b8692d1a94d778a6c1deb6c3d21442746f3f727f"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.7'",
+            "version": "==0.36.1"
         },
         "exceptiongroup": {
             "hashes": [
