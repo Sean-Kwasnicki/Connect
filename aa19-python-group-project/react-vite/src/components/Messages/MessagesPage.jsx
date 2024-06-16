@@ -33,14 +33,14 @@ const MessagesPage = ({ channelId, channelName }) => {
 
     socket.emit("join", { room: channelId });
 
-    // socket.on('delete_message', () => {
-    //     dispatch(getMessagesThunk(channelId));
-    // });
+    socket.on('delete_message', () => {
+        dispatch(getMessagesThunk(channelId));
+    });
 
     return () => {
       socket.off("message");
       socket.emit("leave", { room: channelId });
-      //   socket.off("delete_message");
+        socket.off("delete_message");
     };
   }, [dispatch, channelId]);
 
@@ -62,10 +62,10 @@ const MessagesPage = ({ channelId, channelName }) => {
 
   const handleDelete = async (messageId) => {
     await dispatch(deleteMessageThunk(messageId));
-    // socket.emit('delete_message', {
-    //     message_id: messageId,
-    //     room: channelId,
-    // });
+    socket.emit('delete_message', {
+        message_id: messageId,
+        room: channelId,
+    });
   };
 
   return (
