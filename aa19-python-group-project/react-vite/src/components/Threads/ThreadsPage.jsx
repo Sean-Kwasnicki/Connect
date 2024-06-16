@@ -13,13 +13,13 @@ const ThreadsPage = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        socket.on("thread_created", (data) => {
-            dispatch(fetchThreads());
-        });
+        // socket.on("thread_created", (data) => {
+        //     dispatch(fetchThreads());
+        // });
 
-        return () => {
-            socket.off("thread_created");
-        };
+        // return () => {
+        //     socket.off("thread_created");
+        // };
     }, [dispatch]);
 
     const createNewThread = async () => {

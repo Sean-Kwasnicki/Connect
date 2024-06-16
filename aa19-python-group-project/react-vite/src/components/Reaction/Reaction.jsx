@@ -7,7 +7,7 @@ import './Reaction.css';
 import { FaSmile } from 'react-icons/fa';
 
 
-const socket = io.connect('/');
+// const socket = io.connect('/');
 
 const Reaction = ({ channelId, messageId }) => {
   const dispatch = useDispatch();

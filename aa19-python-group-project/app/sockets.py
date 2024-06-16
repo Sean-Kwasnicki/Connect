@@ -1,19 +1,19 @@
-from flask_socketio import SocketIO, join_room, leave_room, emit
-import os
+# from flask_socketio import SocketIO, join_room, leave_room, emit
+# import os
 
-socketio = SocketIO()
+# socketio = SocketIO()
 
-if os.environ.get("FLASK_ENV") == "production":
-    origins = [
-        "https://connect-imdc.onrender.com/",
-        "http://connect-imdc.onrender.com/",
-        "https://connect-0hg1.onrender.com/",
-        "http://connect-0hg1.onrender.com/"
-    ]
-else:
-    origins = "*"
+# if os.environ.get("FLASK_ENV") == "production":
+#     origins = [
+#         "https://connect-imdc.onrender.com/",
+#         "http://connect-imdc.onrender.com/",
+#         "https://connect-0hg1.onrender.com/",
+#         "http://connect-0hg1.onrender.com/"
+#     ]
+# else:
+#     origins = "*"
 
-socketio = SocketIO(cors_allowed_origins="*")
+# socketio = SocketIO(cors_allowed_origins="*")
 
 # Server dictionary to keep track of users in each server
 # Single source of truth for the current state of each room.

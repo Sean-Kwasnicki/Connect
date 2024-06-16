@@ -8,7 +8,7 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import Reaction from '../Reaction/Reaction';
 import './MessagesPage.css';
 
-const socket = io.connect('/');
+// const socket = io.connect('/');
 
 const MessagesPage = ({ channelId, channelName }) => {
     const dispatch = useDispatch();

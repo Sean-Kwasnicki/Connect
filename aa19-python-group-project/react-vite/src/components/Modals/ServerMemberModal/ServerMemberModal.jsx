@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import io from 'socket.io-client';
 import s from "./ServerMemberModal.module.css";
 
-const socket = io.connect('/');
+// const socket = io.connect('/');
 
 function ServerMemberModal() {
   const dispatch = useDispatch();

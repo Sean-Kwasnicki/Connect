@@ -15,7 +15,7 @@ from .api.direct_messages import direct_messages_routes
 from .api.threads import threads_routes
 from .seeds import seed_commands
 from .config import Config
-from .sockets import socketio
+# from .sockets import socketio
 
 app = Flask(__name__, static_folder='../react-vite/dist', static_url_path='/')
 
@@ -46,7 +46,7 @@ Migrate(app, db)
 CORS(app)
 
 # Initialize SocketIO
-socketio.init_app(app)
+# socketio.init_app(app)
 
 @app.before_request
 def https_redirect():
@@ -94,5 +94,5 @@ def react_root(path):
 def not_found(e):
     return app.send_static_file('index.html')
 
-if __name__ == '__main__':
-    socketio.run(app)
+# if __name__ == '__main__':
+#     socketio.run(app)

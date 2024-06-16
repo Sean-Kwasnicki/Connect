@@ -20,13 +20,13 @@ const DirectMessagesPage = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    socket.on("direct_message", (data) => {
-      dispatch(fetchDirectMessages());
-    });
+    // socket.on("direct_message", (data) => {
+    //   dispatch(fetchDirectMessages());
+    // });
 
-    return () => {
-      socket.off("direct_message");
-    };
+    // return () => {
+    //   socket.off("direct_message");
+    // };
   }, [dispatch]);
 
   const sendDirectMessage = async () => {
