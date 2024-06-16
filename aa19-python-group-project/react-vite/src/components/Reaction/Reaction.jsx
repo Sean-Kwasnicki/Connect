@@ -89,7 +89,10 @@ const Reaction = ({ channelId, messageId }) => {
       <FaSmile className="icon" />
         </button>
       {showEmojiPicker && (
-        <EmojiPicker onEmojiClick={handleEmojiClick} />
+        <EmojiPicker
+          onEmojiClick={handleEmojiClick}
+          theme="dark"
+        />
       )}
       <div className="reaction-counts">
         {Object.keys(reactionCounts).map((emoji) => (

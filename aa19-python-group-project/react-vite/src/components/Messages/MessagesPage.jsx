@@ -70,7 +70,7 @@ const MessagesPage = ({ channelId, channelName }) => {
 
   return (
     <div className="channel-messages">
-      <h1>{channelName} Channel Messages</h1>
+      <h1 className="channel-label">{channelName} Channel Messages</h1>
       <ul>
         {Array.isArray(messages) &&
           messages.map(({ user, content, id }) => (

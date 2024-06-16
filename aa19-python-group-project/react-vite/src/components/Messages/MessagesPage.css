@@ -1,23 +1,45 @@
 .message-item {
   position: relative;
-  padding: 10px;
+  padding: 15px;
   margin-bottom: 10px;
-  border-bottom: 1px solid #e0e0e0;
+  background-color: #2f3136;
+  border-radius: 8px;
+  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  color: white;
+}
+
+.message-item:hover {
+  background-color: #36393f;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.message-header .user-name {
+  font-size: 1.2em; 
+  color: white;
+}
+
+.message-header .timestamp {
+  font-size: 0.85em;
+  color: #72767d;
 }
 
 .message-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.user-name {
-  font-weight: bold;
-  margin-right: 5px;
+  margin-top: 5px;
+  display: block;
+  color: white;
 }
 
 .message-text {
-  flex-grow: 1;
+  display: block;
+  color: white;
+  margin-top: 5px;
 }
 
 .emoji-picker-button {
@@ -29,18 +51,21 @@
   display: inline-block;
 }
 
-.message-item:hover .delete-button {
+.message-item:hover .edit-icon {
   display: inline-block;
 }
 
-.delete-button {
+.edit-icon {
   display: none;
-  margin-left: 10px;
   background: none;
   border: none;
+  color: inherit;
   cursor: pointer;
   font-size: 16px;
-  color: #8c8d8d;
+}
+
+.edit-icon:hover {
+  color: #7289da;
 }
 
 .reaction-counts {
@@ -60,6 +85,9 @@
 
 .channel-messages {
   padding: 20px;
+  background-color: #36393f;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .message-form {
@@ -71,13 +99,15 @@
   flex-grow: 1;
   padding: 10px;
   margin-right: 10px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #72767d;
   border-radius: 4px;
+  background-color: #40444b;
+  color: white;
 }
 
 .message-button {
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: #7289da;
   color: white;
   border: none;
   border-radius: 4px;
@@ -85,5 +115,22 @@
 }
 
 .message-button:hover {
-  background-color: #0056b3;
+  background-color: #677bc4;
+}
+
+.channel-label {
+  color: white;
+  font-size: 1.5em;
+  margin-bottom: 20px;
+}
+
+.delete-button {
+  background: none;
+  border: none;
+  color: #b9bbbe;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  color: #f04747;
 }
