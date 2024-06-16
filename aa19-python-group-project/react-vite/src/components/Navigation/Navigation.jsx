@@ -77,7 +77,6 @@ function Navigation() {
               key={id}
               onClick={(e) => {
                 navigate(navTo);
-                console.log(e);
               }}
               className={s.server}
               onContextMenu={(e) => e.preventDefault()}

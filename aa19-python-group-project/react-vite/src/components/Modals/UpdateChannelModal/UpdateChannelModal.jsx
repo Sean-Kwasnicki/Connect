@@ -12,7 +12,6 @@ function UpdateChannelModal({ serverChannels, onClose }) {
   const { closeModal } = useModal();
 
   useEffect(() => {
-    console.log("serverChannels:", serverChannels);
     if (!serverChannels) {
       console.error("serverChannels is undefined");
     }
@@ -20,7 +19,6 @@ function UpdateChannelModal({ serverChannels, onClose }) {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    console.log("Updating channel...");
 
     if (!serverChannels) {
       setErrors({ name: "Server channels data is missing." });
@@ -28,11 +26,9 @@ function UpdateChannelModal({ serverChannels, onClose }) {
     }
 
     const channel = serverChannels.find(channel => channel.name === channelName);
-    console.log("Channel found:", channel);
 
     if (channel) {
       const response = await dispatch(updateChannelThunk(channel.id, { name: newChannelName }));
-      console.log("Response from thunk:", response);
       if (!response.errors) {
         closeModal();
         onClose();
@@ -40,7 +36,6 @@ function UpdateChannelModal({ serverChannels, onClose }) {
         setErrors(response.errors);
       }
     } else {
-      console.log("Channel not found with name:", channelName);
       setErrors({ name: "Channel name does not match." });
     }
   };

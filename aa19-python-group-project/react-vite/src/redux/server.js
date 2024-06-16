@@ -76,7 +76,6 @@ export const getServersThunk = () => async (dispatch) => {
   if (response.ok) {
     const data = await response.json();
     dispatch(getServers(data));
-    console.log(data);
     return data;
   }
   return [];
@@ -145,21 +144,16 @@ export const getMembersThunk = (serverId) => async (dispatch) => {
 };
 
 export const deleteMemberThunk = (serverId, memberId) => async (dispatch) => {
-  console.log(
-    `Attempting to delete member: ${memberId} from server: ${serverId}`
-  );
 
   const response = await fetch(`/api/servers/${serverId}/members/${memberId}`, {
     method: "DELETE",
   });
 
   if (response.ok) {
-    console.log("Member deleted successfully");
     dispatch(deleteMember(memberId));
     return { message: "Member deleted" };
   } else {
     const errorData = await response.json();
-    console.log("Failed to delete member:", errorData);
     return { errors: errorData };
   }
 };

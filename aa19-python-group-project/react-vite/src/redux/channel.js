@@ -107,7 +107,6 @@ function channelReducer(state = initialState, action) {
     case CREATE_CHANNEL:
       return { ...state, channels: [...state.channels, action.payload] };
     case DELETE_CHANNEL: {
-      console.log(state.channels);
       const currentChannels = state.channels.filter(
         ({ id }) => Number(id) !== Number(action.payload)
       );

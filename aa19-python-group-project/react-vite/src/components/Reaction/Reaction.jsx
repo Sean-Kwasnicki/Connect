@@ -46,9 +46,7 @@ const Reaction = ({ channelId, messageId }) => {
   }, [dispatch, channelId, messageId, Reactions]);
 
   const handleAddReaction = async (emoji) => {
-    console.log('Adding reaction:', emoji);  // Log the emoji being added
     const newReaction = await dispatch(addReactionThunk(channelId, messageId, emoji));
-    console.log('New Reaction:', newReaction);
     if (newReaction) {
       setReactions((prev) => new Set(prev).add(newReaction.id));
       socket.emit('reaction', {
@@ -72,7 +70,6 @@ const Reaction = ({ channelId, messageId }) => {
   };
 
   const handleEmojiClick = (emojiObject) => {
-    console.log('Selected Emoji:', emojiObject.emoji);
     handleAddReaction(emojiObject.emoji);
     setShowEmojiPicker(false);
   };

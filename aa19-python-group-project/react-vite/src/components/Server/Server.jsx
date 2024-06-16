@@ -56,7 +56,6 @@ const Server = () => {
     dispatch(getChannelsThunk(serverId));
 
     if (serverId && user) {
-      console.log(Number(serverId));
       socket.emit("join_server", {
         server: Number(serverId),
         user: user.username,
@@ -69,7 +68,6 @@ const Server = () => {
       });
 
       socket.on("delete_channel", (data) => {
-        console.log(data.channel_id);
         dispatch(deleteChannel(data.channel_id));
       });
 

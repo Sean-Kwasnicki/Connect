@@ -19,10 +19,8 @@ function DeleteChannelModal({ serverChannels, serverId }) {
 
     if (channel) {
       const response = await dispatch(deleteChannelThunk(channel.id));
-      console.log("Delete response:", response);
       if (response === "good") {
         closeModal();
-        console.log(serverId, channel.id);
         socket.emit("delete_channel", {
           server: Number(serverId),
           channel_id: channel.id,
