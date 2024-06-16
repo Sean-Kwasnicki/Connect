@@ -17,7 +17,7 @@
 
 # Server dictionary to keep track of users in each server
 # Single source of truth for the current state of each room.
-servers = {}
+# servers = {}
 
 # @socketio.on('join_server')
 # def on_join(data):
@@ -47,13 +47,13 @@ servers = {}
 # def handle_join(data):
 #     room = data['room']
 #     join_room(room)
-#     emit('user_joined', {'msg': f"{data['user']} has joined the room {room}."}, to=room)
+#     # emit('user_joined', {'msg': f"{data['user']} has joined the room {room}."}, to=room)
 
 # @socketio.on('leave')
 # def handle_leave(data):
 #     room = data['room']
 #     leave_room(room)
-#     emit('user_left', {'msg': f"{data['user']} has left the room {room}."}, to=room)
+#     # emit('user_left', {'msg': f"{data['user']} has left the room {room}."}, to=room)
 
 # @socketio.on('message')
 # def handle_message(data):

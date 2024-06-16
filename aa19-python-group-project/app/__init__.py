@@ -45,16 +45,6 @@ Migrate(app, db)
 # Application Security
 CORS(app)
 
-# Initialize SocketIO
-# socketio.init_app(app)
-
-@app.before_request
-def https_redirect():
-    if os.environ.get('FLASK_ENV') == 'production':
-        if request.headers.get('X-Forwarded-Proto') == 'http':
-            url = request.url.replace('http://', 'https://', 1)
-            code = 301
-            return redirect(url, code=code)
 
 @app.after_request
 def inject_csrf_token(response):
@@ -94,5 +84,29 @@ def react_root(path):
 def not_found(e):
     return app.send_static_file('index.html')
 
-# if __name__ == '__main__':
-#     socketio.run(app)
+# ###################################################################
+# socket stuff
+
+# Initialize SocketIO
+from flask_socketio import SocketIO, join_room, leave_room, emit
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+@socketio.on('join')
+def handle_join(data):
+    room = data['room']
+    join_room(room)
+    # emit('user_joined', {'msg': f"{data['user']} has joined the room {room}."}, to=room)
+
+@socketio.on('leave')
+def handle_leave(data):
+    room = data['room']
+    leave_room(room)
+    # emit('user_left', {'msg': f"{data['user']} has left the room {room}."}, to=room)
+
+@socketio.on('message')
+def handle_message(data):
+    room = data['room']
+    emit("message", data['message'], to=room)
+
+if __name__ == '__main__':
+    socketio.run(app)
