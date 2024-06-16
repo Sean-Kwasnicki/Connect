@@ -22,4 +22,4 @@ COPY . .
 RUN flask db upgrade
 RUN flask seed all
 
-CMD ["python3", "app.py"]
+CMD ["python3", "./app.py/__init__.py"]
