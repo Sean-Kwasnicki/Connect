@@ -36,4 +36,5 @@
   border: 2px solid blue;
   cursor: pointer;
   border-radius: 5px;
+  background-color: rgba(138, 43, 226, 0.2); 
 }
