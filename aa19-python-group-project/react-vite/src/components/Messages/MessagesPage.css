@@ -44,7 +44,7 @@
 
 .emoji-picker-button {
   display: none;
-  margin-left: 10px;
+  margin-right: 50px;
 }
 
 .message-item:hover .emoji-picker-button {
@@ -107,7 +107,7 @@
 
 .message-button {
   padding: 10px 20px;
-  background-color: #7289da;
+  background-color: rgb(88, 101, 242);
   color: white;
   border: none;
   border-radius: 4px;
@@ -115,7 +115,7 @@
 }
 
 .message-button:hover {
-  background-color: #677bc4;
+  background-color:  rgb(126, 137, 253);
 }
 
 .channel-label {

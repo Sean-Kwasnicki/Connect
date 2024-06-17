@@ -31,3 +31,9 @@
 .icon:hover {
   color: #7289da;
 }
+
+.emoji-count {
+  border: 2px solid blue;
+  cursor: pointer;
+  border-radius: 5px;
+}
