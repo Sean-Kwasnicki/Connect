@@ -5,7 +5,7 @@ Welcome to our Discord clone project for App Academy! We recreated a web page wh
 https://connect-imdc.onrender.com/
 
 # WikiLinks
-## [Wiki] (https://github.com/Sean-Kwasnicki/Connect/wiki)
+## [Wiki](https://github.com/Sean-Kwasnicki/Connect/wiki)
 
 # Technologies used to create this project. 
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
