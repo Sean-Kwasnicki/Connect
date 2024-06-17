@@ -93,7 +93,7 @@ const Reaction = ({ channelId, messageId }) => {
       )}
       <div className="reaction-counts">
         {Object.keys(reactionCounts).map((emoji) => (
-          <span key={emoji} onClick={() => {
+          <span className='emoji-count' key={emoji} onClick={() => {
             const reaction = reactions.find(r => r.emoji === emoji && r.user_id === user.id);
             if (reaction) handleRemoveReaction(reaction.id);
           }}>
