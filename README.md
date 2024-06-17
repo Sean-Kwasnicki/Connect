@@ -62,4 +62,5 @@ There is a demo user already created in the database.
 # Demo
    
    Site demo with working websockets
-   ![Animation]([https://user-images.githubusercontent.com/55769045/167316186-6807e0d5-cc19-47b9-92c2-6c0d13430b96.gif](https://s1.ezgif.com/tmp/ezgif-1-9e8caaec25.gif))
+   
+   ![Animation](https://s1.ezgif.com/tmp/ezgif-1-9e8caaec25.gif)
