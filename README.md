@@ -27,3 +27,34 @@ https://connect-imdc.onrender.com/
 
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
+
+
+# Getting Started
+
+To see Connect live, click on the live link above. To run Connect locally on your machine, follow these steps:
+
+* Clone the repository:
+  * `git clone https://github.com/Sean-Kwasnicki/Connect.git`
+
+There is a demo user already created in the database.
+
+* Navigate to the backend folder and install Python packages:
+  * `pipenv install`
+  * `pipenv shell`
+
+* Create and seed the database with:
+  * `flask db upgrade`
+  * `flask seed all`
+
+* Start the server:
+  * `flask run`
+
+* CD into the `react-app` folder and run:
+  * `npm install`
+
+* Start the app with:
+  * `npm run build` (for websockets to work)
+
+* Testing Websocket Functionality:
+  * Open up the site in another browser (preferred) or a new tab, then check when messages are created/deleted.
+
