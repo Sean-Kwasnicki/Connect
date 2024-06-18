@@ -63,4 +63,4 @@ There is a demo user already created in the database.
    
    Site demo with working websockets
    
-   ![Animation](https://s1.ezgif.com/tmp/ezgif-1-9e8caaec25.gif)
+   ![Animation](https://i.imgur.com/YMRVDae.gif)
