@@ -134,3 +134,29 @@
 .delete-button:hover {
   color: #f04747;
 }
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.spinner-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: rgb(88, 100, 242);
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

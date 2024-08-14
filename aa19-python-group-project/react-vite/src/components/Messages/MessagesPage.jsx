@@ -12,7 +12,7 @@ import {
 } from "../../redux/reaction";
 import io from "socket.io-client";
 import { FaPencilAlt } from "react-icons/fa";
-import { FaRegTrashAlt } from "react-icons/fa";
+import { FaRegTrashAlt, FaSpinner } from "react-icons/fa";
 import Reaction from "../Reaction/Reaction";
 import "./MessagesPage.css";
 
@@ -23,9 +23,18 @@ const MessagesPage = ({ channelId, channelName }) => {
   const currentUser = useSelector((state) => state.session.user);
   const messages = useSelector((state) => state.messages.messages || []);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    dispatch(getMessagesThunk(channelId));
+    const fetchData = async () => {
+      setLoading(true);
+      await dispatch(getMessagesThunk(channelId));
+      setLoading(false);
+    };
+
+    fetchData();
+
+
     socket.on("message", () => {
       console.log("\n\n\n\n\n");
       dispatch(getMessagesThunk(channelId));
@@ -71,6 +80,13 @@ const MessagesPage = ({ channelId, channelName }) => {
   return (
     <div className="channel-messages">
       <h1 className='channel-label'>{channelName} Channel Messages</h1>
+      {loading ? (
+        <div className="loading-spinner">
+          <FaSpinner className="spinner-icon" />
+          <p className="loading-text">Loading Messages...</p>
+        </div>
+      ) : (
+        <>
       <ul>
         {Array.isArray(messages) &&
           messages.map(({ user, content, id }) => (
@@ -102,6 +118,8 @@ const MessagesPage = ({ channelId, channelName }) => {
           Send
         </button>
       </form>
+      </>
+      )}
     </div>
   );
 };
