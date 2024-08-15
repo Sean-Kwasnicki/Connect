@@ -11,6 +11,7 @@ import {
 import CreateServerButton from "./CreateServerButton";
 import { IoIosHome } from "react-icons/io";
 import socket from "../../context/Socket";
+import DirectMessageList from "../DirectMessages/DirectMessagesList";
 
 function Navigation() {
   const dispatch = useDispatch();
@@ -25,6 +26,8 @@ function Navigation() {
   });
 
   const user = useSelector((state) => state.session.user);
+
+  const [isSidebarVisible, setSidebarVisible] = useState(false)
 
   //get servers on initial render
   useEffect(() => {
@@ -57,15 +60,21 @@ function Navigation() {
     //   socket.off("update_server");
     //   socket.off("delete_server");
     // };
-  }, []);
+  }, [dispatch]);
+
+  const toggleSidebar = () => {
+    setSidebarVisible(!isSidebarVisible);
+    navigate("/")
+  };
 
   return (
     <nav className={s.nav_bar}>
       <div
         className={s.home_link}
-        onClick={() => {
-          navigate("/");
-        }}
+        onClick={toggleSidebar} // Toggle sidebar and navigate on home icon click
+        // onClick={() => {
+        //   navigate("/");
+        // }}
       >
         <IoIosHome className={s.home_icon} />
       </div>
@@ -86,6 +95,7 @@ function Navigation() {
           );
         })}
       <CreateServerButton />
+      <DirectMessageList isVisible={isSidebarVisible} /> {/* Sidebar component */}
     </nav>
   );
 }
