@@ -1,0 +1,52 @@
+/* DirectMessageList.css */
+
+/* Sidebar base styles */
+.sidebar {
+  position: fixed;
+  left: 90.5px;
+  top: 0;
+  width: 250px;
+  height: 100%;
+  background-color: #2f3136;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+  color: #fff;
+  z-index: 1000;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Sidebar visible state */
+.sidebar_visible {
+  transform: translateX(0); 
+}
+
+/* Direct Messages list styles */
+.dm_list {
+  margin-top: 20px;
+}
+
+/* Each Direct Message item */
+.dm_item {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #40444b;
+}
+
+/* Profile icon styles */
+.profile_icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+/* Direct Message content styles */
+.dm_content {
+  flex-grow: 1;
+}
+
+.dm_content p {
+  margin: 0;
+}

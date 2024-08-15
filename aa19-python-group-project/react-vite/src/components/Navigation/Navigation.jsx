@@ -71,7 +71,7 @@ function Navigation() {
     <nav className={s.nav_bar}>
       <div
         className={s.home_link}
-        onClick={toggleSidebar} // Toggle sidebar and navigate on home icon click
+        onClick={toggleSidebar} 
         // onClick={() => {
         //   navigate("/");
         // }}
@@ -95,7 +95,7 @@ function Navigation() {
           );
         })}
       <CreateServerButton />
-      <DirectMessageList isVisible={isSidebarVisible} /> {/* Sidebar component */}
+      <DirectMessageList isVisible={isSidebarVisible} />
     </nav>
   );
 }
