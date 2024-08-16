@@ -1,4 +1,10 @@
+.messages-container {
+  padding-left: 0;
+}
+
 .message-item {
+  list-style-type: none;
+
   position: relative;
   padding: 15px;
   margin-bottom: 10px;
@@ -115,7 +121,7 @@
 }
 
 .message-button:hover {
-  background-color:  rgb(126, 137, 253);
+  background-color: rgb(126, 137, 253);
 }
 
 .channel-label {
@@ -153,10 +159,14 @@
 .loading-text {
   color: white;
   font-weight: bold;
-  font-size: 1.2rem
+  font-size: 1.2rem;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

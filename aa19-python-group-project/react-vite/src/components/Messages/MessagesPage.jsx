@@ -87,7 +87,7 @@ const MessagesPage = ({ channelId, channelName }) => {
         </div>
       ) : (
         <>
-      <ul>
+      <ul className="messages-container">
         {Array.isArray(messages) &&
           messages.map(({ user, content, id }) => (
             <li key={id} className="message-item">
