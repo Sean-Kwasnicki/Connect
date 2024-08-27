@@ -7,30 +7,10 @@ export const fetchDirectMessages = createAsyncThunk('directMessages/fetchDirectM
     return response.data.DirectMessages;
 });
 
-// export const createDirectMessage = createAsyncThunk('directMessages/createDirectMessage', async ({ receiverId, content }) => {
-//     const response = await axios.post(`/api/direct_messages`, { receiver_id: receiverId, content });
-//     return response.data;
-// });
-
-export const createDirectMessage = createAsyncThunk(
-    'directMessages/createDirectMessage',
-    async ({ receiverId, content }) => {
-        const response = await fetch(`/api/direct_messages/${receiverId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ content })
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to send message');
-        }
-
-        return await response.json();
-    }
-);
-
+export const createDirectMessage = createAsyncThunk('directMessages/createDirectMessage', async ({ receiverId, content }) => {
+    const response = await axios.post(`/api/direct_messages`, { receiver_id: receiverId, content });
+    return response.data;
+});
 
 // Slice
 const directMessagesSlice = createSlice({
@@ -46,6 +26,5 @@ const directMessagesSlice = createSlice({
             });
     },
 });
-
 
 export default directMessagesSlice.reducer;
