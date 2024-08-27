@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import OpenModalMenuItem from "../../Navigation/OpenModalMenuItem";
 import UpdateChannelModal from "./UpdateChannelModal";
 
-function UpdateChannelModalButton({ serverChannels, serverId, Component, closeDropdown }) {
+function UpdateChannelModalButton({ channelId, Component, closeDropdown }) {
   const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
@@ -22,7 +22,9 @@ function UpdateChannelModalButton({ serverChannels, serverId, Component, closeDr
     <OpenModalMenuItem
       itemText="Update Channel"
       onItemClick={closeMenu}
-      modalComponent={<UpdateChannelModal serverChannels={serverChannels} onClose={closeMenu} />}
+      modalComponent={
+        <UpdateChannelModal channelId={channelId} onClose={closeMenu} />
+      }
       Component={Component}
     />
   );

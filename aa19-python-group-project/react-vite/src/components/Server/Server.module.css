@@ -30,8 +30,10 @@
 
 .server_name {
   width: 80%;
+  height: 25px;
+  font-size: 25px;
+  white-space: nowrap;
   color: white;
-  overflow-y: hidden;
   overflow-x: hidden;
 }
 
@@ -41,8 +43,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  font-size: 35px;
 
   &:hover {
     background-color: rgb(73, 73, 73);
@@ -53,8 +54,8 @@
   display: flex;
   position: absolute;
   left: 127px;
-  top: 70px;
-  height: 260px;
+  top: 50px;
+  height: 180px;
   width: 200px;
   border-radius: 10px;
   flex-direction: column;
@@ -62,8 +63,7 @@
   padding: 8px;
 }
 
-.create_channel_button,
-.delete_server_button {
+.server_menu_button {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -76,13 +76,13 @@
   }
 }
 
-.create_channel_button {
+.server_menu_button {
   & > span {
     color: rgb(200, 200, 200);
     font-size: 16px;
   }
 
-  & > .create_channel_plus_symbol {
+  & > .server_menu_button_symbol {
     color: rgb(200, 200, 200);
     font-size: 25px;
   }
@@ -90,12 +90,15 @@
 
 .channel_item,
 .channel_item_selected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
   padding: 8px;
   margin: 2px 8px;
   height: 50px;
   border-radius: 10px;
-  overflow-y: hidden;
-  overflow-x: hidden;
+  text-overflow: clip;
   cursor: pointer;
 }
 
@@ -105,6 +108,39 @@
   & > .channel_name_text {
     color: white;
   }
+}
+
+.channel_gear_button {
+  display: none;
+  color: gray;
+}
+
+.channel_item:hover .channel_gear_button,
+.channel_item_selected:hover .channel_gear_button {
+  display: block;
+}
+
+.channel_dropdown {
+  display: none;
+}
+
+.channel_item:hover .channel_dropdown,
+.channel_item_selected:hover .channel_dropdown {
+  display: block;
+  position: relative;
+  right: 50px;
+  width: 0;
+  height: 0;
+}
+
+.channel_menu_container {
+  position: absolute;
+  z-index: 10;
+  border-radius: 10px;
+  flex-direction: column;
+  background-color: rgb(0, 0, 0);
+  padding: 8px;
+  width: 200px;
 }
 
 .hashtag_symbol_inside_channel {

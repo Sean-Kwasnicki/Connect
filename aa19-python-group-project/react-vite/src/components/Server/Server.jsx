@@ -21,7 +21,7 @@ import DeleteChannelModalButton from "../Modals/DeleteChannelModal/DeleteChannel
 import ServerMemberButton from "../Modals/ServerMemberModal";
 import ServerMembers from "../ServerMembers";
 import UpdateChannelButton from "../Modals/UpdateChannelModal/UpdateChannelButton";
-import socket from "../../context/Socket"
+import socket from "../../context/Socket";
 import { IoIosArrowDown } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
 import { FaCirclePlus } from "react-icons/fa6";
@@ -29,6 +29,8 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import UpdateServerModalButton from "../Modals/UpdateServerModal/UpdateServerModalButton";
 import { PiNotePencil } from "react-icons/pi";
 import { FaPencilAlt } from "react-icons/fa";
+import ServerDropdownMenu from "./ServerDropdownMenu";
+import ChannelDropdownMenu from "./ChannelDropdownMenu";
 
 const Server = () => {
   const { serverId } = useParams("serverId");
@@ -41,11 +43,6 @@ const Server = () => {
 
   const [usersInServer, setUsersInServer] = useState([]);
   const [channelIsSelected, setChannelIsSelected] = useState(null);
-  const [downArrowIsSelected, setDownArrowIsSelected] = useState(false);
-
-  const closeDropdown = () => setDownArrowIsSelected(false);
-
-  useEffect(() => {}, [downArrowIsSelected]);
 
   const currentServer = servers.find(
     (server) => server.id === parseInt(serverId)
@@ -60,17 +57,14 @@ const Server = () => {
       //   server: Number(serverId),
       //   user: user.username,
       // });
-
       // socket.on("update_users", (data) => {
       //   if (data.server === serverId) {
       //     setUsersInServer(data.users);
       //   }
       // });
-
       // socket.on("delete_channel", (data) => {
       //   dispatch(deleteChannel(data.channel_id));
       // });
-
       // return () => {
       //   socket.emit("leave_server", { server: serverId, user: user.username });
       //   socket.off("delete_channel");
@@ -85,51 +79,8 @@ const Server = () => {
         <li className={s.server_bar}>
           <span className={s.server_name}>{serverName}</span>
           {user && user.id === currentServer.owner_id && (
-            <span
-              className={s.arrow}
-              onClick={() => {
-                setDownArrowIsSelected((prev) => !prev);
-              }}
-            >
-              {!downArrowIsSelected && <IoIosArrowDown />}
-              {downArrowIsSelected && <RxCross2 />}
-            </span>
+            <ServerDropdownMenu serverId={serverId} channels={channels} />
           )}
-        </li>
-        <li
-          className={s.server_menu_container}
-          style={{
-            display: downArrowIsSelected ? "" : "none",
-          }}
-        >
-          <CreateChannelButton
-            Component={CreateChannelButtonComponent}
-            closeDropdown={closeDropdown}
-          />
-          <UpdateChannelButton
-            serverChannels={channels}
-            serverId={serverId}
-            Component={UpdateChannelButtonComponent}
-            closeDropdown={closeDropdown}
-          />
-          <DeleteChannelModalButton
-            serverChannels={channels}
-            serverId={serverId}
-            Component={DeleteChannelButtonComponent}
-            closeDropdown={closeDropdown}
-          />
-          <ServerMemberButton
-            Component={ServerMemberButtonComponent}
-            closeDropdown={closeDropdown}
-          />
-          <UpdateServerModalButton
-            Component={UpdateServerButtonComponent}
-            closeDropdown={closeDropdown}
-          />
-          <DeleteServerModalButton
-            Component={DeleteServerButtonComponent}
-            closeDropdown={closeDropdown}
-          />
         </li>
         {channels.map(({ name, id }) => {
           const navTo = `/servers/${serverId}/channels/${id}`;
@@ -150,8 +101,11 @@ const Server = () => {
               }}
               to={navTo}
             >
-              <span className={s.hashtag_symbol_inside_channel}>#</span>
-              <span className={s.channel_name_text}>{name}</span>
+              <div>
+                <span className={s.hashtag_symbol_inside_channel}>#</span>
+                <span className={s.channel_name_text}>{name}</span>
+              </div>
+              <ChannelDropdownMenu channelId={id} serverChannels={channels} />
             </li>
           );
         })}
@@ -163,60 +117,6 @@ const Server = () => {
         <ServerMembers usersInServer={usersInServer} />
       </div>
     </>
-  );
-};
-
-const CreateChannelButtonComponent = () => {
-  return (
-    <div className={s.create_channel_button}>
-      <span>Create Channel</span>
-      <FaCirclePlus className={s.create_channel_plus_symbol} />
-    </div>
-  );
-};
-
-const DeleteChannelButtonComponent = () => {
-  return (
-    <div className={s.create_channel_button}>
-      <span>Delete Channel</span>
-      <FaRegTrashAlt className={s.create_channel_plus_symbol} />
-    </div>
-  );
-};
-
-const UpdateChannelButtonComponent = () => {
-  return (
-    <div className={s.create_channel_button}>
-      <span>Update Channel</span>
-      <FaPencilAlt className={s.create_channel_plus_symbol} />
-    </div>
-  );
-};
-
-const DeleteServerButtonComponent = () => {
-  return (
-    <div className={s.create_channel_button}>
-      <span>Delete Server</span>
-      <FaRegTrashAlt className={s.create_channel_plus_symbol} />
-    </div>
-  );
-};
-
-const ServerMemberButtonComponent = () => {
-  return (
-    <div className={s.create_channel_button}>
-      <span>Invite People</span>
-      <FaCirclePlus className={s.create_channel_plus_symbol} />
-    </div>
-  );
-};
-
-const UpdateServerButtonComponent = () => {
-  return (
-    <div className={s.create_channel_button}>
-      <span>Update Server</span>
-      <PiNotePencil className={s.create_channel_plus_symbol} />
-    </div>
   );
 };
 

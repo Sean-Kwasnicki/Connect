@@ -2,7 +2,12 @@ import { useState, useEffect } from "react";
 import OpenModalMenuItem from "../../Navigation/OpenModalMenuItem";
 import DeleteChannelModal from "./DeleteChannelModal";
 
-function DeleteChannelModalButton({ serverChannels, serverId, Component, closeDropdown }) {
+function DeleteChannelModalButton({
+  serverChannels,
+  serverId,
+  Component,
+  closeDropdown,
+}) {
   const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
@@ -13,7 +18,7 @@ function DeleteChannelModalButton({ serverChannels, serverId, Component, closeDr
     return () => document.removeEventListener("click", closeMenu);
   }, [showMenu]);
 
-   const closeMenu = () => {
+  const closeMenu = () => {
     setShowMenu(false);
     if (closeDropdown) closeDropdown();
   };
@@ -22,7 +27,13 @@ function DeleteChannelModalButton({ serverChannels, serverId, Component, closeDr
     <OpenModalMenuItem
       itemText="Delete Channel"
       onItemClick={closeMenu}
-      modalComponent={<DeleteChannelModal serverChannels={serverChannels} serverId={serverId} onClose={closeMenu} />}
+      modalComponent={
+        <DeleteChannelModal
+          serverChannels={serverChannels}
+          serverId={serverId}
+          onClose={closeMenu}
+        />
+      }
       Component={Component}
     />
   );
