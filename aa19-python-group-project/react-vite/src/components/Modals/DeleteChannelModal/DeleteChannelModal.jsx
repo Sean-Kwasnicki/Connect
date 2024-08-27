@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useModal } from "../../../context/Modal";
 import { deleteChannelThunk } from "../../../redux/channel";
 import s from "./DeleteChannelModal.module.css";
-import socket from "../../../context/Socket"
+import socket from "../../../context/Socket";
 
 function DeleteChannelModal({ serverChannels, serverId }) {
   const [channelName, setChannelName] = useState("");
@@ -18,7 +18,7 @@ function DeleteChannelModal({ serverChannels, serverId }) {
     );
 
     if (channel) {
-      const response = await dispatch(deleteChannelThunk(channel.id));
+      const response = await dispatch(deleteChannelThunk(serverId, channel.id));
       if (response === "good") {
         closeModal();
         // socket.emit("delete_channel", {

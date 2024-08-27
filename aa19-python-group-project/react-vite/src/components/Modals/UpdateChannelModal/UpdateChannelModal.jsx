@@ -4,7 +4,7 @@ import { useModal } from "../../../context/Modal";
 import { updateChannelThunk } from "../../../redux/channel";
 import s from "./UpdateChannelModal.module.css";
 
-function UpdateChannelModal({ channelId, onClose }) {
+function UpdateChannelModal({ serverId, channelId, onClose }) {
   const [newChannelName, setNewChannelName] = useState("");
   const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
@@ -14,7 +14,7 @@ function UpdateChannelModal({ channelId, onClose }) {
     e.preventDefault();
 
     const response = await dispatch(
-      updateChannelThunk(channelId, { name: newChannelName })
+      updateChannelThunk(serverId, channelId, { name: newChannelName })
     );
     if (!response.errors) {
       closeModal();

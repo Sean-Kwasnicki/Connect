@@ -37,7 +37,7 @@ const Server = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const channels = useSelector((state) => state.channels.channels);
+  const channels = useSelector((state) => state.channels[serverId] || []);
   const user = useSelector((state) => state.session.user);
   const servers = useSelector((state) => state.servers.servers);
 
@@ -105,7 +105,11 @@ const Server = () => {
                 <span className={s.hashtag_symbol_inside_channel}>#</span>
                 <span className={s.channel_name_text}>{name}</span>
               </div>
-              <ChannelDropdownMenu channelId={id} serverChannels={channels} />
+              <ChannelDropdownMenu
+                serverId={serverId}
+                channelId={id}
+                serverChannels={channels}
+              />
             </li>
           );
         })}
