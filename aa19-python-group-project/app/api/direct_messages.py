@@ -43,23 +43,48 @@ def direct_message_by_id(id):
         "updated_at": dm.updated_at
     }
 
+# @direct_messages_routes.route('/<int:receiver_id>', methods=['POST'])
+# @login_required
+# def create_direct_message(receiver_id):
+#     print("Endpoint reached")
+#     form = DirectMessageForm()
+#     # Temporarily skip CSRF token handling
+#     # form['csrf_token'].data = request.cookies['csrf_token']
+
+#     if form.validate_on_submit():
+#         print("Form is valid")
+#         new_dm = DirectMessage(
+#             content=form.data['content'],
+#             sender_id=current_user.id,
+#             receiver_id=receiver_id,
+#             created_at=datetime.now(),
+#             updated_at=datetime.now()
+#         )
+#         db.session.add(new_dm)
+#         db.session.commit()
+#         return jsonify(new_dm.to_dict()), 201
+
+#     print("Form errors:", form.errors)  # Add a print statement to see form errors
+#     return form.errors, 401
+
 @direct_messages_routes.route('/<int:receiver_id>', methods=['POST'])
 @login_required
 def create_direct_message(receiver_id):
-    form = DirectMessageForm()
-    form['csrf_token'].data = request.cookies['csrf_token']
-    if form.validate_on_submit():
-        new_dm = DirectMessage(
-            content=form.data['content'],
-            sender_id=current_user.id,
-            receiver_id=receiver_id,
-            created_at=datetime.now(),
-            updated_at=datetime.now()
-        )
-        db.session.add(new_dm)
-        db.session.commit()
-        return jsonify(new_dm.to_dict()), 201
-    return form.errors, 401
+    print("Backend route hit")
+    data = request.json
+    print("Request data:", data)
+
+    # Temporarily skip form validation
+    new_dm = DirectMessage(
+        content=data.get('content'),
+        sender_id=current_user.id,
+        receiver_id=receiver_id,
+        created_at=datetime.now(),
+        updated_at=datetime.now()
+    )
+    db.session.add(new_dm)
+    db.session.commit()
+    return jsonify(new_dm.to_dict()), 201
 
 
 @direct_messages_routes.route('/<int:id>', methods=['PUT'])

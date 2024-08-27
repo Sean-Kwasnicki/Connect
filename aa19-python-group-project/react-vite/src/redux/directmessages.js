@@ -10,18 +10,22 @@ export const fetchDirectMessages = createAsyncThunk('directMessages/fetchDirectM
 export const createDirectMessage = createAsyncThunk(
     'directMessages/createDirectMessage',
     async ({ receiverId, content }) => {
-        const response = await axios.post(
-            `/api/direct_messages/${receiverId}`,
-            { content },
-            {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
-        return response.data;
+        const response = await fetch(`/api/direct_messages/${receiverId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ content })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to send message');
+        }
+
+        return await response.json();
     }
 );
+
 
 //Slice
 const directMessagesSlice = createSlice({

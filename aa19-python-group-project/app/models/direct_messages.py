@@ -1,8 +1,5 @@
 from datetime import datetime
 from .db import db, environment, SCHEMA
-# from flask_sqlalchemy import SQLAlchemy
-
-# db = SQLAlchemy()
 
 class DirectMessage(db.Model):
     __tablename__ = 'direct_messages'
@@ -19,3 +16,14 @@ class DirectMessage(db.Model):
 
     sender = db.relationship('User', foreign_keys=[sender_id], back_populates='sent_messages')
     receiver = db.relationship('User', foreign_keys=[receiver_id], back_populates='received_messages')
+
+    # was missing this 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'content': self.content,
+            'sender_id': self.sender_id,
+            'receiver_id': self.receiver_id,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat(),
+        }
