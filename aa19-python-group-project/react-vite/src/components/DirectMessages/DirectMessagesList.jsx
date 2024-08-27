@@ -1,43 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import './DirectMessagesList.css'; 
+import './DirectMessagesList.css';
+import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 const DirectMessageList = ({ isVisible }) => {
-    const [directMessages, setDirectMessages] = useState([]);
+    const [users, setUsers] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchDirectMessages = async () => {
-            const response = await fetch('/api/direct_messages');
-            const data = await response.json();
-            setDirectMessages(data.DirectMessages);
-        };
-
         if (isVisible) {
-            fetchDirectMessages();
+            const fetchUsers = async () => {
+                const response = await fetch('/api/direct_messages/users');
+                const data = await response.json();
+                setUsers(data);
+            };
+            fetchUsers();
         }
     }, [isVisible]);
 
-    if (!isVisible) return null; // Only render if sidebar is visible
+    if (!isVisible) return null;
+
+    const handleUserClick = (userId) => {
+        navigate(`/direct_messages/${userId}`);
+    };
 
     return (
         <div className={`sidebar ${isVisible ? 'sidebar_visible' : ''}`}>
             <h3>Direct Messages</h3>
             <div className="dm_list">
-                {directMessages.length > 0 ? (
-                    directMessages.map(dm => (
-                        <div key={dm.id} className="dm_item">
-                            <img
-                                src={`https://api.adorable.io/avatars/40/${dm.sender_id}.png`}
-                                alt="User Avatar"
-                                className="profile_icon"
-                            />
+                {users.length > 0 ? (
+                    users.map(user => (
+                        <div key={user.id} className="dm_item" onClick={() => handleUserClick(user.id)}>
+                        <FontAwesomeIcon
+                            icon={faUser}
+                            className="profile_icon"
+                            style={{ fontSize: '24px', marginRight: '10px' }} 
+                        />
                             <div className="dm_content">
-                                <p>{dm.content}</p>
-                                <p><small>From User ID: {dm.sender_id} to User ID: {dm.receiver_id}</small></p>
+                                <p>{user.username}</p>
                             </div>
                         </div>
                     ))
                 ) : (
-                    <p>No direct messages yet.</p>
+                    <p>No other users found.</p>
                 )}
             </div>
         </div>

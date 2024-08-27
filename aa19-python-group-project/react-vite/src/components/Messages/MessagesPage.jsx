@@ -15,6 +15,8 @@ import { FaPencilAlt } from "react-icons/fa";
 import { FaRegTrashAlt, FaSpinner } from "react-icons/fa";
 import Reaction from "../Reaction/Reaction";
 import "./MessagesPage.css";
+import { useModal } from "../../context/Modal";
+import DeleteMessageModalButton from "../Modals/DeleteMessageModal/DeleteMessagesModalButton";
 
 const socket = io.connect("/");
 
@@ -24,6 +26,8 @@ const MessagesPage = ({ channelId, channelName }) => {
   const messages = useSelector((state) => state.messages.messages || []);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(""); // Error state
+  const { openModal } = useModal()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,6 +65,12 @@ const MessagesPage = ({ channelId, channelName }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (message.trim() === "") {
+      setError("Cannot send empty messages");
+      setMessage("");
+      return;
+    }
+    setError("");
     await dispatch(createMessageThunk(channelId, { content: message }));
     socket.emit("message", {
       message: { user: currentUser.username, content: message },
@@ -76,6 +86,15 @@ const MessagesPage = ({ channelId, channelName }) => {
         room: channelId,
     });
   };
+
+  // const handleDelete = (messageId) => {
+  //   openModal(() => (
+  //     <DeleteMessageModal
+  //       messageId={messageId}
+  //       channelId={channelId}
+  //     />
+  //   ));
+  // };
 
   return (
     <div className="channel-messages">
@@ -103,6 +122,11 @@ const MessagesPage = ({ channelId, channelName }) => {
                 >
                   <FaRegTrashAlt />
                 </button>
+                //   <DeleteMessageModalButton
+                //   messageId={id}
+                //   channelId={channelId}
+                //   Icon={<FaRegTrashAlt className="delete-icon" />}
+                // />
               )}
             </li>
           ))}
@@ -118,6 +142,7 @@ const MessagesPage = ({ channelId, channelName }) => {
           Send
         </button>
       </form>
+      {error && <p className="error-message">{error}</p>} 
       </>
       )}
     </div>

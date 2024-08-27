@@ -10,6 +10,8 @@ import serverReducer from "./server";
 import channelReducer from "./channel";
 import messageReducer from "./message"
 import reactionReducer from "./reaction";
+import directMessagesReducer from "./directmessages";
+
 
 const rootReducer = combineReducers({
   session: sessionReducer,
@@ -17,6 +19,7 @@ const rootReducer = combineReducers({
   channels: channelReducer,
   messages: messageReducer,
   reactions: reactionReducer,
+  directMessages: directMessagesReducer,
 });
 
 let enhancer;
