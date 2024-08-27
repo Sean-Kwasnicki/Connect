@@ -7,12 +7,25 @@ export const fetchDirectMessages = createAsyncThunk('directMessages/fetchDirectM
     return response.data.DirectMessages;
 });
 
-export const createDirectMessage = createAsyncThunk('directMessages/createDirectMessage', async ({ receiverId, content }) => {
-    const response = await axios.post(`/api/direct_messages`, { receiver_id: receiverId, content });
-    return response.data;
-});
 
-// Slice
+// Thunk for creating a direct message with custom headers
+export const createDirectMessage = createAsyncThunk(
+    'directMessages/createDirectMessage',
+    async ({ receiverId, content }) => {
+        const response = await axios.post(
+            `/api/direct_messages/${receiverId}`,
+            { content },
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        return response.data;
+    }
+);
+
+//Slice
 const directMessagesSlice = createSlice({
     name: 'directMessages',
     initialState: [],
