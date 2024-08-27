@@ -7,8 +7,6 @@ export const fetchDirectMessages = createAsyncThunk('directMessages/fetchDirectM
     return response.data.DirectMessages;
 });
 
-
-// Thunk for creating a direct message with custom headers
 export const createDirectMessage = createAsyncThunk(
     'directMessages/createDirectMessage',
     async ({ receiverId, content }) => {
