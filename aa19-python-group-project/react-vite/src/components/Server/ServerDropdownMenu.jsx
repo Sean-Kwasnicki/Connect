@@ -13,7 +13,7 @@ import { FaPencilAlt } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
 
-function ServerDropdownMenu({ serverId, closeDropdown, channels }) {
+function ServerDropdownMenu({ serverId, channels }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -21,24 +21,31 @@ function ServerDropdownMenu({ serverId, closeDropdown, channels }) {
     setIsOpen(!isOpen);
   };
 
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setIsOpen(false);
+  const closeDropdown = () => {
+    setIsOpen(false);
+  };
+
+  const handleMouseEnter = () => {
+    // Clear the timeout when the component is hovered over
+    if (dropdownRef.current) {
+      clearTimeout(dropdownRef.current);
     }
   };
 
-  useEffect(() => {
-    // Add event listener to handle clicks outside the dropdown
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      // Cleanup event listener on component unmount
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  const handleMouseLeave = () => {
+    // Set a timeout to close the component after 200ms if not hovered over
+    dropdownRef.current = setTimeout(() => {
+      setIsOpen(false);
+    }, 200);
+  };
 
   return (
-    <div className="dropdown" ref={dropdownRef}>
+    <div
+      className="dropdown"
+      ref={dropdownRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <div onClick={toggleDropdown}>
         {isOpen ? (
           <RxCross2 className={s.arrow} />
