@@ -7,6 +7,11 @@ export const fetchDirectMessages = createAsyncThunk('directMessages/fetchDirectM
     return response.data.DirectMessages;
 });
 
+// export const createDirectMessage = createAsyncThunk('directMessages/createDirectMessage', async ({ receiverId, content }) => {
+//     const response = await axios.post(`/api/direct_messages`, { receiver_id: receiverId, content });
+//     return response.data;
+// });
+
 export const createDirectMessage = createAsyncThunk(
     'directMessages/createDirectMessage',
     async ({ receiverId, content }) => {
@@ -27,7 +32,7 @@ export const createDirectMessage = createAsyncThunk(
 );
 
 
-//Slice
+// Slice
 const directMessagesSlice = createSlice({
     name: 'directMessages',
     initialState: [],
