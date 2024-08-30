@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from app.models import DirectMessage, db
+from app.models import DirectMessage, db, User
 from app.forms import DirectMessageForm
 from datetime import datetime
 
@@ -43,23 +43,26 @@ def direct_message_by_id(id):
         "updated_at": dm.updated_at
     }
 
-@direct_messages_routes.route('', methods=['POST'])
+
+@direct_messages_routes.route('/<int:receiver_id>', methods=['POST'])
 @login_required
-def create_direct_message():
-    form = DirectMessageForm()
-    form['csrf_token'].data = request.cookies['csrf_token']
-    if form.validate_on_submit():
-        new_dm = DirectMessage(
-            content=form.data['content'],
-            sender_id=current_user.id,
-            receiver_id=form.data['receiver_id'],
-            created_at=datetime.now(),
-            updated_at=datetime.now()
-        )
-        db.session.add(new_dm)
-        db.session.commit()
-        return jsonify(new_dm.to_dict()), 201
-    return form.errors, 401
+def create_direct_message(receiver_id):
+    print("Backend route hit")
+    data = request.json
+    print("Request data:", data)
+
+    # Temporarily skip form validation
+    new_dm = DirectMessage(
+        content=data.get('content'),
+        sender_id=current_user.id,
+        receiver_id=receiver_id,
+        created_at=datetime.now(),
+        updated_at=datetime.now()
+    )
+    db.session.add(new_dm)
+    db.session.commit()
+    return jsonify(new_dm.to_dict()), 201
+
 
 @direct_messages_routes.route('/<int:id>', methods=['PUT'])
 @login_required
@@ -96,3 +99,22 @@ def delete_direct_message(id):
     db.session.delete(dm)
     db.session.commit()
     return {"message": "Direct Message deleted"}
+
+
+@direct_messages_routes.route('/users', methods=['GET'])
+def get_all_users_except_current():
+    user_id = current_user.id
+    users = User.query.filter(User.id != user_id).all()
+    return jsonify([user.to_dict() for user in users])
+
+
+@direct_messages_routes.route('/<int:user_id>', methods=['GET'])
+def get_direct_messages_with_user(user_id):
+    current_user_id = current_user.id
+
+    messages = DirectMessage.query.filter(
+        ((DirectMessage.sender_id == current_user_id) & (DirectMessage.receiver_id == user_id)) |
+        ((DirectMessage.sender_id == user_id) & (DirectMessage.receiver_id == current_user_id))
+    ).order_by(DirectMessage.created_at).all()
+
+    return jsonify([dm.to_dict() for dm in messages])

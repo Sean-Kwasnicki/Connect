@@ -16,14 +16,46 @@ function SignupFormPage() {
 
   if (sessionUser) return <Navigate to="/" replace={true} />;
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      return setErrors({
-        confirmPassword:
-          "Confirm Password field must be the same as the Password field",
-      });
+    const trimmedEmail = email.trim();
+    const trimmedUsername = username.trim();
+    const trimmedPassword = password.trim();
+    const trimmedConfirmPassword = confirmPassword.trim();
+    const validationErrors = {};
+
+    if (!trimmedEmail) {
+      validationErrors.email = "Email cannot be empty or contain only spaces.";
+    } else if (!validateEmail(trimmedEmail)) {
+      validationErrors.email = "Please enter a valid email address.";
+    }
+
+    if (!trimmedUsername) {
+      validationErrors.username = "Username cannot be empty or contain only spaces.";
+    }
+
+    if (!trimmedPassword) {
+      validationErrors.password = "Password cannot be empty or contain only spaces.";
+    }
+
+    if (!trimmedConfirmPassword) {
+      validationErrors.confirmPassword = "Password cannot be empty or contain only spaces.";
+    }
+
+    if (trimmedPassword !== trimmedConfirmPassword) {
+      validationErrors.confirmPassword = "Confirm Password field must be the same as the Password field.";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
     }
 
     const serverResponse = await dispatch(
@@ -57,7 +89,7 @@ function SignupFormPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              {errors.email && <p>{errors.email}</p>}
+              {errors.email && <p className={s.error}>{errors.email}</p>}
             </div>
             <div className={s.form_input}>
               <label>
@@ -69,7 +101,7 @@ function SignupFormPage() {
                 onChange={(e) => setUsername(e.target.value)}
                 required
               />
-              {errors.username && <p>{errors.username}</p>}
+              {errors.username && <p className={s.error}>{errors.username}</p>}
             </div>
             <div className={s.form_input}>
               <label>
@@ -81,7 +113,7 @@ function SignupFormPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              {errors.password && <p>{errors.password}</p>}
+              {errors.password && <p className={s.error}>{errors.password}</p>}
             </div>
             <div className={s.form_input}>
               <label>
@@ -93,7 +125,7 @@ function SignupFormPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
-              {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
+              {errors.confirmPassword && <p className={s.error}>{errors.confirmPassword}</p>}
             </div>
             <button className={s.submit_button} type="submit">
               Continue

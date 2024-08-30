@@ -53,3 +53,28 @@
   color: white;
   font-size: 35px;
 }
+
+.about_link {
+  background-color: #313338;
+  width: 60px;
+  height: 60px;
+  min-height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+  font-size: 17px;
+  font-family: "Lucida Sans";
+  margin-top: 5px;
+  margin-bottom: 5px;
+  color: rgb(191, 191, 191);
+  &:hover {
+    color: white;
+    cursor: pointer;
+    background-color: gray;
+  }
+}
+
+a{
+  all: unset;
+}
