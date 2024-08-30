@@ -27,7 +27,7 @@ function Navigation() {
 
   const user = useSelector((state) => state.session.user);
 
-  const [isSidebarVisible, setSidebarVisible] = useState(false)
+  const [isSidebarVisible, setSidebarVisible] = useState(false);
 
   //get servers on initial render
   useEffect(() => {
@@ -64,14 +64,14 @@ function Navigation() {
 
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
-    navigate("/")
+    navigate("/");
   };
 
   return (
     <nav className={s.nav_bar}>
       <div
         className={s.home_link}
-        onClick={toggleSidebar} 
+        onClick={toggleSidebar}
         // onClick={() => {
         //   navigate("/");
         // }}
@@ -95,6 +95,14 @@ function Navigation() {
           );
         })}
       <CreateServerButton />
+
+      <a
+        className={s.about_link}
+        href="https://github.com/Sean-Kwasnicki/Connect"
+      >
+        About
+      </a>
+
       <DirectMessageList isVisible={isSidebarVisible} />
     </nav>
   );

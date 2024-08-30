@@ -11,6 +11,7 @@
   flex-direction: column;
   background-color: #2b2d31;
   height: calc(100vh - 70px);
+  z-index: 100;
   & > li {
     list-style: none;
   }

@@ -84,13 +84,12 @@
   display: flex;
   justify-content: center;
   margin-top: 20px;
+  margin-left: 355px;
 }
 
 .message-input {
   flex-grow: 0;
-  width: 60%; 
-  padding: 10px;
-  margin-right: 10px;
+  width: 60%;
   border: 1px solid #72767d;
   border-radius: 4px;
   background-color: #40444b;
