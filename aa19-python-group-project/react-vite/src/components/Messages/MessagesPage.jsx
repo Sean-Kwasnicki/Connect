@@ -12,7 +12,7 @@ import {
 } from "../../redux/reaction";
 import io from "socket.io-client";
 import { FaPencilAlt } from "react-icons/fa";
-import { FaRegTrashAlt } from "react-icons/fa";
+import { FaRegTrashAlt, FaSpinner } from "react-icons/fa";
 import Reaction from "../Reaction/Reaction";
 import "./MessagesPage.css";
 
@@ -23,9 +23,18 @@ const MessagesPage = ({ channelId, channelName }) => {
   const currentUser = useSelector((state) => state.session.user);
   const messages = useSelector((state) => state.messages.messages || []);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    dispatch(getMessagesThunk(channelId));
+    const fetchData = async () => {
+      setLoading(true);
+      await dispatch(getMessagesThunk(channelId));
+      setLoading(false);
+    };
+
+    fetchData();
+
+
     socket.on("message", () => {
       console.log("\n\n\n\n\n");
       dispatch(getMessagesThunk(channelId));
@@ -33,14 +42,14 @@ const MessagesPage = ({ channelId, channelName }) => {
 
     socket.emit("join", { room: channelId });
 
-    // socket.on('delete_message', () => {
-    //     dispatch(getMessagesThunk(channelId));
-    // });
+    socket.on('delete_message', () => {
+        dispatch(getMessagesThunk(channelId));
+    });
 
     return () => {
       socket.off("message");
       socket.emit("leave", { room: channelId });
-      //   socket.off("delete_message");
+        socket.off("delete_message");
     };
   }, [dispatch, channelId]);
 
@@ -62,16 +71,23 @@ const MessagesPage = ({ channelId, channelName }) => {
 
   const handleDelete = async (messageId) => {
     await dispatch(deleteMessageThunk(messageId));
-    // socket.emit('delete_message', {
-    //     message_id: messageId,
-    //     room: channelId,
-    // });
+    socket.emit('delete_message', {
+        message_id: messageId,
+        room: channelId,
+    });
   };
 
   return (
     <div className="channel-messages">
-      <h1>{channelName} Channel Messages</h1>
-      <ul>
+      <h1 className='channel-label'>{channelName} Channel Messages</h1>
+      {loading ? (
+        <div className="loading-spinner">
+          <FaSpinner className="spinner-icon" />
+          <p className="loading-text">Loading Messages...</p>
+        </div>
+      ) : (
+        <>
+      <ul className="messages-container">
         {Array.isArray(messages) &&
           messages.map(({ user, content, id }) => (
             <li key={id} className="message-item">
@@ -102,6 +118,8 @@ const MessagesPage = ({ channelId, channelName }) => {
           Send
         </button>
       </form>
+      </>
+      )}
     </div>
   );
 };

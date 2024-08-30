@@ -1,26 +1,51 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import './DirectMessagesList.css';
+import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 
-const DirectMessageList = () => {
-    const [directMessages, setDirectMessages] = useState([]);
+const DirectMessageList = ({ isVisible }) => {
+    const [users, setUsers] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchDirectMessages = async () => {
-            const response = await axios.get('/api/direct_messages');
-            setDirectMessages(response.data.DirectMessages);
-        };
+        if (isVisible) {
+            const fetchUsers = async () => {
+                const response = await fetch('/api/direct_messages/users');
+                const data = await response.json();
+                setUsers(data);
+            };
+            fetchUsers();
+        }
+    }, [isVisible]);
 
-        fetchDirectMessages();
-    }, []);
+    if (!isVisible) return null;
+
+    const handleUserClick = (userId) => {
+        navigate(`/direct_messages/${userId}`);
+    };
 
     return (
-        <div>
-            {directMessages.map(dm => (
-                <div key={dm.id}>
-                    <p>{dm.content}</p>
-                    <p><small>From User ID: {dm.sender_id} to User ID: {dm.receiver_id}</small></p>
-                </div>
-            ))}
+        <div className={`sidebar ${isVisible ? 'sidebar_visible' : ''}`}>
+            <h3>Direct Messages</h3>
+            <div className="dm_list">
+                {users.length > 0 ? (
+                    users.map(user => (
+                        <div key={user.id} className="dm_item" onClick={() => handleUserClick(user.id)}>
+                        <FontAwesomeIcon
+                            icon={faUser}
+                            className="profile_icon"
+                            style={{ fontSize: '24px', marginRight: '10px' }}
+                        />
+                            <div className="dm_content">
+                                <p>{user.username}</p>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p>No other users found.</p>
+                )}
+            </div>
         </div>
     );
 };

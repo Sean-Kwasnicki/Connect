@@ -1,0 +1,19 @@
+.home_screen_container {
+  width: calc(100vw - 90px);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(54, 57, 63);
+}
+
+.handshake {
+  color: white;
+  font-size: 150px;
+}
+
+.title_text {
+  color: white;
+  padding: 16px;
+  font-size: 100px;
+}

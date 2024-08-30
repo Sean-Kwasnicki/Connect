@@ -11,9 +11,10 @@ import {
 import socket from "../../context/Socket";
 
 const Channel = () => {
+  const { serverId } = useParams();
   const { channelId } = useParams();
   const dispatch = useDispatch();
-  const channels = useSelector((state) => state.channels.channels);
+  const channels = useSelector((state) => state.channels[serverId] || []);
   const [channelName, setChannelName] = useState("");
 
   useEffect(() => {
@@ -32,15 +33,12 @@ const Channel = () => {
   useEffect(() => {
     if (channelId) {
       // socket.emit("join", { room: channelId });
-
       // socket.on("new_channel", (channel) => {
       //   dispatch(createChannel(channel));
       // });
-
       // socket.on("remove_channel", (channelId) => {
       //   dispatch(deleteChannel(channelId));
       // });
-
       // return () => {
       //   socket.emit("leave", { room: channelId });
       //   socket.off("new_channel");

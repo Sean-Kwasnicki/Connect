@@ -1,9 +1,44 @@
-.messages-container {
-  list-style-type: none;
-  padding-left: 0;
+/* DirectMessagesPage.css */
+
+.dm_page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background-color: #36393f;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.message-item {
+.channel-label {
+  color: white;
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  text-align: center;
+  width: 100%;
+}
+
+.messages_list {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background-color: #36393f;
+  width: 100%;
+  max-width: 800px;
+  text-align: center;
+  color: white;
+  margin-left: 475px;
+}
+
+
+.messages_list {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background-color: #36393f;
+}
+
+.message_item {
   position: relative;
   padding: 15px;
   margin-bottom: 10px;
@@ -11,9 +46,10 @@
   border-radius: 8px;
   transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
   color: white;
+  text-align: center; /* Center the text */
 }
 
-.message-item:hover {
+.message_item:hover {
   background-color: #36393f;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transform: scale(1.05);
@@ -28,80 +64,31 @@
 .message-header .user-name {
   font-size: 1.2em;
   color: white;
+  text-align: center;
+  flex: 1;
 }
 
 .message-header .timestamp {
   font-size: 0.85em;
   color: #72767d;
+  text-align: right;
 }
 
 .message-content {
   margin-top: 5px;
-  display: block;
   color: white;
+  text-align: center;
 }
 
-.message-text {
-  display: block;
-  color: white;
-  margin-top: 5px;
-}
-
-.emoji-picker-button {
-  display: none;
-  margin-right: 50px;
-}
-
-.message-item:hover .emoji-picker-button {
-  display: inline-block;
-}
-
-.message-item:hover .edit-icon {
-  display: inline-block;
-}
-
-.edit-icon {
-  display: none;
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.edit-icon:hover {
-  color: #7289da;
-}
-
-.reaction-counts {
-  margin-top: 5px;
+.send_message {
   display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.reaction-item {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.channel-messages {
-  padding: 20px;
-  background-color: #36393f;
-  height: 100%;
-  overflow-y: auto;
-}
-
-.message-form {
-  display: flex;
+  justify-content: center;
   margin-top: 20px;
 }
 
 .message-input {
-  flex-grow: 1;
+  flex-grow: 0;
+  width: 60%; 
   padding: 10px;
   margin-right: 10px;
   border: 1px solid #72767d;
@@ -121,12 +108,6 @@
 
 .message-button:hover {
   background-color: rgb(126, 137, 253);
-}
-
-.channel-label {
-  color: white;
-  font-size: 1.5em;
-  margin-bottom: 20px;
 }
 
 .delete-button {
@@ -162,10 +143,13 @@
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
 }

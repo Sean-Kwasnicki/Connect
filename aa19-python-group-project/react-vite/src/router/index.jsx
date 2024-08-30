@@ -7,6 +7,9 @@ import Channel from "../components/Channel";
 import MessagesPage from "../components/Messages/MessagesPage";
 import DirectMessagesPage from "../components/DirectMessages/DirectMessagesPage";
 import ThreadsPage from "../components/Threads/ThreadsPage";
+import HomeScreen from "./HomeScreen";
+import HomeScreenStyles from "./HomeScreen.module.css";
+import ChannelScreenStyle from "./ChannelScreen.module.css";
 
 export const router = createBrowserRouter([
   { path: "/signup", element: <SignupFormPage /> },
@@ -17,12 +20,20 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <h1>Welcome!</h1>,
+        element: <HomeScreen s={HomeScreenStyles} />,
+      },
+      {
+        path: "direct_messages/:userId",
+        element: <DirectMessagesPage />,
       },
       {
         path: "servers/:serverId",
         element: <Server />,
         children: [
+          {
+            path: "",
+            element: <HomeScreen s={ChannelScreenStyle} />,
+          },
           {
             path: "channels/:channelId",
             element: <Channel />,
@@ -31,10 +42,10 @@ export const router = createBrowserRouter([
                 path: "messages",
                 element: <MessagesPage />,
               },
-              {
-                path: "direct-messages",
-                element: <DirectMessagesPage />,
-              },
+              // {
+              //   path: "direct-messages",
+              //   element: <DirectMessagesPage />,
+              // },
               {
                 path: "threads",
                 element: <ThreadsPage />,
