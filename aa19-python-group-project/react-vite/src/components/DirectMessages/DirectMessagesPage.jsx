@@ -16,8 +16,6 @@ const DirectMessagesPage = () => {
     const messages = useSelector(state => state.directMessages);
 
     useEffect(() => {
-        console.log('currentUserId:', currentUserId);
-        console.log('otherUserId:', otherUserId);
 
         // Fetch all messages for the current user
         dispatch(fetchDirectMessages());
@@ -40,7 +38,6 @@ const DirectMessagesPage = () => {
         setNewMessage('');
 
         if (messages.length > 0) {
-            console.log("Messages available for filtering:", messages);
 
             const filtered = messages.filter(
                 (msg) =>
@@ -49,15 +46,12 @@ const DirectMessagesPage = () => {
             );
 
             setFilteredMessages(filtered);
-            console.log("Filtered Messages:", filtered);
         }
     }, [messages, currentUserId, otherUserId]);
 
     const handleSendMessage = () => {
       // Check if the message is not just whitespace
       if (newMessage.trim() === '') return;
-
-      console.log('Sending message to user:', parseInt(otherUserId), 'with content:', newMessage);
 
       // Dispatch the createDirectMessage action
       dispatch(createDirectMessage({ receiverId: parseInt(otherUserId), content: newMessage }))
@@ -69,7 +63,6 @@ const DirectMessagesPage = () => {
                   // Update the filtered messages with the new message
                   const updatedMessages = [...filteredMessages, newMessageData];
                   setFilteredMessages(updatedMessages);
-                  console.log('Updated Filtered Messages:', updatedMessages);
 
                   // Clear the input field after sending the message
                   setNewMessage('');

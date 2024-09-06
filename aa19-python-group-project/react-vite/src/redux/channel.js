@@ -67,7 +67,6 @@ export const createChannelThunk = (serverId, channel) => async (dispatch) => {
 };
 
 export const deleteChannelThunk = (serverId, channelId) => async (dispatch) => {
-  console.log(serverId, channelId);
   const response = await fetch(`/api/channels/${channelId}`, {
     method: "DELETE",
   });
@@ -120,7 +119,6 @@ function channelReducer(state = initialState, action) {
     case DELETE_CHANNEL: {
       const newState = { ...state };
       const { serverId, channelId } = action.payload;
-      console.log(serverId, channelId, state[serverId]);
       //copy over all current channels except for the deleted one
       newState[serverId] = state[serverId].filter(({ id }) => id !== channelId);
       return newState;

@@ -182,9 +182,7 @@ function serverReducer(state = initialState, action) {
         }
       }
       const serversCopy = [...state.servers];
-      console.log(serversCopy);
       serversCopy[serverIndex] = action.payload.server;
-      console.log(serversCopy, serverIndex);
       return { ...state, servers: serversCopy };
     }
     case DELETE_SERVER: {

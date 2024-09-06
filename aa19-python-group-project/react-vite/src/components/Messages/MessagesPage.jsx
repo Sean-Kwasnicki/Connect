@@ -36,7 +36,6 @@ const MessagesPage = ({ channelId, channelName }) => {
 
 
     socket.on("message", () => {
-      console.log("\n\n\n\n\n");
       dispatch(getMessagesThunk(channelId));
     });
 
