@@ -14,7 +14,9 @@ import io from "socket.io-client";
 import { FaPencilAlt } from "react-icons/fa";
 import { FaRegTrashAlt, FaSpinner } from "react-icons/fa";
 import Reaction from "../Reaction/Reaction";
-import "./MessagesPage.css";
+import DeleteMessageModal from "../Modals/DeleteMessageModal";
+import s from "./MessagesPage.module.css";
+import EmojiPickerButton from "../Reaction/EmojiPickerButton";
 
 const socket = io.connect("/");
 
@@ -25,6 +27,13 @@ const MessagesPage = ({ channelId, channelName }) => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const onEmojiClick = ({ emoji }) => {
+    const response = dispatch(addReactionThunk(channelId, messageId, emoji));
+    if (response) {
+      showEmojiPicker(false);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -34,21 +43,20 @@ const MessagesPage = ({ channelId, channelName }) => {
 
     fetchData();
 
-
     socket.on("message", () => {
       dispatch(getMessagesThunk(channelId));
     });
 
     socket.emit("join", { room: channelId });
 
-    socket.on('delete_message', () => {
-        dispatch(getMessagesThunk(channelId));
+    socket.on("delete_message", () => {
+      dispatch(getMessagesThunk(channelId));
     });
 
     return () => {
       socket.off("message");
       socket.emit("leave", { room: channelId });
-        socket.off("delete_message");
+      socket.off("delete_message");
     };
   }, [dispatch, channelId]);
 
@@ -68,57 +76,66 @@ const MessagesPage = ({ channelId, channelName }) => {
     setMessage("");
   };
 
-  const handleDelete = async (messageId) => {
-    await dispatch(deleteMessageThunk(messageId));
-    socket.emit('delete_message', {
-        message_id: messageId,
-        room: channelId,
-    });
-  };
-
   return (
-    <div className="channel-messages">
-      <h1 className='channel-label'>{channelName} Channel Messages</h1>
+    <div className={s.channel_messages}>
+      <h1 className={s.channel_label}>{channelName} Channel Messages</h1>
       {loading ? (
-        <div className="loading-spinner">
-          <FaSpinner className="spinner-icon" />
-          <p className="loading-text">Loading Messages...</p>
+        <div className={s.loading_spinner}>
+          <FaSpinner className={s.spinner_icon} />
+          <p className={s.loading_text}>Loading Messages...</p>
         </div>
       ) : (
         <>
-      <ul className="messages-container">
-        {Array.isArray(messages) &&
-          messages.map(({ user, content, id }) => (
-            <li key={id} className="message-item">
-              <div className="message-content">
-                <span className="user-name">{user}</span>
-                <span className="message-text">{content}</span>
-              </div>
-              <Reaction channelId={channelId} messageId={id} />
-              {currentUser.username === user && (
-                <button
-                  className="delete-button"
-                  onClick={() => handleDelete(id)}
-                >
-                  <FaRegTrashAlt />
-                </button>
-              )}
-            </li>
-          ))}
-      </ul>
-      <form className="message-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          className="message-input"
-        />
-        <button type="submit" className="message-button">
-          Send
-        </button>
-      </form>
-      </>
+          <ul className={s.messages_container}>
+            {Array.isArray(messages) &&
+              messages.map(({ user, content, id }) => (
+                <li key={id} className={s.message_item}>
+                  <div className={s.message_content}>
+                    <div className={s.message_content_header}>
+                      <span className={s.username}>{user}</span>
+                      <div className={s.message_buttons}>
+                        <EmojiPickerButton
+                          channelId={channelId}
+                          messageId={id}
+                          onEmojiClick={(emoji) => {
+                            dispatch(addReactionThunk(channelId, id, emoji));
+                          }}
+                        />
+                        {currentUser.username === user && (
+                          <DeleteMessageModal
+                            messageId={id}
+                            Component={DeleteChannelModalComponent}
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <span className={s.message_text}>{content}</span>
+                    <Reaction channelId={channelId} messageId={id} />
+                  </div>
+                </li>
+              ))}
+          </ul>
+          <form className={s.message_form} onSubmit={handleSubmit}>
+            <input
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className={s.message_input}
+            />
+            <button type="submit" className="message-button">
+              Send
+            </button>
+          </form>
+        </>
       )}
+    </div>
+  );
+};
+
+const DeleteChannelModalComponent = () => {
+  return (
+    <div className="delete-message-modal-button">
+      <FaRegTrashAlt />
     </div>
   );
 };

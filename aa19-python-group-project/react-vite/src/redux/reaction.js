@@ -1,4 +1,3 @@
-
 // Action Types
 const GET_REACTIONS = "reactions/getReactions";
 const ADD_REACTION = "reactions/addReaction";
@@ -23,61 +22,64 @@ export const removeReaction = (reactionId, messageId) => ({
 // Thunks
 export const getReactionsThunk = (channelId, messageId) => async (dispatch) => {
   try {
-    const response = await fetch(`/api/channels/${channelId}/messages/${messageId}/reactions`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
+    const response = await fetch(
+      `/api/channels/${channelId}/messages/${messageId}/reactions`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    });
+    );
     if (response.ok) {
       const data = await response.json();
       dispatch(getReactions(messageId, data.reactions));
     }
   } catch (error) {
-    console.error("Failed to fetch reactions:", error);
+    return error("Failed to fetch reactions:", error);
   }
 };
 
-export const addReactionThunk = (channelId, messageId, emoji) => async (dispatch) => {
-  try {
-    const response = await fetch(`/api/channels/${channelId}/messages/${messageId}/reactions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ emoji }),
-    });
+export const addReactionThunk =
+  (channelId, messageId, emoji) => async (dispatch) => {
+    const response = await fetch(
+      `/api/channels/${channelId}/messages/${messageId}/reactions`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ emoji }),
+      }
+    );
 
     if (response.ok) {
-      const newReaction = await response.json(); 
+      const newReaction = await response.json();
       dispatch(addReaction(newReaction));
       return newReaction;
-    } else {
-      console.error("Failed to add reaction:", response.statusText);
     }
-  } catch (error) {
-    console.error("Failed to add reaction:", error);
-  }
-};
+  };
 
-export const removeReactionThunk = (channelId, messageId, reactionId) => async (dispatch) => {
-  try {
-    const response = await fetch(`/api/channels/${channelId}/messages/${messageId}/reactions/${reactionId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+export const removeReactionThunk =
+  (channelId, messageId, reactionId) => async (dispatch) => {
+    try {
+      const response = await fetch(
+        `/api/channels/${channelId}/messages/${messageId}/reactions/${reactionId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    if (response.ok) {
-      dispatch(removeReaction(reactionId, messageId));
-    } else {
-      console.error("Failed to remove reaction:", response.statusText);
+      if (response.ok) {
+        dispatch(removeReaction(reactionId, messageId));
+      }
+    } catch (error) {
+      return error("Failed to remove reaction:", error);
     }
-  } catch (error) {
-    console.error("Failed to remove reaction:", error);
-  }
-};
+  };
 
 // Initial State
 const initialState = { reactionsByMessageId: {} };
@@ -90,8 +92,8 @@ const reactionsReducer = (state = initialState, action) => {
         ...state,
         reactionsByMessageId: {
           ...state.reactionsByMessageId,
-          [action.payload.messageId]: action.payload.reactions
-        }
+          [action.payload.messageId]: action.payload.reactions,
+        },
       };
     case ADD_REACTION:
       return {
@@ -100,19 +102,19 @@ const reactionsReducer = (state = initialState, action) => {
           ...state.reactionsByMessageId,
           [action.payload.message_id]: [
             ...(state.reactionsByMessageId[action.payload.message_id] || []),
-            action.payload
-          ]
-        }
+            action.payload,
+          ],
+        },
       };
     case REMOVE_REACTION:
       return {
         ...state,
         reactionsByMessageId: {
           ...state.reactionsByMessageId,
-          [action.payload.messageId]: state.reactionsByMessageId[action.payload.messageId].filter(
-            (reaction) => reaction.id !== action.payload.reactionId
-          )
-        }
+          [action.payload.messageId]: state.reactionsByMessageId[
+            action.payload.messageId
+          ].filter((reaction) => reaction.id !== action.payload.reactionId),
+        },
       };
     default:
       return state;

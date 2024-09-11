@@ -1,6 +1,7 @@
 /* EmojiPickerButton.css */
 .emoji-picker-container {
-  position: relative;
+  position: absolute;
+  right: 285px;
 }
 
 .emoji-picker-icon {

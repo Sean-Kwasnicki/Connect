@@ -5,18 +5,18 @@
 }
 
 .emoji-picker-button {
-  display: none;
+  /* display: none; */
   position: absolute;
   right: 0;
   border: none;
   background: none;
-  margin-top: -30px;
-  margin-left: -30px;
+  /* margin-top: -30px;
+  margin-left: -30px; */
 }
 
-.reaction-container:hover .emoji-picker-button {
+/* .reaction-container:hover .emoji-picker-button {
   display: inline-block;
-}
+} */
 
 .reaction-counts {
   display: flex;
@@ -36,5 +36,5 @@
   border: 2px solid blue;
   cursor: pointer;
   border-radius: 5px;
-  background-color: rgba(138, 43, 226, 0.2); 
+  background-color: rgba(138, 43, 226, 0.2);
 }

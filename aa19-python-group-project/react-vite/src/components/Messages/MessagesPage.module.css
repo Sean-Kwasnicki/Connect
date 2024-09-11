@@ -1,63 +1,68 @@
-.messages-container {
+.messages_container {
   list-style-type: none;
   padding-left: 0;
 }
 
-.message-item {
-  position: relative;
+.message_item {
   padding: 15px;
   margin-bottom: 10px;
   background-color: #2f3136;
   border-radius: 8px;
-  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  /* transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s; */
+  color: white;
+
+  &:hover {
+    background-color: #36393f;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* transform: scale(1.05); */
+  }
+}
+
+.message_content {
+  margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: top;
   color: white;
 }
 
-.message-item:hover {
-  background-color: #36393f;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transform: scale(1.05);
-}
-
-.message-header {
+.message_content_header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 
-.message-header .user-name {
-  font-size: 1.2em;
+.username {
+  font-weight: bold;
   color: white;
+  padding-bottom: 5px;
 }
 
-.message-header .timestamp {
-  font-size: 0.85em;
-  color: #72767d;
+.message_text {
+  color: rgb(212, 212, 212);
+  padding-bottom: 5px;
 }
 
-.message-content {
-  margin-top: 5px;
-  display: block;
-  color: white;
+.message_buttons {
+  display: none;
+  background-color: #36393f;
+
+  & > div {
+    padding: 4px;
+
+    &:hover {
+      cursor: pointer;
+      color: rgb(172, 172, 172);
+    }
+  }
 }
 
-.message-text {
-  display: block;
-  color: white;
-  margin-top: 5px;
+.message_item:hover .message_buttons {
+  display: flex;
 }
 
 .emoji-picker-button {
   display: none;
   margin-right: 50px;
-}
-
-.message-item:hover .emoji-picker-button {
-  display: inline-block;
-}
-
-.message-item:hover .edit-icon {
-  display: inline-block;
 }
 
 .edit-icon {
@@ -88,21 +93,21 @@
   gap: 3px;
 }
 
-.channel-messages {
+.channel_messages {
   padding: 20px;
   background-color: #36393f;
   height: 100%;
   overflow-y: auto;
 }
 
-.message-form {
+.message_form {
   display: flex;
+  justify-content: space-between;
   margin-top: 20px;
 }
 
-.message-input {
+.message_input {
   flex-grow: 1;
-  padding: 10px;
   margin-right: 10px;
   border: 1px solid #72767d;
   border-radius: 4px;
@@ -123,7 +128,7 @@
   background-color: rgb(126, 137, 253);
 }
 
-.channel-label {
+.channel_label {
   color: white;
   font-size: 1.5em;
   margin-bottom: 20px;
@@ -140,7 +145,7 @@
   color: #f04747;
 }
 
-.loading-spinner {
+.loading_spinner {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -148,14 +153,14 @@
   height: 100%;
 }
 
-.spinner-icon {
+.spinner_icon {
   font-size: 2rem;
   margin-bottom: 10px;
   color: rgb(88, 100, 242);
   animation: spin 1s linear infinite;
 }
 
-.loading-text {
+.loading_text {
   color: white;
   font-weight: bold;
   font-size: 1.2rem;

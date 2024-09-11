@@ -6,7 +6,6 @@ const GET_MESSAGES = "messages/getMessages";
 const CREATE_MESSAGE = "messages/createMessage";
 const DELETE_MESSAGE = "messages/deleteMessage";
 
-
 // Actions
 const getMessages = (messages) => ({
   type: GET_MESSAGES,
@@ -23,8 +22,6 @@ const deleteMessage = (messageId) => ({
   payload: messageId,
 });
 
-
-
 // Thunks
 export const getMessagesThunk = (channelId) => async (dispatch) => {
   try {
@@ -34,46 +31,46 @@ export const getMessagesThunk = (channelId) => async (dispatch) => {
       dispatch(getMessages(messages));
     }
   } catch (error) {
-    console.error("Failed to fetch messages:", error);
+    return error("Failed to fetch messages:", error);
   }
 };
 
-export const createMessageThunk = (channelId, content) => async (dispatch, getState) => {
-  try {
-    const { session: { user } } = getState(); 
-    const response = await fetch(`/api/channels/${channelId}/messages`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ...content, user: user.username }),
-    });
+export const createMessageThunk =
+  (channelId, content) => async (dispatch, getState) => {
+    try {
+      const {
+        session: { user },
+      } = getState();
+      const response = await fetch(`/api/channels/${channelId}/messages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...content, user: user.username }),
+      });
 
-    if (response.ok) {
-      const newMessage = await response.json();
-      dispatch(createMessage(newMessage));
-    } else {
-      console.error("Failed to create message:", response.statusText);
+      if (response.ok) {
+        const newMessage = await response.json();
+        dispatch(createMessage(newMessage));
+      } else {
+        return null;
+      }
+    } catch (error) {
       return null;
     }
-  } catch (error) {
-    console.error("Failed to create message:", error);
-    return null;
-  }
-};
-
+  };
 
 export const deleteMessageThunk = (messageId) => async (dispatch) => {
-  try {
-    const response = await axios.delete(`/api/messages/${messageId}`);
-    if (response.status === 200) {
-      dispatch(deleteMessage(messageId));
-    }
-  } catch (error) {
-    console.error("Failed to delete message:", error);
+  const raw = await fetch(`/api/messages/${messageId}`, {
+    method: "DELETE",
+  });
+
+  if (raw.status === 200) {
+    const response = await raw.json();
+    dispatch(deleteMessage(messageId));
+    return response;
   }
 };
-
 
 // Initial State
 const initialState = {
@@ -88,7 +85,12 @@ const messageReducer = (state = initialState, action) => {
     case CREATE_MESSAGE:
       return { ...state, messages: [...state.messages, action.payload] };
     case DELETE_MESSAGE:
-      return { ...state, messages: state.messages.filter(message => message.id !== action.payload) };
+      return {
+        ...state,
+        messages: state.messages.filter(
+          (message) => message.id !== action.payload
+        ),
+      };
     default:
       return state;
   }

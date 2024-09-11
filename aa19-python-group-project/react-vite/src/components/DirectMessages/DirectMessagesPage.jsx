@@ -1,116 +1,129 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchDirectMessages, createDirectMessage } from '../../redux/directmessages';
-import './DirectMessagesPage.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchDirectMessages,
+  createDirectMessage,
+} from "../../redux/directmessages";
+import "./DirectMessagesPage.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 const DirectMessagesPage = () => {
-    const { userId: otherUserId } = useParams();
-    const dispatch = useDispatch();
-    const [filteredMessages, setFilteredMessages] = useState([]);
-    const [newMessage, setNewMessage] = useState('');
-    const [otherUserName, setOtherUserName] = useState('User');
-    const currentUserId = useSelector(state => state.session.user.id);
-    const messages = useSelector(state => state.directMessages);
+  const { userId: otherUserId } = useParams();
+  const dispatch = useDispatch();
+  const [filteredMessages, setFilteredMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [otherUserName, setOtherUserName] = useState("User");
+  const currentUserId = useSelector((state) => state.session.user.id);
+  const messages = useSelector((state) => state.directMessages);
 
-    useEffect(() => {
+  useEffect(() => {
+    // Fetch all messages for the current user
+    dispatch(fetchDirectMessages());
 
-        // Fetch all messages for the current user
-        dispatch(fetchDirectMessages());
+    // Fetch the username of the other user
+    const fetchUserName = async () => {
+      try {
+        const response = await fetch(`/api/users/${otherUserId}`);
+        const userData = await response.json();
+        setOtherUserName(userData.username);
+      } catch (error) {
+        return error("Failed to fetch username:", error);
+      }
+    };
 
-        // Fetch the username of the other user
-        const fetchUserName = async () => {
-            try {
-                const response = await fetch(`/api/users/${otherUserId}`);
-                const userData = await response.json();
-                setOtherUserName(userData.username);
-            } catch (error) {
-                console.error('Failed to fetch username:', error);
-            }
-        };
+    fetchUserName();
+  }, [dispatch, otherUserId]);
 
-        fetchUserName();
-    }, [dispatch, otherUserId]);
+  useEffect(() => {
+    setNewMessage("");
 
-    useEffect(() => {
-        setNewMessage('');
+    if (messages.length > 0) {
+      const filtered = messages.filter(
+        (msg) =>
+          (msg.sender_id === currentUserId &&
+            msg.receiver_id === parseInt(otherUserId)) ||
+          (msg.sender_id === parseInt(otherUserId) &&
+            msg.receiver_id === currentUserId)
+      );
 
-        if (messages.length > 0) {
+      setFilteredMessages(filtered);
+    }
+  }, [messages, currentUserId, otherUserId]);
 
-            const filtered = messages.filter(
-                (msg) =>
-                    (msg.sender_id === currentUserId && msg.receiver_id === parseInt(otherUserId)) ||
-                    (msg.sender_id === parseInt(otherUserId) && msg.receiver_id === currentUserId)
-            );
+  const handleSendMessage = () => {
+    // Check if the message is not just whitespace
+    if (newMessage.trim() === "") return;
 
-            setFilteredMessages(filtered);
+    // Dispatch the createDirectMessage action
+    dispatch(
+      createDirectMessage({
+        receiverId: parseInt(otherUserId),
+        content: newMessage,
+      })
+    )
+      .then((resultAction) => {
+        // Check if the action was fulfilled
+        if (
+          resultAction.type === "directMessages/createDirectMessage/fulfilled"
+        ) {
+          const newMessageData = resultAction.payload;
+
+          // Update the filtered messages with the new message
+          const updatedMessages = [...filteredMessages, newMessageData];
+          setFilteredMessages(updatedMessages);
+
+          // Clear the input field after sending the message
+          setNewMessage("");
         }
-    }, [messages, currentUserId, otherUserId]);
-
-    const handleSendMessage = () => {
-      // Check if the message is not just whitespace
-      if (newMessage.trim() === '') return;
-
-      // Dispatch the createDirectMessage action
-      dispatch(createDirectMessage({ receiverId: parseInt(otherUserId), content: newMessage }))
-          .then((resultAction) => {
-              // Check if the action was fulfilled
-              if (resultAction.type === 'directMessages/createDirectMessage/fulfilled') {
-                  const newMessageData = resultAction.payload;
-
-                  // Update the filtered messages with the new message
-                  const updatedMessages = [...filteredMessages, newMessageData];
-                  setFilteredMessages(updatedMessages);
-
-                  // Clear the input field after sending the message
-                  setNewMessage('');
-              }
-          })
-          .catch((error) => {
-              console.error('Failed to create message:', error);
-          });
+      })
+      .catch((error) => {
+        return error("Failed to create message:", error);
+      });
   };
 
-
-    return (
-        <div className="dm_page">
-            <h3 className="channel-label">Conversation with {otherUserName}</h3>
-            <div className="messages_list">
-                {filteredMessages.length > 0 ? (
-                    filteredMessages.map((msg) => (
-                        <div key={msg.id} className="message_item">
-                            <div className="message-header">
-                                <FontAwesomeIcon
-                                    icon={faUser}
-                                    className="profile_icon"
-                                    style={{ fontSize: '24px', marginRight: '10px' }}
-                                />
-                                <span className="user-name">{msg.sender_id === currentUserId ? 'You' : otherUserName}</span>
-                                <span className="timestamp">{new Date(msg.created_at).toLocaleString()}</span>
-                            </div>
-                            <div className="message-content">
-                                {msg.content}
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <p>No messages yet.</p>
-                )}
-            </div>
-            <div className="send_message">
-                <input
-                    type="text"
-                    className="message-input"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Type a message..."
+  return (
+    <div className="dm_page">
+      <h3 className="channel-label">Conversation with {otherUserName}</h3>
+      <div className="messages_list">
+        {filteredMessages.length > 0 ? (
+          filteredMessages.map((msg) => (
+            <div key={msg.id} className="message_item">
+              <div className="message-header">
+                <FontAwesomeIcon
+                  icon={faUser}
+                  className="profile_icon"
+                  style={{ fontSize: "24px", marginRight: "10px" }}
                 />
-                <button className="message-button" onClick={handleSendMessage}>Send</button>
+                <span className="user-name">
+                  {msg.sender_id === currentUserId ? "You" : otherUserName}
+                </span>
+                <span className="timestamp">
+                  {new Date(msg.created_at).toLocaleString()}
+                </span>
+              </div>
+              <div className="message-content">{msg.content}</div>
             </div>
-        </div>
-    );
+          ))
+        ) : (
+          <p>No messages yet.</p>
+        )}
+      </div>
+      <div className="send_message">
+        <input
+          type="text"
+          className="message-input"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          placeholder="Type a message..."
+        />
+        <button className="message-button" onClick={handleSendMessage}>
+          Send
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default DirectMessagesPage;
