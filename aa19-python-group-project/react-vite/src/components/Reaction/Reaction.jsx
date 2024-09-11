@@ -9,8 +9,6 @@ import {
 import io from "socket.io-client";
 import "./Reaction.css";
 
-// const socket = io.connect('/');
-
 const Reaction = ({ channelId, messageId }) => {
   const dispatch = useDispatch();
   const reactions = useSelector(
@@ -21,8 +19,6 @@ const Reaction = ({ channelId, messageId }) => {
 
   useEffect(() => {
     dispatch(getReactionsThunk(channelId, messageId));
-
-    // socket.emit('join', { room: `channel_${channelId}` });
   }, [dispatch, channelId, messageId, Reactions]);
 
   const handleAddReaction = async (emoji) => {
@@ -31,10 +27,6 @@ const Reaction = ({ channelId, messageId }) => {
     );
     if (newReaction) {
       setReactions((prev) => new Set(prev).add(newReaction.id));
-      // socket.emit('reaction', {
-      //   room: `channel_${channelId}`,
-      //   reaction: newReaction,
-      // });
     }
   };
 
@@ -45,10 +37,6 @@ const Reaction = ({ channelId, messageId }) => {
       updated.delete(reactionId);
       return updated;
     });
-    // socket.emit('reaction', {
-    //   room: `channel_${channelId}`,
-    //   reaction: { remove: true, reactionId, messageId },
-    // });
   };
 
   const reactionCounts = reactions.reduce((acc, reaction) => {

@@ -20,7 +20,6 @@ function DeleteServerModal() {
 
     if (response === "good") {
       closeModal();
-      // socket.emit("delete_server", { serverId });
       navigate("/");
     } else {
       setErrors(response.errors);

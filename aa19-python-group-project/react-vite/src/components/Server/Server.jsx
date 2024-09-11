@@ -52,25 +52,6 @@ const Server = () => {
   useEffect(() => {
     dispatch(getChannelsThunk(serverId));
 
-    if (serverId && user) {
-      // socket.emit("join_server", {
-      //   server: Number(serverId),
-      //   user: user.username,
-      // });
-      // socket.on("update_users", (data) => {
-      //   if (data.server === serverId) {
-      //     setUsersInServer(data.users);
-      //   }
-      // });
-      // socket.on("delete_channel", (data) => {
-      //   dispatch(deleteChannel(data.channel_id));
-      // });
-      // return () => {
-      //   socket.emit("leave_server", { server: serverId, user: user.username });
-      //   socket.off("delete_channel");
-      //   socket.off("update_users");
-      // };
-    }
   }, [dispatch, serverId, user]);
 
   return (

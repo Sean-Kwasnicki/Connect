@@ -12,20 +12,9 @@ const ThreadsPage = () => {
         dispatch(fetchThreads());
     }, [dispatch]);
 
-    useEffect(() => {
-        // socket.on("thread_created", (data) => {
-        //     dispatch(fetchThreads());
-        // });
-
-        // return () => {
-        //     socket.off("thread_created");
-        // };
-    }, [dispatch]);
-
     const createNewThread = async () => {
         if (messageId) {
             await dispatch(createThread(messageId));
-            // socket.emit("create_thread", { message_id: messageId });
             setMessageId("");
         }
     };

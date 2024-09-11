@@ -21,12 +21,6 @@ function UpdateServerModal() {
     );
 
     if (response) {
-      // socket.emit("update_server", {
-      //   payload: {
-      //     server: response,
-      //     serverId: response.id,
-      //   },
-      // });
       closeModal();
     } else {
       setErrors(response.errors);

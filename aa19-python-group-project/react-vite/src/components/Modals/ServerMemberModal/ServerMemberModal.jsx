@@ -7,8 +7,6 @@ import { useParams } from "react-router-dom";
 import io from 'socket.io-client';
 import s from "./ServerMemberModal.module.css";
 
-// const socket = io.connect('/');
-
 function ServerMemberModal() {
   const dispatch = useDispatch();
   const { closeModal } = useModal();
@@ -20,7 +18,6 @@ function ServerMemberModal() {
     e.preventDefault();
     const response = await dispatch(joinServerThunk({ serverId, username }));
     if (response && !response.errors) {
-      // socket.emit('join_server', { server: serverId, user: username });
       closeModal();
     } else {
       setErrors(response?.errors || { message: "Unknown error occurred" });

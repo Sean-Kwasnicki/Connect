@@ -42,10 +42,6 @@ export const router = createBrowserRouter([
                 path: "messages",
                 element: <MessagesPage />,
               },
-              // {
-              //   path: "direct-messages",
-              //   element: <DirectMessagesPage />,
-              // },
               {
                 path: "threads",
                 element: <ThreadsPage />,
