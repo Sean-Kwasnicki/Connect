@@ -5,7 +5,7 @@ import {
   fetchDirectMessages,
   createDirectMessage,
 } from "../../redux/directmessages";
-import "./DirectMessagesPage.css";
+import s from "./DirectMessagesPage.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 
@@ -52,7 +52,9 @@ const DirectMessagesPage = () => {
     }
   }, [messages, currentUserId, otherUserId]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+
     // Check if the message is not just whitespace
     if (newMessage.trim() === "") return;
 
@@ -84,43 +86,44 @@ const DirectMessagesPage = () => {
   };
 
   return (
-    <div className="dm_page">
-      <h3 className="channel-label">Conversation with {otherUserName}</h3>
-      <div className="messages_list">
-        {filteredMessages.length > 0 ? (
-          filteredMessages.map((msg) => (
-            <div key={msg.id} className="message_item">
-              <div className="message-header">
-                <FontAwesomeIcon
-                  icon={faUser}
-                  className="profile_icon"
-                  style={{ fontSize: "24px", marginRight: "10px" }}
-                />
-                <span className="user-name">
-                  {msg.sender_id === currentUserId ? "You" : otherUserName}
-                </span>
-                <span className="timestamp">
-                  {new Date(msg.created_at).toLocaleString()}
-                </span>
+    <div className={s.channel_messages}>
+      <h1 className={s.channel_label}>{otherUserName}</h1>
+      <div className={s.messages_container}>
+        <ul className={s.messages}>
+          {filteredMessages.length > 0 ? (
+            filteredMessages.map((msg) => (
+              <div key={msg.id} className={s.message}>
+                <div className={s.message_header}>
+                  <FontAwesomeIcon
+                    icon={faUser}
+                    className={s.profile_picture}
+                  />
+                  <div className={s.username}>
+                    {msg.sender_id === currentUserId ? "You" : otherUserName}
+                  </div>
+                  <div className={s.timestamp}>
+                    {new Date(msg.created_at).toLocaleString()}
+                  </div>
+                </div>
+                <span className={s.message_text}>{msg.content}</span>
               </div>
-              <div className="message-content">{msg.content}</div>
-            </div>
-          ))
-        ) : (
-          <p>No messages yet.</p>
-        )}
-      </div>
-      <div className="send_message">
-        <input
-          type="text"
-          className="message-input"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Type a message..."
-        />
-        <button className="message-button" onClick={handleSendMessage}>
-          Send
-        </button>
+            ))
+          ) : (
+            <p>No messages yet.</p>
+          )}
+        </ul>
+
+        <div className={s.message_form}>
+          <form onSubmit={handleSendMessage}>
+            <input
+              type="text"
+              className={s.message_input}
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder={`Message @${otherUserName}`}
+            />
+          </form>
+        </div>
       </div>
     </div>
   );

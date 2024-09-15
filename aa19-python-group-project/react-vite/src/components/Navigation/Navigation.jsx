@@ -2,16 +2,10 @@ import { NavLink, useNavigate, useParams } from "react-router-dom";
 import s from "./Navigation.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
-import {
-  getServersThunk,
-  createServer,
-  updateServer,
-  deleteServer,
-} from "../../redux/server";
+import { getServersThunk } from "../../redux/server";
 import CreateServerButton from "./CreateServerButton";
 import { IoIosHome } from "react-icons/io";
 import socket from "../../context/Socket";
-import DirectMessageList from "../DirectMessages/DirectMessagesList";
 
 function Navigation() {
   const dispatch = useDispatch();
@@ -27,24 +21,20 @@ function Navigation() {
 
   const user = useSelector((state) => state.session.user);
 
-  const [isSidebarVisible, setSidebarVisible] = useState(false);
-
   //get servers on initial render
   useEffect(() => {
     //grab servers from api and update store
     dispatch(getServersThunk());
   }, [dispatch]);
 
-  const toggleSidebar = () => {
-    setSidebarVisible(!isSidebarVisible);
-    navigate("/");
-  };
-
   return (
     <nav className={s.nav_bar}>
       <div
         className={s.home_link}
-        onClick={toggleSidebar}
+        onClick={(e) => {
+          e.preventDefault();
+          navigate("/direct_messages");
+        }}
       >
         <IoIosHome className={s.home_icon} />
       </div>
@@ -72,8 +62,6 @@ function Navigation() {
       >
         About
       </a>
-
-      <DirectMessageList isVisible={isSidebarVisible} />
     </nav>
   );
 }

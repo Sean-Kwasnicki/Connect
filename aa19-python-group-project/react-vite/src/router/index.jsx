@@ -5,6 +5,7 @@ import Layout from "./Layout";
 import Server from "../components/Server";
 import Channel from "../components/Channel";
 import MessagesPage from "../components/Messages/MessagesPage";
+import DirectMessages from "../components/DirectMessages/DirectMessages";
 import DirectMessagesPage from "../components/DirectMessages/DirectMessagesPage";
 import ThreadsPage from "../components/Threads/ThreadsPage";
 import HomeScreen from "./HomeScreen";
@@ -23,8 +24,14 @@ export const router = createBrowserRouter([
         element: <HomeScreen s={HomeScreenStyles} />,
       },
       {
-        path: "direct_messages/:userId",
-        element: <DirectMessagesPage />,
+        path: "direct_messages/",
+        element: <DirectMessages />,
+        children: [
+          {
+            path: ":userId",
+            element: <DirectMessagesPage />,
+          },
+        ],
       },
       {
         path: "servers/:serverId",

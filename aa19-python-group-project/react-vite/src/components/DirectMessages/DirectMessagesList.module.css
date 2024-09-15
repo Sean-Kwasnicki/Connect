@@ -1,21 +1,16 @@
 /* Sidebar base styles */
 .sidebar {
-  position: fixed;
-  left: 90.5px;
+  display: flex;
+  flex-direction: column;
   top: 0;
   width: 250px;
-  height: 100%;
+  height: calc(100vh - 70px);
   background-color: #2f3136;
-  padding: 20px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
   color: #fff;
-  transform: translateX(-100%);
-  transition: transform 0.3s ease-in-out;
-}
-
-/* Sidebar visible state */
-.sidebar_visible {
-  transform: translateX(0);
+  padding: 20px;
+  /* transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out; */
 }
 
 /* Direct Messages list styles */
@@ -47,4 +42,24 @@
 
 .dm_content p {
   margin: 0;
+}
+
+.home_screen_container {
+  width: calc(100vw - 340px);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(54, 57, 63);
+}
+
+.handshake {
+  color: white;
+  font-size: 150px;
+}
+
+.title_text {
+  color: white;
+  padding: 16px;
+  font-size: 100px;
 }
